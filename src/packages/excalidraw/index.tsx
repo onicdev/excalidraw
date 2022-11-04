@@ -233,5 +233,8 @@ export {
   viewportCoordsToSceneCoords,
 } from "../../utils";
 
+// Custom for Neembboard
 export * from "../../constants";
 export { jotaiStore } from "../../jotai";
+export { ErrorDialog } from "../../components/ErrorDialog";
+export * as CollabReconciliation from "../../excalidraw-app/collab/reconciliation";
