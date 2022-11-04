@@ -238,3 +238,4 @@ export * from "../../constants";
 export { jotaiStore } from "../../jotai";
 export { ErrorDialog } from "../../components/ErrorDialog";
 export * as CollabReconciliation from "../../excalidraw-app/collab/reconciliation";
+export * as Utils from "../../utils";
