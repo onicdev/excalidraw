@@ -232,3 +232,6 @@ export {
   sceneCoordsToViewportCoords,
   viewportCoordsToSceneCoords,
 } from "../../utils";
+
+export * from "../../constants";
+export { jotaiStore } from "../../jotai";
