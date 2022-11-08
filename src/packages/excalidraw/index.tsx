@@ -245,3 +245,5 @@ export * from "../../element/typeChecks";
 export * from "../../excalidraw-app/collab/reconciliation";
 export * from "../../utils";
 export * from "../../analytics";
+export * from "../../data/encode";
+export * from "../../data/restore";
