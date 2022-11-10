@@ -35,6 +35,7 @@ import {
   actionUngroup,
   actionLink,
   actionToggleLock,
+  actionToggleLinearEditor,
 } from "../actions";
 import { createRedoAction, createUndoAction } from "../actions/actionHistory";
 import { ActionManager } from "../actions/manager";
@@ -5881,6 +5882,12 @@ class App extends React.Component<AppProps, AppState> {
       this.actionManager.getAppState(),
     );
 
+    const mayBeAllowToggleLineEditing =
+      actionToggleLinearEditor.contextItemPredicate(
+        this.actionManager.getElementsIncludingDeleted(),
+        this.actionManager.getAppState(),
+      );
+
     const separator = "separator";
 
     const elements = this.scene.getNonDeletedElements();
@@ -6022,6 +6029,7 @@ class App extends React.Component<AppProps, AppState> {
             maybeFlipHorizontal && actionFlipHorizontal,
             maybeFlipVertical && actionFlipVertical,
             (maybeFlipHorizontal || maybeFlipVertical) && separator,
+            mayBeAllowToggleLineEditing && actionToggleLinearEditor,
             actionLink.contextItemPredicate(elements, this.state) && actionLink,
             actionDuplicateSelection,
             actionToggleLock,
