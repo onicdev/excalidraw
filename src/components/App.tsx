@@ -5705,11 +5705,11 @@ class App extends React.Component<AppProps, AppState> {
 
     const type = element ? "element" : "canvas";
 
-    const container = this.excalidrawContainerRef.current!;
-    const { top: offsetTop, left: offsetLeft } =
-      container.getBoundingClientRect();
-    const left = event.clientX - offsetLeft;
-    const top = event.clientY - offsetTop;
+    // const container = this.excalidrawContainerRef.current!;
+    // const { top: offsetTop, left: offsetLeft } =
+    //   container.getBoundingClientRect();
+    const left = event.clientX;
+    const top = event.clientY;
 
     if (element && !this.state.selectedElementIds[element.id]) {
       this.setState(
