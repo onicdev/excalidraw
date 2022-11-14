@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import ReactDOM from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import { canvasToBlob } from "../data/blob";
 import { NonDeletedExcalidrawElement } from "../element/types";
 import { CanvasError } from "../errors";
@@ -117,7 +117,7 @@ const renderCanvasExportPreview = ({
     : elements;
 
   const render = () => {
-    ReactDOM.createRoot(
+    createRoot(
       document.getElementById("canvas-export-preview") as HTMLElement,
     ).render(
       <React.StrictMode>
