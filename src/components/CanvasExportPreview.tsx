@@ -129,11 +129,24 @@ const renderCanvasExportPreview = ({
       </React.StrictMode>,
     );
   };
+
+  const exportPng = () => {
+    onExportToPng(exportedElements);
+  };
+
+  const exportSvg = () => {
+    onExportToSvg(exportedElements);
+  };
+
+  const copyToClipboard = () => {
+    onExportToClipboard(exportedElements);
+  };
+
   return {
     render,
-    onExportToPng,
-    onExportToSvg,
-    onExportToClipboard,
+    exportPng,
+    exportSvg,
+    copyToClipboard,
   };
 };
 
