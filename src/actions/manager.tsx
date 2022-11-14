@@ -176,4 +176,12 @@ export class ActionManager {
 
     return null;
   };
+
+  /** Execute action which requires a value as parameter */
+  executeActionByValue = (action: Action, value: any) => {
+    const elements = this.getElementsIncludingDeleted();
+    const appState = this.getAppState();
+
+    this.updater(action.perform(elements, appState, value, this.app));
+  };
 }
