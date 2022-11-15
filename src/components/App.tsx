@@ -268,7 +268,6 @@ import {
   isLocalLink,
 } from "../element/Hyperlink";
 import { shouldShowBoundingBox } from "../element/transformHandles";
-import { initCanvasExportPreview } from "./CanvasExportPreview";
 
 const deviceContextInitialValue = {
   isSmScreen: false,
@@ -430,7 +429,6 @@ class App extends React.Component<AppProps, AppState> {
         setActiveTool: this.setActiveTool,
         setCursor: this.setCursor,
         resetCursor: this.resetCursor,
-        getCanvasExport: this.getCanvasExport,
         getActionManager: () => this.actionManager,
       } as const;
       if (typeof excalidrawRef === "function") {
@@ -608,15 +606,6 @@ class App extends React.Component<AppProps, AppState> {
 
   public getSceneElements = () => {
     return this.scene.getNonDeletedElements();
-  };
-
-  public getCanvasExport = () => {
-    return initCanvasExportPreview({
-      elements: this.scene.getNonDeletedElements(),
-      appState: this.state,
-      files: this.files,
-      setAppState: this.setAppState,
-    });
   };
 
   private syncActionResult = withBatchedUpdates(

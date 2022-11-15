@@ -285,3 +285,14 @@ export const actionExportWithDarkMode = register({
     </div>
   ),
 });
+
+export const actionShowCanvasExport = register({
+  name: "showCanvasExport",
+  trackEvent: { category: "export", action: "showCanvas" },
+  perform: (_elements, appState, value) => {
+    return {
+      appState: { ...appState, showCanvasExport: value },
+      commitToHistory: false,
+    };
+  },
+});

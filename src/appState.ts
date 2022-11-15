@@ -90,6 +90,7 @@ export const getDefaultAppState = (): Omit<
     pendingImageElementId: null,
     showHyperlinkPopup: false,
     selectedLinearElement: null,
+    showCanvasExport: false,
   };
 };
 
@@ -139,9 +140,9 @@ const APP_STATE_STORAGE_CONF = (<
   penMode: { browser: true, export: false, server: false },
   penDetected: { browser: true, export: false, server: false },
   errorMessage: { browser: false, export: false, server: false },
-  exportBackground: { browser: true, export: false, server: false },
+  exportBackground: { browser: false, export: false, server: false },
   exportEmbedScene: { browser: true, export: false, server: false },
-  exportScale: { browser: true, export: false, server: false },
+  exportScale: { browser: false, export: false, server: false },
   exportWithDarkMode: { browser: true, export: false, server: false },
   fileHandle: { browser: false, export: false, server: false },
   gridSize: { browser: true, export: true, server: true },
@@ -182,6 +183,7 @@ const APP_STATE_STORAGE_CONF = (<
   pendingImageElementId: { browser: false, export: false, server: false },
   showHyperlinkPopup: { browser: false, export: false, server: false },
   selectedLinearElement: { browser: true, export: false, server: false },
+  showCanvasExport: { browser: false, export: false, server: false },
 });
 
 const _clearAppStateForStorage = <

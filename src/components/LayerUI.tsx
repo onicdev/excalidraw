@@ -14,7 +14,8 @@ import { SelectedShapeActions, ShapesSwitcher } from "./Actions";
 // import { BackgroundPickerAndDarkModeToggle } from "./BackgroundPickerAndDarkModeToggle";
 // import CollabButton from "./CollabButton";
 import { ErrorDialog } from "./ErrorDialog";
-import { ExportCB, ImageExportDialog } from "./ImageExportDialog";
+import { ImageExportDialog } from "./ImageExportDialog";
+import { ExportCB, CanvasExportPreview } from "./CanvasExportPreview";
 import { FixedSideContainer } from "./FixedSideContainer";
 import { HintViewer } from "./HintViewer";
 import { Island } from "./Island";
@@ -148,6 +149,53 @@ const LayerUI = ({
         appState={appState}
         files={files}
         actionManager={actionManager}
+        onExportToPng={createExporter("png")}
+        onExportToSvg={createExporter("svg")}
+        onExportToClipboard={createExporter("clipboard")}
+      />
+    );
+  };
+
+  const renderCanvasExportPreview = () => {
+    if (!appState.showCanvasExport) {
+      return null;
+    }
+
+    const createExporter =
+      (type: ExportType): ExportCB =>
+      async (exportedElements) => {
+        trackEvent("export", type, "ui");
+        const fileHandle = await exportCanvas(
+          type,
+          exportedElements,
+          appState,
+          files,
+          {
+            exportBackground: appState.exportBackground,
+            name: appState.name,
+            viewBackgroundColor: appState.viewBackgroundColor,
+          },
+        )
+          .catch(muteFSAbortError)
+          .catch((error) => {
+            console.error(error);
+            setAppState({ errorMessage: error.message });
+          });
+
+        if (
+          appState.exportEmbedScene &&
+          fileHandle &&
+          isImageFileHandle(fileHandle)
+        ) {
+          setAppState({ fileHandle });
+        }
+      };
+
+    return (
+      <CanvasExportPreview
+        elements={elements}
+        appState={appState}
+        files={files}
         onExportToPng={createExporter("png")}
         onExportToSvg={createExporter("svg")}
         onExportToClipboard={createExporter("clipboard")}
@@ -295,6 +343,7 @@ const LayerUI = ({
             {/* {appState.viewModeEnabled
               ? renderViewModeCanvasActions()
               : renderCanvasActions()} */}
+            {renderCanvasExportPreview()}
             {shouldRenderSelectedShapeActions && renderSelectedShapeActions()}
           </Stack.Col>
           {!appState.viewModeEnabled && (
