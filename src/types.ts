@@ -180,6 +180,7 @@ export type AppState = {
   pendingImageElementId: ExcalidrawImageElement["id"] | null;
   showHyperlinkPopup: false | "info" | "editor";
   selectedLinearElement: LinearElementEditor | null;
+  showCanvasExport: boolean;
 };
 
 export type NormalizedZoomValue = number & { _brand: "normalizedZoom" };
@@ -479,7 +480,6 @@ export type ExcalidrawImperativeAPI = {
   setActiveTool: InstanceType<typeof App>["setActiveTool"];
   setCursor: InstanceType<typeof App>["setCursor"];
   resetCursor: InstanceType<typeof App>["resetCursor"];
-  getCanvasExport: InstanceType<typeof App>["getCanvasExport"];
   getActionManager: () => InstanceType<typeof App>["actionManager"];
 };
 

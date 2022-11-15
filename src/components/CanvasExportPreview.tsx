@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import { canvasToBlob } from "../data/blob";
 import { NonDeletedExcalidrawElement } from "../element/types";
 import { CanvasError } from "../errors";
@@ -9,10 +9,6 @@ import { getSelectedElements, isSomeElementSelected } from "../scene";
 import { exportToCanvas } from "../scene/export";
 import { AppState, BinaryFiles } from "../types";
 import { DEFAULT_EXPORT_PADDING } from "../constants";
-import { ExportType } from "../scene/types";
-import { exportCanvas } from "../data";
-import { muteFSAbortError } from "../utils";
-import { isImageFileHandle } from "../data/blob";
 
 export const ErrorCanvasPreview = () => {
   return (
@@ -44,30 +40,75 @@ export type ExportCB = (
   scale?: number,
 ) => void;
 
-const CanvasExportPreview = ({
-  exportedElements,
-  appState,
-  files,
-  exportPadding = DEFAULT_EXPORT_PADDING,
-}: {
+type CanvasExportPreviewProps = {
   appState: AppState;
-  exportedElements: readonly NonDeletedExcalidrawElement[];
+  elements: readonly NonDeletedExcalidrawElement[];
   files: BinaryFiles;
-  exportPadding?: number;
-}) => {
-  const previewRef = useRef<HTMLDivElement>(null);
-  const { exportBackground, viewBackgroundColor } = appState;
+  onExportToPng: ExportCB;
+  onExportToSvg: ExportCB;
+  onExportToClipboard: ExportCB;
+};
 
-  useEffect(() => {
-    const previewNode = previewRef.current;
+type CanvasExportPreviewState = {
+  modalRootEl: HTMLElement;
+  el: HTMLDivElement;
+};
+
+export class CanvasExportPreview extends React.Component<
+  CanvasExportPreviewProps,
+  CanvasExportPreviewState
+> {
+  exportedElements: readonly NonDeletedExcalidrawElement[] = [];
+
+  constructor(props: CanvasExportPreviewProps) {
+    super(props);
+
+    this.state = {
+      modalRootEl: document.getElementById(
+        "canvas-export-preview",
+      ) as HTMLElement,
+      el: document.createElement("div"),
+    };
+    // @ts-ignore
+    this.previewRef = React.createRef();
+  }
+
+  componentDidMount() {
+    this.state.modalRootEl.appendChild(this.state.el);
+    window.addEventListener("exportCanvasToPng", this.exportToPng);
+    window.addEventListener("exportCanvasToSvg", this.exportToSvg);
+    window.addEventListener("exportCanvasToClipboard", this.exportToClipboard);
+  }
+
+  componentDidUpdate(): void {
+    // @ts-ignore
+    const previewNode = this.previewRef.current;
+
     if (!previewNode) {
       return;
     }
-    exportToCanvas(exportedElements, appState, files, {
-      exportBackground,
-      viewBackgroundColor,
-      exportPadding,
-    })
+
+    const { exportBackground, viewBackgroundColor } = this.props.appState;
+    const exportPadding = DEFAULT_EXPORT_PADDING;
+
+    const someElementIsSelected = isSomeElementSelected(
+      this.props.elements,
+      this.props.appState,
+    );
+    this.exportedElements = someElementIsSelected
+      ? getSelectedElements(this.props.elements, this.props.appState, true)
+      : this.props.elements;
+
+    exportToCanvas(
+      this.exportedElements,
+      this.props.appState,
+      this.props.files,
+      {
+        exportBackground,
+        viewBackgroundColor,
+        exportPadding,
+      },
+    )
       .then((canvas) => {
         // if converting to blob fails, there's some problem that will
         // likely prevent preview and export (e.g. canvas too big)
@@ -79,127 +120,35 @@ const CanvasExportPreview = ({
         console.error(error);
         renderPreview(new CanvasError(), previewNode);
       });
-  }, [
-    appState,
-    files,
-    exportedElements,
-    exportBackground,
-    exportPadding,
-    viewBackgroundColor,
-  ]);
+  }
 
-  return (
-    <div>
-      <div className="ExportDialog__preview" ref={previewRef} />
-    </div>
-  );
-};
-
-const renderCanvasExportPreview = ({
-  elements,
-  appState,
-  files,
-  onExportToPng,
-  onExportToSvg,
-  onExportToClipboard,
-}: {
-  elements: readonly NonDeletedExcalidrawElement[];
-  appState: AppState;
-  files: BinaryFiles;
-  onExportToPng: ExportCB;
-  onExportToSvg: ExportCB;
-  onExportToClipboard: ExportCB;
-}) => {
-  const someElementIsSelected = isSomeElementSelected(elements, appState);
-
-  const exportedElements = someElementIsSelected
-    ? getSelectedElements(elements, appState, true)
-    : elements;
-
-  const render = () => {
-    ReactDOM.createRoot(
-      document.getElementById("canvas-export-preview") as HTMLElement,
-    ).render(
-      <React.StrictMode>
-        <CanvasExportPreview
-          exportedElements={exportedElements}
-          appState={appState}
-          files={files}
-        />
-      </React.StrictMode>,
+  componentWillUnmount() {
+    this.state.modalRootEl.removeChild(this.state.el);
+    window.removeEventListener("exportCanvasToPng", this.exportToPng);
+    window.removeEventListener("exportCanvasToSvg", this.exportToSvg);
+    window.removeEventListener(
+      "exportCanvasToClipboard",
+      this.exportToClipboard,
     );
-  };
+  }
 
-  const exportPng = () => {
-    onExportToPng(exportedElements);
-  };
+  exportToPng() {
+    this.props.onExportToPng(this.exportedElements);
+  }
 
-  const exportSvg = () => {
-    onExportToSvg(exportedElements);
-  };
+  exportToSvg() {
+    this.props.onExportToSvg(this.exportedElements);
+  }
 
-  const copyToClipboard = () => {
-    onExportToClipboard(exportedElements);
-  };
+  exportToClipboard() {
+    this.props.onExportToClipboard(this.exportedElements);
+  }
 
-  return {
-    render,
-    exportPng,
-    exportSvg,
-    copyToClipboard,
-  };
-};
-
-export const initCanvasExportPreview = ({
-  elements,
-  appState,
-  files,
-  setAppState,
-}: {
-  elements: readonly NonDeletedExcalidrawElement[];
-  appState: AppState;
-  files: BinaryFiles;
-  setAppState: React.Component<any, AppState>["setState"];
-}) => {
-  const createExporter =
-    (type: ExportType): ExportCB =>
-    async (exportedElements) => {
-      const fileHandle = await exportCanvas(
-        type,
-        exportedElements,
-        appState,
-        files,
-        {
-          exportBackground: appState.exportBackground,
-          name: appState.name,
-          viewBackgroundColor: appState.viewBackgroundColor,
-        },
-      )
-        .catch(muteFSAbortError)
-        .catch((error) => {
-          console.error(error);
-          setAppState({ errorMessage: error.message });
-        });
-
-      if (
-        appState.exportEmbedScene &&
-        fileHandle &&
-        isImageFileHandle(fileHandle)
-      ) {
-        setAppState({ fileHandle });
-      }
-    };
-
-  const onExportToPng = createExporter("png");
-  const onExportToSvg = createExporter("svg");
-  const onExportToClipboard = createExporter("clipboard");
-
-  return renderCanvasExportPreview({
-    elements,
-    appState,
-    files,
-    onExportToPng,
-    onExportToSvg,
-    onExportToClipboard,
-  });
-};
+  render() {
+    return ReactDOM.createPortal(
+      // @ts-ignore
+      <div className="ExportDialog__preview" ref={this.previewRef} />,
+      this.state.el,
+    );
+  }
+}
