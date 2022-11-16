@@ -78,9 +78,24 @@ export class CanvasExportPreview extends React.Component<
     window.addEventListener("exportCanvasToPng", this.exportToPng);
     window.addEventListener("exportCanvasToSvg", this.exportToSvg);
     window.addEventListener("exportCanvasToClipboard", this.exportToClipboard);
+    this.renderCanvas();
   }
 
   componentDidUpdate(): void {
+    this.renderCanvas();
+  }
+
+  componentWillUnmount() {
+    this.state.modalRootEl.removeChild(this.state.el);
+    window.removeEventListener("exportCanvasToPng", this.exportToPng);
+    window.removeEventListener("exportCanvasToSvg", this.exportToSvg);
+    window.removeEventListener(
+      "exportCanvasToClipboard",
+      this.exportToClipboard,
+    );
+  }
+
+  renderCanvas = () => {
     // @ts-ignore
     const previewNode = this.previewRef.current;
 
@@ -120,29 +135,19 @@ export class CanvasExportPreview extends React.Component<
         console.error(error);
         renderPreview(new CanvasError(), previewNode);
       });
-  }
+  };
 
-  componentWillUnmount() {
-    this.state.modalRootEl.removeChild(this.state.el);
-    window.removeEventListener("exportCanvasToPng", this.exportToPng);
-    window.removeEventListener("exportCanvasToSvg", this.exportToSvg);
-    window.removeEventListener(
-      "exportCanvasToClipboard",
-      this.exportToClipboard,
-    );
-  }
-
-  exportToPng() {
+  exportToPng = () => {
     this.props.onExportToPng(this.exportedElements);
-  }
+  };
 
-  exportToSvg() {
+  exportToSvg = () => {
     this.props.onExportToSvg(this.exportedElements);
-  }
+  };
 
-  exportToClipboard() {
+  exportToClipboard = () => {
     this.props.onExportToClipboard(this.exportedElements);
-  }
+  };
 
   render() {
     return ReactDOM.createPortal(
