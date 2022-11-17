@@ -1,7 +1,7 @@
 import throttle from "lodash.throttle";
 import { PureComponent } from "react";
 import { ExcalidrawImperativeAPI } from "../../types";
-import { ErrorDialog } from "../../components/ErrorDialog";
+// import { ErrorDialog } from "../../components/ErrorDialog";
 import { APP_NAME, ENV, EVENT } from "../../constants";
 import { ImportedDataState } from "../../data/types";
 import {
@@ -790,7 +790,8 @@ class Collab extends PureComponent<Props, CollabState> {
   };
 
   render() {
-    const { username, errorMessage, activeRoomLink } = this.state;
+    // const { username, errorMessage, activeRoomLink } = this.state;
+    const { username, activeRoomLink } = this.state;
 
     const { modalIsShown } = this.props;
 
@@ -810,12 +811,12 @@ class Collab extends PureComponent<Props, CollabState> {
             theme={this.excalidrawAPI.getAppState().theme}
           />
         )}
-        {errorMessage && (
+        {/* {errorMessage && (
           <ErrorDialog
             message={errorMessage}
             onClose={() => this.setState({ errorMessage: "" })}
           />
-        )}
+        )} */}
       </>
     );
   }
