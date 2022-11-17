@@ -13,7 +13,7 @@ import { muteFSAbortError } from "../utils";
 import { SelectedShapeActions, ShapesSwitcher } from "./Actions";
 // import { BackgroundPickerAndDarkModeToggle } from "./BackgroundPickerAndDarkModeToggle";
 // import CollabButton from "./CollabButton";
-import { ErrorDialog } from "./ErrorDialog";
+// import { ErrorDialog } from "./ErrorDialog";
 import { ImageExportDialog } from "./ImageExportDialog";
 import { ExportCB, CanvasExportPreview } from "./CanvasExportPreview";
 import { FixedSideContainer } from "./FixedSideContainer";
@@ -426,12 +426,12 @@ const LayerUI = ({
   return (
     <>
       {appState.isLoading && <LoadingMessage delay={250} />}
-      {appState.errorMessage && (
+      {/* {appState.errorMessage && (
         <ErrorDialog
           message={appState.errorMessage}
           onClose={() => setAppState({ errorMessage: null })}
         />
-      )}
+      )} */}
       {appState.showHelpDialog && (
         <HelpDialog
           onClose={() => {
