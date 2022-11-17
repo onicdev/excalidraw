@@ -113,6 +113,7 @@ export type ActionName =
   | "bindText"
   | "toggleLock"
   | "toggleLinearEditor"
+  | "errorMessage"
   | "showCanvasExport";
 
 export type PanelComponentProps = {
