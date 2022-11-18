@@ -81,6 +81,7 @@ export type LastActiveToolBeforeEraser =
 export type AppState = {
   isLoading: boolean;
   errorMessage: string | null;
+  successMessageType: "exportToClipboard" | null;
   draggingElement: NonDeletedExcalidrawElement | null;
   resizingElement: NonDeletedExcalidrawElement | null;
   multiElement: NonDeleted<ExcalidrawLinearElement> | null;

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { register } from "./register";
 
 export const actionErrorMessage = register({
@@ -7,6 +6,17 @@ export const actionErrorMessage = register({
   perform: (_elements, appState, value: string) => {
     return {
       appState: { ...appState, errorMessage: value },
+      commitToHistory: false,
+    };
+  },
+});
+
+export const actionSuccessMessage = register({
+  name: "successMessage",
+  trackEvent: false,
+  perform: (_elements, appState, value) => {
+    return {
+      appState: { ...appState, successMessageType: value },
       commitToHistory: false,
     };
   },
