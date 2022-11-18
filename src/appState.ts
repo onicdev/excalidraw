@@ -49,6 +49,7 @@ export const getDefaultAppState = (): Omit<
     penMode: false,
     penDetected: false,
     errorMessage: null,
+    successMessageType: null,
     exportBackground: true,
     exportScale: defaultExportScale,
     exportEmbedScene: false,
@@ -184,6 +185,7 @@ const APP_STATE_STORAGE_CONF = (<
   showHyperlinkPopup: { browser: false, export: false, server: false },
   selectedLinearElement: { browser: true, export: false, server: false },
   showCanvasExport: { browser: false, export: false, server: false },
+  successMessageType: { browser: false, export: false, server: false },
 });
 
 const _clearAppStateForStorage = <

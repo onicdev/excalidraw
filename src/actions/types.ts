@@ -114,6 +114,7 @@ export type ActionName =
   | "toggleLock"
   | "toggleLinearEditor"
   | "errorMessage"
+  | "successMessage"
   | "showCanvasExport";
 
 export type PanelComponentProps = {

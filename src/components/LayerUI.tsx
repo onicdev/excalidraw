@@ -165,30 +165,29 @@ const LayerUI = ({
       (type: ExportType): ExportCB =>
       async (exportedElements) => {
         trackEvent("export", type, "ui");
-        const fileHandle = await exportCanvas(
-          type,
-          exportedElements,
-          appState,
-          files,
-          {
-            exportBackground: appState.exportBackground,
-            name: appState.name,
-            viewBackgroundColor: appState.viewBackgroundColor,
-          },
-        )
+        await exportCanvas(type, exportedElements, appState, files, {
+          exportBackground: appState.exportBackground,
+          name: appState.name,
+          viewBackgroundColor: appState.viewBackgroundColor,
+        })
+          .then((fileHandle) => {
+            if (type === "clipboard" || type === "clipboard-svg") {
+              setAppState({ successMessageType: "exportToClipboard" });
+            }
+
+            if (
+              appState.exportEmbedScene &&
+              fileHandle &&
+              isImageFileHandle(fileHandle)
+            ) {
+              setAppState({ fileHandle });
+            }
+          })
           .catch(muteFSAbortError)
           .catch((error) => {
             console.error(error);
             setAppState({ errorMessage: error.message });
           });
-
-        if (
-          appState.exportEmbedScene &&
-          fileHandle &&
-          isImageFileHandle(fileHandle)
-        ) {
-          setAppState({ fileHandle });
-        }
       };
 
     return (
