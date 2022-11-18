@@ -68,6 +68,8 @@ export type BinaryFileMetadata = Omit<BinaryFileData, "dataURL">;
 
 export type BinaryFiles = Record<ExcalidrawElement["id"], BinaryFileData>;
 
+export type SuccessMessage = "exportToClipboard" | null;
+
 export type LastActiveToolBeforeEraser =
   | {
       type: typeof SHAPES[number]["value"] | "eraser";
@@ -81,7 +83,7 @@ export type LastActiveToolBeforeEraser =
 export type AppState = {
   isLoading: boolean;
   errorMessage: string | null;
-  successMessageType: "exportToClipboard" | null;
+  successMessageType: SuccessMessage;
   draggingElement: NonDeletedExcalidrawElement | null;
   resizingElement: NonDeletedExcalidrawElement | null;
   multiElement: NonDeleted<ExcalidrawLinearElement> | null;
