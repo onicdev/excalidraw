@@ -51,8 +51,28 @@ const elementBackgroundColors = [
   "#FFB5AD",
 ];
 
+const clientBackgroundColors = [
+  "#1F2123",
+  "#0678CB",
+  "#8CCA08",
+  "#E60E5E",
+  "#00BAA5",
+  "#F59127",
+  "#8155E3",
+  "#009E52",
+  "#D21C09",
+  "#FAD000",
+];
+
 export default {
   canvasBackground: [oc.white, oc.gray[0], oc.gray[1], ...shades(0)],
   elementBackground: [...elementBackgroundColors],
+  clientBackgroundColors: [...clientBackgroundColors],
   elementStroke: [...elementStrokeColors],
 };
+
+export function getTextFillColor(backgroundColor: string) {
+  return ["#8CCA08", "#00BAA5", "#F59127", "#FAD000"].includes(backgroundColor)
+    ? "#1F2123"
+    : oc.white;
+}
