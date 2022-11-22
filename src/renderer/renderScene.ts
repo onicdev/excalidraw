@@ -702,8 +702,9 @@ export const _renderScene = ({
       if (!isOutOfBounds && usernameAndIdleState) {
         const offsetX = x + width;
         const offsetY = y + height;
+        context.font = "700 12px/16px sans-serif";
         const paddingHorizontal = 8;
-        // should be 4 by design but line-height on line 727 is ignored and takes 12px same as font size
+        // should be 4 by design but line-height on line 705 is ignored and takes 12px same as font size
         const paddingVertical = 6;
         const measure = context.measureText(usernameAndIdleState);
         const measureHeight =
@@ -724,7 +725,6 @@ export const _renderScene = ({
         context.closePath();
 
         context.fillStyle = getTextFillColor(background);
-        context.font = "700 12px/16px sans-serif";
         context.fillText(
           usernameAndIdleState,
           offsetX + paddingHorizontal,
