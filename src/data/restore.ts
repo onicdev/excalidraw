@@ -1,6 +1,7 @@
 import {
   ExcalidrawElement,
   ExcalidrawSelectionElement,
+  ExcalidrawTextElement,
   FontFamilyValues,
 } from "../element/types";
 import {
@@ -16,7 +17,7 @@ import {
   isInvisiblySmallElement,
   refreshTextDimensions,
 } from "../element";
-import { isLinearElementType } from "../element/typeChecks";
+import { isLinearElementType, isTextElement } from "../element/typeChecks";
 import { randomId } from "../random";
 import {
   DEFAULT_FONT_FAMILY,
@@ -139,7 +140,7 @@ const restoreElementWithProperties = <
 
 const restoreElement = (
   element: Exclude<ExcalidrawElement, ExcalidrawSelectionElement>,
-  refreshDimensions = true,
+  refreshDimensions = false,
 ): typeof element | null => {
   switch (element.type) {
     case "text":
@@ -235,14 +236,90 @@ const restoreElement = (
   }
 };
 
+/**
+ * Repairs contaienr element's boundElements array by removing duplicates and
+ * fixing containerId of bound elements if not present. Also removes any
+ * bound elements that do not exist in the elements array.
+ *
+ * NOTE mutates elements.
+ */
+const repairContainerElement = (
+  container: Mutable<ExcalidrawElement>,
+  elementsMap: Map<string, Mutable<ExcalidrawElement>>,
+) => {
+  if (container.boundElements) {
+    // copy because we're not cloning on restore, and we don't want to mutate upstream
+    const boundElements = container.boundElements.slice();
+
+    // dedupe bindings & fix boundElement.containerId if not set already
+    const boundIds = new Set<ExcalidrawElement["id"]>();
+    container.boundElements = boundElements.reduce(
+      (
+        acc: Mutable<NonNullable<ExcalidrawElement["boundElements"]>>,
+        binding,
+      ) => {
+        const boundElement = elementsMap.get(binding.id);
+        if (boundElement && !boundIds.has(binding.id)) {
+          if (
+            isTextElement(boundElement) &&
+            // being slightly conservative here, preserving existing containerId
+            // if defined, lest boundElements is stale
+            !boundElement.containerId
+          ) {
+            (boundElement as Mutable<ExcalidrawTextElement>).containerId =
+              container.id;
+          }
+
+          acc.push(binding);
+          boundIds.add(binding.id);
+        }
+        return acc;
+      },
+      [],
+    );
+  }
+};
+
+/**
+ * Repairs target bound element's container's boundElements array,
+ * or removes contaienrId if container does not exist.
+ *
+ * NOTE mutates elements.
+ */
+const repairBoundElement = (
+  boundElement: Mutable<ExcalidrawTextElement>,
+  elementsMap: Map<string, Mutable<ExcalidrawElement>>,
+) => {
+  const container = boundElement.containerId
+    ? elementsMap.get(boundElement.containerId)
+    : null;
+
+  if (!container) {
+    boundElement.containerId = null;
+    return;
+  }
+
+  if (
+    container.boundElements &&
+    !container.boundElements.find((binding) => binding.id === boundElement.id)
+  ) {
+    // copy because we're not cloning on restore, and we don't want to mutate upstream
+    const boundElements = (
+      container.boundElements || (container.boundElements = [])
+    ).slice();
+    boundElements.push({ type: "text", id: boundElement.id });
+    container.boundElements = boundElements;
+  }
+};
+
 export const restoreElements = (
   elements: ImportedDataState["elements"],
   /** NOTE doesn't serve for reconciliation */
   localElements: readonly ExcalidrawElement[] | null | undefined,
-  refreshDimensions = true,
+  refreshDimensions = false,
 ): ExcalidrawElement[] => {
   const localElementsMap = localElements ? arrayToMap(localElements) : null;
-  return (elements || []).reduce((elements, element) => {
+  const restoredElements = (elements || []).reduce((elements, element) => {
     // filtering out selection, which is legacy, no longer kept in elements,
     // and causing issues if retained
     if (element.type !== "selection" && !isInvisiblySmallElement(element)) {
@@ -260,6 +337,18 @@ export const restoreElements = (
     }
     return elements;
   }, [] as ExcalidrawElement[]);
+
+  // repair binding. Mutates elements.
+  const restoredElementsMap = arrayToMap(restoredElements);
+  for (const element of restoredElements) {
+    if (isTextElement(element) && element.containerId) {
+      repairBoundElement(element, restoredElementsMap);
+    } else if (element.boundElements) {
+      repairContainerElement(element, restoredElementsMap);
+    }
+  }
+
+  return restoredElements;
 };
 
 const coalesceAppStateValue = <
@@ -387,7 +476,7 @@ export const restore = (
   localElements: readonly ExcalidrawElement[] | null | undefined,
 ): RestoredDataState => {
   return {
-    elements: restoreElements(data?.elements, localElements, true),
+    elements: restoreElements(data?.elements, localElements),
     appState: restoreAppState(data?.appState, localAppState || null),
     files: data?.files || {},
   };

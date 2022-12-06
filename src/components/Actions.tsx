@@ -25,11 +25,12 @@ import Stack from "./Stack";
 import { ToolButton } from "./ToolButton";
 import { hasStrokeColor } from "../scene/comparisons";
 import { trackEvent } from "../analytics";
-import { hasBoundTextElement, isBoundToContainer } from "../element/typeChecks";
+import { hasBoundTextElement } from "../element/typeChecks";
 import clsx from "clsx";
 import { actionToggleZenMode } from "../actions";
 import "./Actions.scss";
 import { Tooltip } from "./Tooltip";
+import { shouldAllowVerticalAlign } from "../element/textElement";
 
 export const SelectedShapeActions = ({
   appState,
@@ -125,10 +126,8 @@ export const SelectedShapeActions = ({
         </>
       )}
 
-      {targetElements.some(
-        (element) =>
-          hasBoundTextElement(element) || isBoundToContainer(element),
-      ) && renderAction("changeVerticalAlign")}
+      {shouldAllowVerticalAlign(targetElements) &&
+        renderAction("changeVerticalAlign")}
       {(canHaveArrowheads(appState.activeTool.type) ||
         targetElements.some((element) => canHaveArrowheads(element.type))) && (
         <>{renderAction("changeArrowhead")}</>
@@ -218,13 +217,12 @@ export const ShapesSwitcher = ({
   appState: AppState;
 }) => (
   <>
-    {SHAPES.map(({ value, icon, key, fillable }, index) => {
-      const numberKey = value === "eraser" ? 0 : index + 1;
+    {SHAPES.map(({ value, icon, key, numericKey, fillable }, index) => {
       const label = t(`toolBar.${value}`);
       const letter = key && (typeof key === "string" ? key : key[0]);
       const shortcut = letter
-        ? `${capitalizeString(letter)} ${t("helpDialog.or")} ${numberKey}`
-        : `${numberKey}`;
+        ? `${capitalizeString(letter)} ${t("helpDialog.or")} ${numericKey}`
+        : `${numericKey}`;
       return (
         <ToolButton
           className={clsx("Shape", { fillable })}
@@ -234,10 +232,10 @@ export const ShapesSwitcher = ({
           checked={activeTool.type === value}
           name="editor-current-shape"
           title={`${capitalizeString(label)} — ${shortcut}`}
-          keyBindingLabel={`${numberKey}`}
+          keyBindingLabel={numericKey}
           aria-label={capitalizeString(label)}
           aria-keyshortcuts={shortcut}
-          data-testid={value}
+          data-testid={`toolbar-${value}`}
           onPointerDown={({ pointerType }) => {
             if (!appState.penDetected && pointerType === "pen") {
               setAppState({
