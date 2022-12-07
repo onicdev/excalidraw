@@ -1,4 +1,3 @@
-import oc from "open-color";
 import {
   DEFAULT_FONT_FAMILY,
   DEFAULT_FONT_SIZE,
@@ -23,17 +22,17 @@ export const getDefaultAppState = (): Omit<
     theme: THEME.LIGHT,
     collaborators: new Map(),
     currentChartType: "bar",
-    currentItemBackgroundColor: "transparent",
-    currentItemEndArrowhead: "arrow",
-    currentItemFillStyle: "hachure",
+    currentItemBackgroundColor: "#FFFFFF",
+    currentItemEndArrowhead: "triangle",
+    currentItemFillStyle: "solid",
     currentItemFontFamily: DEFAULT_FONT_FAMILY,
     currentItemFontSize: DEFAULT_FONT_SIZE,
-    currentItemLinearStrokeSharpness: "round",
+    currentItemLinearStrokeSharpness: "sharp",
     currentItemOpacity: 100,
-    currentItemRoughness: 1,
+    currentItemRoughness: 0,
     currentItemStartArrowhead: null,
-    currentItemStrokeColor: oc.black,
-    currentItemStrokeSharpness: "sharp",
+    currentItemStrokeColor: "#1F2123",
+    currentItemStrokeSharpness: "round",
     currentItemStrokeStyle: "solid",
     currentItemStrokeWidth: 1,
     currentItemTextAlign: DEFAULT_TEXT_ALIGN,
@@ -51,6 +50,7 @@ export const getDefaultAppState = (): Omit<
     penMode: false,
     penDetected: false,
     errorMessage: null,
+    successMessageType: null,
     exportBackground: true,
     exportScale: defaultExportScale,
     exportEmbedScene: false,
@@ -83,7 +83,7 @@ export const getDefaultAppState = (): Omit<
     startBoundElement: null,
     suggestedBindings: [],
     toast: null,
-    viewBackgroundColor: oc.white,
+    viewBackgroundColor: "#EEEEEE",
     zenModeEnabled: false,
     zoom: {
       value: 1 as NormalizedZoomValue,
@@ -92,6 +92,7 @@ export const getDefaultAppState = (): Omit<
     pendingImageElementId: null,
     showHyperlinkPopup: false,
     selectedLinearElement: null,
+    showCanvasExport: false,
   };
 };
 
@@ -111,7 +112,7 @@ const APP_STATE_STORAGE_CONF = (<
   T extends Record<keyof AppState, Values>,
 >(config: { [K in keyof T]: K extends keyof AppState ? T[K] : never }) =>
   config)({
-  showWelcomeScreen: { browser: true, export: false, server: false },
+  showWelcomeScreen: { browser: false, export: false, server: false },
   theme: { browser: true, export: false, server: false },
   collaborators: { browser: false, export: false, server: false },
   currentChartType: { browser: true, export: false, server: false },
@@ -142,9 +143,9 @@ const APP_STATE_STORAGE_CONF = (<
   penMode: { browser: true, export: false, server: false },
   penDetected: { browser: true, export: false, server: false },
   errorMessage: { browser: false, export: false, server: false },
-  exportBackground: { browser: true, export: false, server: false },
+  exportBackground: { browser: false, export: false, server: false },
   exportEmbedScene: { browser: true, export: false, server: false },
-  exportScale: { browser: true, export: false, server: false },
+  exportScale: { browser: false, export: false, server: false },
   exportWithDarkMode: { browser: true, export: false, server: false },
   fileHandle: { browser: false, export: false, server: false },
   gridSize: { browser: true, export: true, server: true },
@@ -185,6 +186,8 @@ const APP_STATE_STORAGE_CONF = (<
   pendingImageElementId: { browser: false, export: false, server: false },
   showHyperlinkPopup: { browser: false, export: false, server: false },
   selectedLinearElement: { browser: true, export: false, server: false },
+  showCanvasExport: { browser: false, export: false, server: false },
+  successMessageType: { browser: false, export: false, server: false },
 });
 
 const _clearAppStateForStorage = <
