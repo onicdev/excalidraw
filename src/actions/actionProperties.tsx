@@ -31,7 +31,7 @@ import {
   FontSizeExtraLargeIcon,
   EdgeSharpIcon,
   EdgeRoundIcon,
-  FreedrawIcon,
+  FontFamilyHandDrawnIcon,
   FontFamilyNormalIcon,
   FontFamilyCodeIcon,
   TextAlignLeftIcon,
@@ -660,11 +660,6 @@ export const actionChangeFontFamily = register({
       icon: JSX.Element;
     }[] = [
       {
-        value: FONT_FAMILY.Virgil,
-        text: t("labels.handDrawn"),
-        icon: FreedrawIcon,
-      },
-      {
         value: FONT_FAMILY.Helvetica,
         text: t("labels.normal"),
         icon: FontFamilyNormalIcon,
@@ -673,6 +668,11 @@ export const actionChangeFontFamily = register({
         value: FONT_FAMILY.Cascadia,
         text: t("labels.code"),
         icon: FontFamilyCodeIcon,
+      },
+      {
+        value: FONT_FAMILY.Virgil,
+        text: t("labels.handDrawn"),
+        icon: FontFamilyHandDrawnIcon,
       },
     ];
 
