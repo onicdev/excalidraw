@@ -2,7 +2,7 @@ import {
   ArrowIcon,
   DiamondIcon,
   EllipseIcon,
-  EraserIcon,
+  // EraserIcon,
   FreedrawIcon,
   ImageIcon,
   LineIcon,
@@ -76,13 +76,13 @@ export const SHAPES = [
     numericKey: KEYS["9"],
     fillable: false,
   },
-  {
-    icon: EraserIcon,
-    value: "eraser",
-    key: KEYS.E,
-    numericKey: KEYS["0"],
-    fillable: false,
-  },
+  // {
+  //   icon: EraserIcon,
+  //   value: "eraser",
+  //   key: KEYS.E,
+  //   numericKey: KEYS["0"],
+  //   fillable: false,
+  // },
 ] as const;
 
 export const findShapeByKey = (key: string) => {
