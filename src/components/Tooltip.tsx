@@ -1,6 +1,7 @@
 import "./Tooltip.scss";
 
 import React, { useEffect } from "react";
+import { debounce } from "../utils";
 
 export const getTooltipDiv = () => {
   const existingDiv = document.querySelector<HTMLDivElement>(
@@ -59,27 +60,43 @@ export const updateTooltipPosition = (
   });
 };
 
-const updateTooltip = (
-  item: HTMLDivElement,
-  tooltip: HTMLDivElement,
-  label: string,
-  long: boolean,
-) => {
-  tooltip.classList.add("excalidraw-tooltip--visible");
-  tooltip.style.minWidth = long ? "50ch" : "10ch";
-  tooltip.style.maxWidth = long ? "50ch" : "15ch";
-
-  tooltip.textContent = label;
-
-  const itemRect = item.getBoundingClientRect();
-  updateTooltipPosition(tooltip, itemRect);
+const closeTooltip = () => {
+  updateTooltip.cancel();
+  getTooltipDiv().classList.remove("excalidraw-tooltip--visible");
 };
+
+const updateTooltip = debounce(
+  (
+    item: HTMLDivElement,
+    tooltip: HTMLDivElement,
+    label: string,
+    long: boolean,
+    keyshortcuts?: string,
+  ) => {
+    tooltip.classList.add("excalidraw-tooltip--visible");
+    tooltip.style.minWidth = long ? "50ch" : "10ch";
+    tooltip.style.maxWidth = long ? "50ch" : "15ch";
+
+    tooltip.textContent = label;
+    if (keyshortcuts) {
+      const shortcut = document.createElement("span");
+      shortcut.className = "excalidraw-tooltip__keyshortcut";
+      shortcut.textContent = keyshortcuts;
+      tooltip.insertAdjacentElement("afterbegin", shortcut);
+    }
+
+    const itemRect = item.getBoundingClientRect();
+    updateTooltipPosition(tooltip, itemRect);
+  },
+  800,
+);
 
 type TooltipProps = {
   children: React.ReactNode;
   label: string;
   long?: boolean;
   style?: React.CSSProperties;
+  keyshortcuts?: string;
 };
 
 export const Tooltip = ({
@@ -87,10 +104,10 @@ export const Tooltip = ({
   label,
   long = false,
   style,
+  keyshortcuts,
 }: TooltipProps) => {
   useEffect(() => {
-    return () =>
-      getTooltipDiv().classList.remove("excalidraw-tooltip--visible");
+    return () => closeTooltip();
   }, []);
   return (
     <div
@@ -101,11 +118,10 @@ export const Tooltip = ({
           getTooltipDiv(),
           label,
           long,
+          keyshortcuts,
         )
       }
-      onPointerLeave={() =>
-        getTooltipDiv().classList.remove("excalidraw-tooltip--visible")
-      }
+      onPointerLeave={() => closeTooltip()}
       style={style}
     >
       {children}
