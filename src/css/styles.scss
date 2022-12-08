@@ -171,12 +171,29 @@
     button,
     .zIndexButton {
       @include outlineButtonStyles;
+      border-width: 0;
+      width: initial;
+      height: initial;
 
-      padding: 0;
+      padding: 4px 6.5px;
 
       svg {
-        width: var(--default-icon-size);
-        height: var(--default-icon-size);
+        width: 35px; // For Neembboard
+        height: 24px; // For Neembboard
+        padding: 0 2px; // For Neembboard
+      }
+    }
+
+    &.buttonListIcon {
+      .excalidraw-tooltip-wrapper {
+        // For Neembboard
+        display: inline-flex; // For Neembboard
+      } // For Neembboard
+
+      label {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
       }
     }
   }
@@ -265,7 +282,7 @@
   }
 
   .App-menu_top {
-    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-columns: 1fr max-content 1fr;
     grid-gap: 2rem;
     align-items: flex-start;
     cursor: default;
