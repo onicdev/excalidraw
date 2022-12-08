@@ -411,6 +411,24 @@ class App extends React.Component<AppProps, AppState> {
     this.id = nanoid();
 
     this.library = new Library(this);
+
+    this.scene = new Scene();
+    this.fonts = new Fonts({
+      scene: this.scene,
+      onSceneUpdated: this.onSceneUpdated,
+    });
+    this.history = new History();
+    this.actionManager = new ActionManager(
+      this.syncActionResult,
+      () => this.state,
+      () => this.scene.getElementsIncludingDeleted(),
+      this,
+    );
+    this.actionManager.registerAll(actions);
+
+    this.actionManager.registerAction(createUndoAction(this.history));
+    this.actionManager.registerAction(createRedoAction(this.history));
+
     if (excalidrawRef) {
       const readyPromise =
         ("current" in excalidrawRef && excalidrawRef.current?.readyPromise) ||
@@ -438,6 +456,7 @@ class App extends React.Component<AppProps, AppState> {
         setCursor: this.setCursor,
         resetCursor: this.resetCursor,
         toggleMenu: this.toggleMenu,
+        getActionManager: () => this.actionManager,
       } as const;
       if (typeof excalidrawRef === "function") {
         excalidrawRef(api);
@@ -451,23 +470,6 @@ class App extends React.Component<AppProps, AppState> {
       container: this.excalidrawContainerRef.current,
       id: this.id,
     };
-
-    this.scene = new Scene();
-    this.fonts = new Fonts({
-      scene: this.scene,
-      onSceneUpdated: this.onSceneUpdated,
-    });
-    this.history = new History();
-    this.actionManager = new ActionManager(
-      this.syncActionResult,
-      () => this.state,
-      () => this.scene.getElementsIncludingDeleted(),
-      this,
-    );
-    this.actionManager.registerAll(actions);
-
-    this.actionManager.registerAction(createUndoAction(this.history));
-    this.actionManager.registerAction(createRedoAction(this.history));
   }
 
   private renderCanvas() {
