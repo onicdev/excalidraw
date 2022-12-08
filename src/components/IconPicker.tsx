@@ -150,7 +150,7 @@ export function IconPicker<T>({
 }) {
   const [isActive, setActive] = React.useState(false);
   const rPickerButton = React.useRef<any>(null);
-  const isRTL = getLanguage().rtl;
+  // const isRTL = getLanguage().rtl;
 
   return (
     <div>
@@ -170,7 +170,7 @@ export function IconPicker<T>({
               onCloseRequest={(event) =>
                 event.target !== rPickerButton.current && setActive(false)
               }
-              {...(isRTL ? { right: 5.5 } : { left: -5.5 })}
+              // {...(isRTL ? { right: 5.5 } : { left: -5.5 })}
             >
               <Picker
                 options={options}
@@ -183,7 +183,7 @@ export function IconPicker<T>({
                 }}
               />
             </Popover>
-            <div className="picker-triangle" />
+            {/* <div className="picker-triangle" /> */}
           </>
         ) : null}
       </React.Suspense>
