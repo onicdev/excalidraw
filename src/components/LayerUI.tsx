@@ -12,8 +12,9 @@ import { AppProps, AppState, ExcalidrawProps, BinaryFiles } from "../types";
 import { muteFSAbortError } from "../utils";
 import { SelectedShapeActions, ShapesSwitcher } from "./Actions";
 // import CollabButton from "./CollabButton";
-import { ErrorDialog } from "./ErrorDialog";
-import { ExportCB, ImageExportDialog } from "./ImageExportDialog";
+// import { ErrorDialog } from "./ErrorDialog";
+import { ImageExportDialog } from "./ImageExportDialog";
+import { ExportCB, CanvasExportPreview } from "./CanvasExportPreview";
 import { FixedSideContainer } from "./FixedSideContainer";
 import { HintViewer } from "./HintViewer";
 import { Island } from "./Island";
@@ -178,6 +179,52 @@ const LayerUI = ({
     );
   };
 
+  const renderCanvasExportPreview = () => {
+    if (!appState.showCanvasExport) {
+      return null;
+    }
+
+    const createExporter =
+      (type: ExportType): ExportCB =>
+      async (exportedElements) => {
+        trackEvent("export", type, "ui");
+        await exportCanvas(type, exportedElements, appState, files, {
+          exportBackground: appState.exportBackground,
+          name: appState.name,
+          viewBackgroundColor: appState.viewBackgroundColor,
+        })
+          .then((fileHandle) => {
+            if (type === "clipboard" || type === "clipboard-svg") {
+              setAppState({ successMessageType: "exportToClipboard" });
+            }
+
+            if (
+              appState.exportEmbedScene &&
+              fileHandle &&
+              isImageFileHandle(fileHandle)
+            ) {
+              setAppState({ fileHandle });
+            }
+          })
+          .catch(muteFSAbortError)
+          .catch((error) => {
+            console.error(error);
+            setAppState({ errorMessage: error.message });
+          });
+      };
+
+    return (
+      <CanvasExportPreview
+        elements={elements}
+        appState={appState}
+        files={files}
+        onExportToPng={createExporter("png")}
+        onExportToSvg={createExporter("svg")}
+        onExportToClipboard={createExporter("clipboard")}
+      />
+    );
+  };
+
   // const [isMenuOpen, setIsMenuOpen] = useAtom(isMenuOpenAtom);
   // const menuRef = useOutsideClickHook(() => setIsMenuOpen(false));
 
@@ -319,6 +366,7 @@ const LayerUI = ({
             })}
           >
             {/* {renderCanvasActions()} */}
+            {renderCanvasExportPreview()}
             {shouldRenderSelectedShapeActions && renderSelectedShapeActions()}
           </Stack.Col>
           {!appState.viewModeEnabled && (
@@ -444,12 +492,12 @@ const LayerUI = ({
   return (
     <>
       {appState.isLoading && <LoadingMessage delay={250} />}
-      {appState.errorMessage && (
+      {/* {appState.errorMessage && (
         <ErrorDialog
           message={appState.errorMessage}
           onClose={() => setAppState({ errorMessage: null })}
         />
-      )}
+      )} */}
       {appState.openDialog === "help" && (
         <HelpDialog
           onClose={() => {
