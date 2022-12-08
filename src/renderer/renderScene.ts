@@ -1,6 +1,7 @@
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { RoughSVG } from "roughjs/bin/svg";
 import oc from "open-color";
+import { getTextFillColor } from "../colors";
 
 import { AppState, BinaryFiles, Point, Zoom } from "../types";
 import {
@@ -647,7 +648,7 @@ export const _renderScene = ({
       x -= appState.offsetLeft;
       y -= appState.offsetTop;
 
-      const width = 9;
+      const width = 15;
       const height = 14;
 
       const isOutOfBounds =
@@ -668,9 +669,9 @@ export const _renderScene = ({
       context.fillStyle = background;
 
       const userState = renderConfig.remotePointerUserStates[clientId];
-      if (isOutOfBounds || userState === UserIdleState.AWAY) {
-        context.globalAlpha = 0.48;
-      }
+      // if (isOutOfBounds || userState === UserIdleState.AWAY) {
+      //   context.globalAlpha = 0.48;
+      // }
 
       if (
         renderConfig.remotePointerButton &&
@@ -679,26 +680,42 @@ export const _renderScene = ({
         context.beginPath();
         context.arc(x, y, 15, 0, 2 * Math.PI, false);
         context.lineWidth = 3;
-        context.strokeStyle = "#ffffff88";
+        context.strokeStyle = stroke;
         context.stroke();
         context.closePath();
 
         context.beginPath();
         context.arc(x, y, 15, 0, 2 * Math.PI, false);
         context.lineWidth = 1;
-        context.strokeStyle = stroke;
+        context.strokeStyle = background;
         context.stroke();
         context.closePath();
       }
+      context.filter =
+        "drop-shadow(0px 0px 1px rgba(0, 3, 20, 0.12)) drop-shadow(0px 1.5px 3px rgba(0, 3, 20, 0.16))";
 
       context.beginPath();
-      context.moveTo(x, y);
-      context.lineTo(x + 1, y + 14);
-      context.lineTo(x + 4, y + 9);
-      context.lineTo(x + 9, y + 10);
-      context.lineTo(x, y);
+      context.fillStyle = stroke;
+      context.moveTo(x, y - 3);
+      context.bezierCurveTo(x - 2, y - 4, x - 4, y - 2, x - 3, y);
+      context.lineTo(x + 3, y + 18);
+      context.bezierCurveTo(x + 4, y + 20, x + 7, y + 20, x + 8, y + 18);
+      context.bezierCurveTo(x + 8, y + 14, x + 14, y + 8, x + 18, y + 8);
+      context.bezierCurveTo(x + 20, y + 7, x + 20, y + 3, x + 18, y + 3);
+      context.lineTo(x, y - 3);
       context.fill();
-      context.stroke();
+      context.closePath();
+
+      context.restore();
+
+      context.beginPath();
+      context.fillStyle = background;
+      context.moveTo(x + 0.5, y + 0.5);
+      context.lineTo(x + 5.3, y + 15.5);
+      context.bezierCurveTo(x + 6, y + 12, x + 12, y + 6, x + 16.3, y + 5.5);
+      context.lineTo(x + 0.5, y + 0.5);
+      context.fill();
+      context.closePath();
 
       const username = renderConfig.remotePointerUsernames[clientId];
 
@@ -716,39 +733,37 @@ export const _renderScene = ({
       if (!isOutOfBounds && usernameAndIdleState) {
         const offsetX = x + width;
         const offsetY = y + height;
-        const paddingHorizontal = 4;
-        const paddingVertical = 4;
+        context.font = "700 12px/16px sans-serif";
+        const paddingHorizontal = 8;
+        // should be 4 by design but line-height on line 736 is ignored and takes 12px same as font size
+        const paddingVertical = 6;
         const measure = context.measureText(usernameAndIdleState);
         const measureHeight =
           measure.actualBoundingBoxDescent + measure.actualBoundingBoxAscent;
 
-        const boxX = offsetX - 1;
-        const boxY = offsetY - 1;
-        const boxWidth = measure.width + 2 * paddingHorizontal + 2;
-        const boxHeight = measureHeight + 2 * paddingVertical + 2;
         if (context.roundRect) {
+          context.fillStyle = background;
           context.beginPath();
           context.roundRect(
-            boxX,
-            boxY,
-            boxWidth,
-            boxHeight,
-            4 / renderConfig.zoom.value,
+            offsetX,
+            offsetY,
+            measure.width + 2 * paddingHorizontal,
+            measureHeight + 2 * paddingVertical,
+            8,
           );
-          context.fillStyle = background;
           context.fill();
-          context.fillStyle = stroke;
-          context.stroke();
+          context.closePath();
         } else {
-          // Border
-          context.fillStyle = stroke;
-          context.fillRect(boxX, boxY, boxWidth, boxHeight);
-          // Background
           context.fillStyle = background;
-          context.fillRect(offsetX, offsetY, boxWidth - 2, boxHeight - 2);
+          context.fillRect(
+            offsetX,
+            offsetY,
+            measure.width + 2 * paddingHorizontal,
+            measureHeight + 2 * paddingVertical,
+          );
         }
-        context.fillStyle = oc.white;
 
+        context.fillStyle = getTextFillColor(background);
         context.fillText(
           usernameAndIdleState,
           offsetX + paddingHorizontal,
