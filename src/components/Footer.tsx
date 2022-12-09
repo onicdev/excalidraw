@@ -1,18 +1,18 @@
 import clsx from "clsx";
 import { ActionManager } from "../actions/manager";
-import { t } from "../i18n";
+// import { t } from "../i18n";
 import { AppState, ExcalidrawProps } from "../types";
 import {
   ExitZenModeAction,
   FinalizeAction,
   UndoRedoActions,
-  ZoomActions,
+  // ZoomActions,
 } from "./Actions";
 import { useDevice } from "./App";
-import { WelcomeScreenHelpArrow } from "./icons";
+// import { WelcomeScreenHelpArrow } from "./icons";
 import { Section } from "./Section";
 import Stack from "./Stack";
-import WelcomeScreenDecor from "./WelcomeScreenDecor";
+// import WelcomeScreenDecor from "./WelcomeScreenDecor";
 
 const Footer = ({
   appState,
@@ -43,19 +43,30 @@ const Footer = ({
       >
         <Stack.Col gap={2}>
           <Section heading="canvasActions">
-            <ZoomActions
+            {/* <ZoomActions
               renderAction={actionManager.renderAction}
               zoom={appState.zoom}
-            />
+            /> */}
 
             {!appState.viewModeEnabled && (
-              <UndoRedoActions
-                renderAction={actionManager.renderAction}
-                className={clsx("zen-mode-transition", {
-                  "layer-ui__wrapper__footer-left--transition-bottom":
-                    appState.zenModeEnabled,
-                })}
-              />
+              <>
+                <UndoRedoActions
+                  renderAction={actionManager.renderAction}
+                  className={clsx("zen-mode-transition", {
+                    "layer-ui__wrapper__footer-left--transition-bottom":
+                      appState.zenModeEnabled,
+                  })}
+                />
+
+                <div
+                  className={clsx("eraser-buttons zen-mode-transition", {
+                    "layer-ui__wrapper__footer-left--transition-left":
+                      appState.zenModeEnabled,
+                  })}
+                >
+                  {actionManager.renderAction("eraser", { size: "small" })}
+                </div>
+              </>
             )}
             {showFinalize && (
               <FinalizeAction
@@ -69,7 +80,7 @@ const Footer = ({
           </Section>
         </Stack.Col>
       </div>
-      <div
+      {/* <div
         className={clsx(
           "layer-ui__wrapper__footer-center zen-mode-transition",
           {
@@ -79,8 +90,8 @@ const Footer = ({
         )}
       >
         {renderCustomFooter?.(false, appState)}
-      </div>
-      <div
+      </div> */}
+      {/* <div
         className={clsx("layer-ui__wrapper__footer-right zen-mode-transition", {
           "transition-right disable-pointerEvents": appState.zenModeEnabled,
         })}
@@ -97,7 +108,7 @@ const Footer = ({
 
           {actionManager.renderAction("toggleShortcuts")}
         </div>
-      </div>
+      </div> */}
       <ExitZenModeAction
         actionManager={actionManager}
         showExitZenModeBtn={showExitZenModeBtn}

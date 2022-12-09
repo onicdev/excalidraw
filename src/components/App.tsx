@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { flushSync } from "react-dom";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { RoughCanvas } from "roughjs/bin/canvas";
 import rough from "roughjs/bin/rough";
 import clsx from "clsx";
@@ -188,6 +189,7 @@ import { RenderConfig, ScrollBars } from "../scene/types";
 import { getStateForZoom } from "../scene/zoom";
 import { findShapeByKey, SHAPES } from "../shapes";
 import {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AppClassProperties,
   AppProps,
   AppState,
@@ -197,6 +199,7 @@ import {
   BinaryFiles,
   Gesture,
   GestureEvent,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   LibraryItems,
   PointerDownState,
   SceneData,
@@ -408,6 +411,24 @@ class App extends React.Component<AppProps, AppState> {
     this.id = nanoid();
 
     this.library = new Library(this);
+
+    this.scene = new Scene();
+    this.fonts = new Fonts({
+      scene: this.scene,
+      onSceneUpdated: this.onSceneUpdated,
+    });
+    this.history = new History();
+    this.actionManager = new ActionManager(
+      this.syncActionResult,
+      () => this.state,
+      () => this.scene.getElementsIncludingDeleted(),
+      this,
+    );
+    this.actionManager.registerAll(actions);
+
+    this.actionManager.registerAction(createUndoAction(this.history));
+    this.actionManager.registerAction(createRedoAction(this.history));
+
     if (excalidrawRef) {
       const readyPromise =
         ("current" in excalidrawRef && excalidrawRef.current?.readyPromise) ||
@@ -435,6 +456,7 @@ class App extends React.Component<AppProps, AppState> {
         setCursor: this.setCursor,
         resetCursor: this.resetCursor,
         toggleMenu: this.toggleMenu,
+        getActionManager: () => this.actionManager,
       } as const;
       if (typeof excalidrawRef === "function") {
         excalidrawRef(api);
@@ -448,23 +470,6 @@ class App extends React.Component<AppProps, AppState> {
       container: this.excalidrawContainerRef.current,
       id: this.id,
     };
-
-    this.scene = new Scene();
-    this.fonts = new Fonts({
-      scene: this.scene,
-      onSceneUpdated: this.onSceneUpdated,
-    });
-    this.history = new History();
-    this.actionManager = new ActionManager(
-      this.syncActionResult,
-      () => this.state,
-      () => this.scene.getElementsIncludingDeleted(),
-      this,
-    );
-    this.actionManager.registerAll(actions);
-
-    this.actionManager.registerAction(createUndoAction(this.history));
-    this.actionManager.registerAction(createRedoAction(this.history));
   }
 
   private renderCanvas() {
@@ -590,6 +595,7 @@ class App extends React.Component<AppProps, AppState> {
                     id={this.id}
                     onImageAction={this.onImageAction}
                     renderWelcomeScreen={
+                      false &&
                       this.state.showWelcomeScreen &&
                       this.state.activeTool.type === "selection" &&
                       !this.scene.getElementsIncludingDeleted().length

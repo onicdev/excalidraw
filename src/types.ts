@@ -79,6 +79,8 @@ export type BinaryFileMetadata = Omit<BinaryFileData, "dataURL">;
 
 export type BinaryFiles = Record<ExcalidrawElement["id"], BinaryFileData>;
 
+export type SuccessMessage = "exportToClipboard" | null;
+
 export type LastActiveToolBeforeEraser =
   | {
       type: typeof SHAPES[number]["value"] | "eraser";
@@ -94,6 +96,7 @@ export type AppState = {
   showWelcomeScreen: boolean;
   isLoading: boolean;
   errorMessage: string | null;
+  successMessageType: SuccessMessage;
   draggingElement: NonDeletedExcalidrawElement | null;
   resizingElement: NonDeletedExcalidrawElement | null;
   multiElement: NonDeleted<ExcalidrawLinearElement> | null;
@@ -194,6 +197,7 @@ export type AppState = {
   pendingImageElementId: ExcalidrawImageElement["id"] | null;
   showHyperlinkPopup: false | "info" | "editor";
   selectedLinearElement: LinearElementEditor | null;
+  showCanvasExport: boolean;
 };
 
 export type NormalizedZoomValue = number & { _brand: "normalizedZoom" };
@@ -499,6 +503,7 @@ export type ExcalidrawImperativeAPI = {
   setCursor: InstanceType<typeof App>["setCursor"];
   resetCursor: InstanceType<typeof App>["resetCursor"];
   toggleMenu: InstanceType<typeof App>["toggleMenu"];
+  getActionManager: () => InstanceType<typeof App>["actionManager"];
 };
 
 export type Device = Readonly<{

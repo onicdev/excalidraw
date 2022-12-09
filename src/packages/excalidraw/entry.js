@@ -5,3 +5,16 @@ import "../../../public/fonts.css";
 
 polyfill();
 export * from "./index";
+export { AbortError } from "../../errors";
+export { ErrorDialog } from "../../components/ErrorDialog";
+export { jotaiStore } from "../../jotai";
+export { t as translate } from "../../i18n";
+export * from "../../constants";
+export * from "../../data/encryption";
+export * from "../../element/mutateElement";
+export * from "../../element/typeChecks";
+export * from "../../excalidraw-app/collab/reconciliation";
+export * from "../../utils";
+export * from "../../analytics";
+export * from "../../data/encode";
+export * from "../../data/restore";

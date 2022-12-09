@@ -267,68 +267,43 @@ export const ExcalLogo = createIcon(
 
 // custom
 export const SelectionIcon = createIcon(
-  <g stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <path d="M6 6l4.153 11.793a0.365 .365 0 0 0 .331 .207a0.366 .366 0 0 0 .332 -.207l2.184 -4.793l4.787 -1.994a0.355 .355 0 0 0 .213 -.323a0.355 .355 0 0 0 -.213 -.323l-11.787 -4.36z" />
-    <path d="M13.5 13.5l4.5 4.5" />
-  </g>,
-  { fill: "none", width: 22, height: 22, strokeWidth: 1.25 },
+  <path d="M4.53182 2.27732C4.5429 2.2813 4.55397 2.28528 4.56503 2.28925L20.3072 7.94029C20.5842 8.03969 20.8499 8.13502 21.0546 8.22911C21.2275 8.30859 21.6058 8.48935 21.8197 8.88237C22.0535 9.31212 22.0603 9.82957 21.8378 10.2653C21.6343 10.6638 21.2609 10.8544 21.0901 10.9384C20.888 11.0379 20.6249 11.1401 20.3506 11.2468L13.7958 13.7958L11.2467 20.3506C11.1401 20.6249 11.0378 20.888 10.9384 21.0901C10.8544 21.2609 10.6638 21.6343 10.2653 21.8378C9.82954 22.0603 9.31209 22.0535 8.88234 21.8197C8.48932 21.6058 8.30856 21.2275 8.22907 21.0546C8.13498 20.8499 8.03965 20.5842 7.94025 20.3072L2.28924 4.56503C2.28528 4.55397 2.2813 4.5429 2.27732 4.53182C2.19732 4.30909 2.11615 4.08311 2.06656 3.89231C2.01952 3.7113 1.94153 3.36184 2.07129 2.98716C2.22004 2.55761 2.55762 2.22004 2.98717 2.07128C3.36185 1.94153 3.7113 2.01952 3.89232 2.06656C4.08312 2.11615 4.3091 2.19732 4.53182 2.27732ZM4.29156 4.29155L9.60955 19.106L11.9848 12.9982C11.9874 12.9915 11.9904 12.9836 11.9938 12.9748C12.0265 12.8888 12.0941 12.7111 12.2069 12.553C12.3023 12.4193 12.4192 12.3023 12.553 12.2069C12.7111 12.0941 12.8888 12.0265 12.9748 11.9938C12.9836 11.9905 12.9914 11.9875 12.9982 11.9848L19.106 9.60957L4.29156 4.29155Z" />,
+  { ...tablerIconProps, strokeWidth: 0 },
 );
 
 // tabler-icons: square
 export const RectangleIcon = createIcon(
-  <g strokeWidth="1.5">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <rect x="4" y="4" width="16" height="16" rx="2"></rect>
-  </g>,
-  tablerIconProps,
+  <path d="M7 5H17C18.1046 5 19 5.89543 19 7V17C19 18.1046 18.1046 19 17 19H7C5.89543 19 5 18.1046 5 17V7C5 5.89543 5.89543 5 7 5ZM3 7C3 4.79086 4.79086 3 7 3H17C19.2091 3 21 4.79086 21 7V17C21 19.2091 19.2091 21 17 21H7C4.79086 21 3 19.2091 3 17V7Z" />,
+  { ...tablerIconProps, fillRule: "evenodd", strokeWidth: 0 },
 );
 
 // tabler-icons: square-rotated
 export const DiamondIcon = createIcon(
-  <g strokeWidth="1.5">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <path d="M10.5 20.4l-6.9 -6.9c-.781 -.781 -.781 -2.219 0 -3l6.9 -6.9c.781 -.781 2.219 -.781 3 0l6.9 6.9c.781 .781 .781 2.219 0 3l-6.9 6.9c-.781 .781 -2.219 .781 -3 0z" />
-  </g>,
-
-  tablerIconProps,
+  <path d="M10.3951 3.82744C11.1862 2.72419 12.8138 2.72419 13.6049 3.82744L18.6234 10.8263C19.1255 11.5266 19.1255 12.4734 18.6234 13.1737L13.6049 20.1726C12.8138 21.2758 11.1862 21.2758 10.3951 20.1726L5.3766 13.1737C4.87447 12.4734 4.87447 11.5266 5.3766 10.8263L10.3951 3.82744ZM12 5.00112L6.9815 12L12 18.9989L17.0185 12L12 5.00112Z" />,
+  { ...tablerIconProps, fillRule: "evenodd", strokeWidth: 0 },
 );
 
 // tabler-icons: circle
 export const EllipseIcon = createIcon(
-  <g strokeWidth="1.5">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <circle cx="12" cy="12" r="9"></circle>
-  </g>,
-
-  tablerIconProps,
+  <path d="M20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12ZM22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" />,
+  { ...tablerIconProps, fillRule: "evenodd", strokeWidth: 0 },
 );
 
 // tabler-icons: arrow-narrow-right
 export const ArrowIcon = createIcon(
-  <g strokeWidth="1.5">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <line x1="5" y1="12" x2="19" y2="12" />
-    <line x1="15" y1="16" x2="19" y2="12" />
-    <line x1="15" y1="8" x2="19" y2="12" />
-  </g>,
-  tablerIconProps,
+  <path d="M13.0004 7.00357L15.5826 7.00357L5.29289 17.2933C4.90237 17.6838 4.90237 18.317 5.29289 18.7075C5.68342 19.098 6.31658 19.098 6.70711 18.7075L17.0004 8.41421V11.0036C17.0004 11.5559 17.4481 12.0036 18.0004 12.0036C18.5527 12.0036 19.0004 11.5559 19.0004 11.0036V6.00357L19.0004 6.00185C19.0009 5.74531 18.9032 5.48863 18.7075 5.29289C18.4907 5.07607 18.1991 4.97963 17.9157 5.00357L13.0004 5.00357C12.4481 5.00357 12.0004 5.45129 12.0004 6.00357C12.0004 6.55586 12.4481 7.00357 13.0004 7.00357Z" />,
+  { ...tablerIconProps, strokeWidth: 0 },
 );
 
 // custom?
 export const LineIcon = createIcon(
-  <path d="M4.167 10h11.666" strokeWidth="1.5" />,
-  modifiedTablerIconProps,
+  <path d="M5.39161 17.1872C4.92629 17.6525 4.86722 18.3478 5.25969 18.7403C5.65215 19.1328 6.34752 19.0737 6.81284 18.6084L18.6084 6.81284C19.0737 6.34752 19.1328 5.65215 18.7403 5.25969C18.3479 4.86722 17.6525 4.92629 17.1872 5.39161L5.39161 17.1872Z" />,
+  { ...tablerIconProps, strokeWidth: 0 },
 );
 
 export const PenModeIcon = createIcon(
-  <g strokeWidth="1.25">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M20 17v-12c0 -1.121 -.879 -2 -2 -2s-2 .879 -2 2v12l2 2l2 -2z"></path>
-    <path d="M16 7h4"></path>
-    <path d="M18 19h-13a2 2 0 1 1 0 -4h4a2 2 0 1 0 0 -4h-3"></path>
-  </g>,
-  tablerIconProps,
+  <path d="M15.399 3.13256C16.909 1.62248 19.3574 1.62248 20.8674 3.13256C22.3775 4.64263 22.3775 7.09095 20.8674 8.60103L9.61215 19.8563C8.90715 20.5613 8.00925 21.0419 7.03159 21.2374L3.32953 21.9778C2.55213 22.1333 1.86671 21.4479 2.02219 20.6705L2.7626 16.9684C2.95814 15.9908 3.43868 15.0928 4.14368 14.3879L15.399 3.13256ZM19.4391 4.56094C18.7179 3.83974 17.5486 3.83974 16.8274 4.56094L14.5115 6.87681L17.1232 9.48851L19.4391 7.17264C20.1603 6.45144 20.1603 5.28214 19.4391 4.56094ZM15.6948 10.9169L13.0831 8.3052L5.57206 15.8162C5.14906 16.2392 4.86074 16.778 4.74342 17.3646L4.27042 19.7296L6.63543 19.2566C7.22202 19.1393 7.76076 18.8509 8.18376 18.4279L15.6948 10.9169Z" />,
+  { width: 20, fillRule: "evenodd", strokeWidth: 0 },
 );
 
 // modified tabler-icons: pencil
@@ -569,19 +544,13 @@ export const menu = createIcon(
 );
 
 export const UndoIcon = createIcon(
-  <path
-    d="M7.5 10.833 4.167 7.5 7.5 4.167M4.167 7.5h9.166a3.333 3.333 0 0 1 0 6.667H12.5"
-    strokeWidth="1.25"
-  />,
-  modifiedTablerIconProps,
+  "M4.29289 10.7069C3.90237 10.3164 3.90237 9.68323 4.29289 9.29271C4.30445 9.28115 4.31622 9.26994 4.32819 9.25906L7.29436 6.29289C7.68489 5.90237 8.31805 5.90237 8.70858 6.29289C8.90379 6.48811 9.00142 6.74396 9.00147 6.99982H9.00156V9.00009H15.5C17.9853 9.00009 20 11.0148 20 13.5001C20 15.9854 17.9853 18.0001 15.5 18.0001H12C11.4477 18.0001 11 17.5524 11 17.0001C11 16.4478 11.4477 16.0001 12 16.0001H15.5C16.8807 16.0001 18 14.8808 18 13.5001C18 12.1194 16.8807 11.0001 15.5 11.0001H9.00156V12.9998H9.00076C9.00096 13.256 8.90333 13.5122 8.70787 13.7077C8.31735 14.0982 7.68418 14.0982 7.29366 13.7077L4.29289 10.7069Z",
+  { width: 24, mirror: true },
 );
 
 export const RedoIcon = createIcon(
-  <path
-    d="M12.5 10.833 15.833 7.5 12.5 4.167M15.833 7.5H6.667a3.333 3.333 0 1 0 0 6.667H7.5"
-    strokeWidth="1.25"
-  />,
-  modifiedTablerIconProps,
+  "M19.7091 9.29366C20.0996 9.68418 20.0996 10.3173 19.7091 10.7079C19.6975 10.7194 19.6857 10.7306 19.6738 10.7415L16.7076 13.7077C16.3171 14.0982 15.6839 14.0982 15.2934 13.7077C15.0982 13.5125 15.0005 13.2566 15.0005 13.0008H15.0004V11H8.5C7.11929 11 6 12.1193 6 13.5C6 14.8807 7.11929 16 8.5 16H12C12.5523 16 13 16.4477 13 17C13 17.5523 12.5523 18 12 18H8.5C6.01472 18 4 15.9853 4 13.5C4 11.0147 6.01472 9 8.5 9H15.0004V7.00076H15.0012C15.001 6.74459 15.0986 6.48835 15.2941 6.29289C15.6846 5.90237 16.3178 5.90237 16.7083 6.29289L19.7091 9.29366Z",
+  { width: 24, mirror: true },
 );
 
 export const questionCircle = createIcon(
@@ -750,79 +719,39 @@ export const SendToBackIcon = createIcon(
 // that would make them lie about their function.
 //
 export const AlignTopIcon = createIcon(
-  <>
-    <g clipPath="url(#a)" stroke="currentColor" strokeWidth="1.25">
-      <path
-        d="M3.333 3.333h13.334"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M13.542 6.458h-.417c-.92 0-1.667.747-1.667 1.667v7.083c0 .92.746 1.667 1.667 1.667h.417c.92 0 1.666-.746 1.666-1.667V8.125c0-.92-.746-1.667-1.666-1.667ZM6.875 6.458h-.417c-.92 0-1.666.747-1.666 1.667v3.75c0 .92.746 1.667 1.666 1.667h.417c.92 0 1.667-.746 1.667-1.667v-3.75c0-.92-.747-1.667-1.667-1.667Z" />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="#fff" d="M0 0h20v20H0z" />
-      </clipPath>
-    </defs>
-  </>,
-  modifiedTablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M3 2C2.44772 2 2 2.44772 2 3C2 3.55228 2.44772 4 3 4H21C21.5523 4 22 3.55228 22 3C22 2.44772 21.5523 2 21 2H3ZM9 18.5V9.5C9 8.67157 8.32843 8 7.5 8C6.67157 8 6 8.67157 6 9.5V18.5C6 19.3284 6.67157 20 7.5 20C8.32843 20 9 19.3284 9 18.5ZM7.5 6C5.567 6 4 7.567 4 9.5V18.5C4 20.433 5.567 22 7.5 22C9.433 22 11 20.433 11 18.5V9.5C11 7.567 9.433 6 7.5 6ZM18 14.5V9.5C18 8.67157 17.3284 8 16.5 8C15.6716 8 15 8.67157 15 9.5V14.5C15 15.3284 15.6716 16 16.5 16C17.3284 16 18 15.3284 18 14.5ZM16.5 6C14.567 6 13 7.567 13 9.5V14.5C13 16.433 14.567 18 16.5 18C18.433 18 20 16.433 20 14.5V9.5C20 7.567 18.433 6 16.5 6Z"
+  />,
+  { width: 24, mirror: true },
 );
 
 export const AlignBottomIcon = createIcon(
-  <>
-    <g clipPath="url(#a)" stroke="currentColor" strokeWidth="1.25">
-      <path
-        d="M3.333 16.667h13.334"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M6.875 3.125h-.417c-.92 0-1.666.746-1.666 1.667v7.083c0 .92.746 1.667 1.666 1.667h.417c.92 0 1.667-.746 1.667-1.667V4.792c0-.92-.747-1.667-1.667-1.667ZM13.542 5.817h-.417c-.92 0-1.667.747-1.667 1.667v4.391c0 .92.746 1.667 1.667 1.667h.417c.92 0 1.666-.746 1.666-1.667V7.484c0-.92-.746-1.667-1.666-1.667Z" />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="#fff" d="M0 0h20v20H0z" />
-      </clipPath>
-    </defs>
-  </>,
-  modifiedTablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M9 14.5V5.5C9 4.67157 8.32843 4 7.5 4C6.67157 4 6 4.67157 6 5.5V14.5C6 15.3284 6.67157 16 7.5 16C8.32843 16 9 15.3284 9 14.5ZM7.5 2C5.567 2 4 3.567 4 5.5V14.5C4 16.433 5.567 18 7.5 18C9.433 18 11 16.433 11 14.5V5.5C11 3.567 9.433 2 7.5 2ZM18 14.5V9.5C18 8.67157 17.3284 8 16.5 8C15.6716 8 15 8.67157 15 9.5V14.5C15 15.3284 15.6716 16 16.5 16C17.3284 16 18 15.3284 18 14.5ZM16.5 6C14.567 6 13 7.567 13 9.5V14.5C13 16.433 14.567 18 16.5 18C18.433 18 20 16.433 20 14.5V9.5C20 7.567 18.433 6 16.5 6ZM3 20C2.44772 20 2 20.4477 2 21C2 21.5523 2.44772 22 3 22H21C21.5523 22 22 21.5523 22 21C22 20.4477 21.5523 20 21 20H3Z"
+  />,
+  { width: 24, mirror: true },
 );
 
 export const AlignLeftIcon = createIcon(
-  <>
-    <g clipPath="url(#a)" stroke="currentColor" strokeWidth="1.25">
-      <path
-        d="M3.333 3.333v13.334"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M15.208 4.792H8.125c-.92 0-1.667.746-1.667 1.666v.417c0 .92.747 1.667 1.667 1.667h7.083c.92 0 1.667-.747 1.667-1.667v-.417c0-.92-.746-1.666-1.667-1.666ZM12.516 11.458H8.125c-.92 0-1.667.746-1.667 1.667v.417c0 .92.747 1.666 1.667 1.666h4.391c.92 0 1.667-.746 1.667-1.666v-.417c0-.92-.746-1.667-1.667-1.667Z" />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="#fff" d="M0 0h20v20H0z" />
-      </clipPath>
-    </defs>
-  </>,
-  modifiedTablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M3 2C2.44772 2 2 2.44772 2 3V21C2 21.5523 2.44772 22 3 22C3.55228 22 4 21.5523 4 21V3C4 2.44772 3.55228 2 3 2ZM18.5 6H9.5C8.67157 6 8 6.67157 8 7.5C8 8.32843 8.67157 9 9.5 9H18.5C19.3284 9 20 8.32843 20 7.5C20 6.67157 19.3284 6 18.5 6ZM9.5 4C7.567 4 6 5.567 6 7.5C6 9.433 7.567 11 9.5 11H18.5C20.433 11 22 9.433 22 7.5C22 5.567 20.433 4 18.5 4H9.5ZM14.5 15H9.5C8.67157 15 8 15.6716 8 16.5C8 17.3284 8.67157 18 9.5 18H14.5C15.3284 18 16 17.3284 16 16.5C16 15.6716 15.3284 15 14.5 15ZM9.5 13C7.567 13 6 14.567 6 16.5C6 18.433 7.567 20 9.5 20H14.5C16.433 20 18 18.433 18 16.5C18 14.567 16.433 13 14.5 13H9.5Z"
+  />,
+  { width: 24 },
 );
 
 export const AlignRightIcon = createIcon(
-  <>
-    <g clipPath="url(#a)" stroke="currentColor" strokeWidth="1.25">
-      <path
-        d="M16.667 3.333v13.334"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path d="M11.875 4.792H4.792c-.92 0-1.667.746-1.667 1.666v.417c0 .92.746 1.667 1.667 1.667h7.083c.92 0 1.667-.747 1.667-1.667v-.417c0-.92-.746-1.666-1.667-1.666ZM11.683 11.458H7.292c-.92 0-1.667.746-1.667 1.667v.417c0 .92.746 1.666 1.667 1.666h4.39c.921 0 1.667-.746 1.667-1.666v-.417c0-.92-.746-1.667-1.666-1.667Z" />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="#fff" d="M0 0h20v20H0z" />
-      </clipPath>
-    </defs>
-  </>,
-  modifiedTablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M21 2C20.4477 2 20 2.44772 20 3V21C20 21.5523 20.4477 22 21 22C21.5523 22 22 21.5523 22 21V3C22 2.44772 21.5523 2 21 2ZM14.5 6H5.5C4.67157 6 4 6.67157 4 7.5C4 8.32843 4.67157 9 5.5 9H14.5C15.3284 9 16 8.32843 16 7.5C16 6.67157 15.3284 6 14.5 6ZM5.5 4C3.567 4 2 5.567 2 7.5C2 9.433 3.567 11 5.5 11H14.5C16.433 11 18 9.433 18 7.5C18 5.567 16.433 4 14.5 4H5.5ZM14.5 15H9.5C8.67157 15 8 15.6716 8 16.5C8 17.3284 8.67157 18 9.5 18H14.5C15.3284 18 16 17.3284 16 16.5C16 15.6716 15.3284 15 14.5 15ZM9.5 13C7.567 13 6 14.567 6 16.5C6 18.433 7.567 20 9.5 20H14.5C16.433 20 18 18.433 18 16.5C18 14.567 16.433 13 14.5 13H9.5Z"
+  />,
+  { width: 24 },
 );
 
 export const DistributeHorizontallyIcon = createIcon(
@@ -864,23 +793,21 @@ export const DistributeVerticallyIcon = createIcon(
 );
 
 export const CenterVerticallyIcon = createIcon(
-  <g stroke="currentColor" strokeWidth="1.25">
-    <path d="M1.667 10h2.916" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M8.333 10h3.334" strokeLinejoin="round" />
-    <path d="M15.417 10h2.916" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M6.875 4.792h-.417c-.92 0-1.666.746-1.666 1.666v7.084c0 .92.746 1.666 1.666 1.666h.417c.92 0 1.667-.746 1.667-1.666V6.458c0-.92-.747-1.666-1.667-1.666ZM13.542 6.458h-.417c-.92 0-1.667.747-1.667 1.667v3.75c0 .92.746 1.667 1.667 1.667h.417c.92 0 1.666-.746 1.666-1.667v-3.75c0-.92-.746-1.667-1.666-1.667Z" />
-  </g>,
-  modifiedTablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M7.5 18C8.32843 18 9 17.3284 9 16.5V12V7.5C9 6.67157 8.32843 6 7.5 6C6.67157 6 6 6.67157 6 7.5V12V16.5C6 17.3284 6.67157 18 7.5 18ZM11 7.5V11H13V9.5C13 7.567 14.567 6 16.5 6C18.433 6 20 7.567 20 9.5V11H21C21.5523 11 22 11.4477 22 12C22 12.5523 21.5523 13 21 13H20V14.5C20 16.433 18.433 18 16.5 18C14.567 18 13 16.433 13 14.5V13H11V16.5C11 18.433 9.433 20 7.5 20C5.567 20 4 18.433 4 16.5V13H3C2.44772 13 2 12.5523 2 12C2 11.4477 2.44772 11 3 11H4V7.5C4 5.567 5.567 4 7.5 4C9.433 4 11 5.567 11 7.5ZM18 12V9.5C18 8.67157 17.3284 8 16.5 8C15.6716 8 15 8.67157 15 9.5V12V14.5C15 15.3284 15.6716 16 16.5 16C17.3284 16 18 15.3284 18 14.5V12Z"
+  />,
+  { width: 24, mirror: true },
 );
 
 export const CenterHorizontallyIcon = createIcon(
-  <g stroke="currentColor" strokeWidth="1.25">
-    <path d="M10 18.333v-2.916" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M10 11.667V8.333" strokeLinejoin="round" />
-    <path d="M10 4.583V1.667" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M4.792 13.125v.417c0 .92.746 1.666 1.666 1.666h7.084c.92 0 1.666-.746 1.666-1.666v-.417c0-.92-.746-1.667-1.666-1.667H6.458c-.92 0-1.666.746-1.666 1.667ZM6.458 6.458v.417c0 .92.747 1.667 1.667 1.667h3.75c.92 0 1.667-.747 1.667-1.667v-.417c0-.92-.746-1.666-1.667-1.666h-3.75c-.92 0-1.667.746-1.667 1.666Z" />
-  </g>,
-  modifiedTablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M12 2C11.4477 2 11 2.44772 11 3V4H7.5C5.567 4 4 5.567 4 7.5C4 9.433 5.567 11 7.5 11H11V13H9.5C7.567 13 6 14.567 6 16.5C6 18.433 7.567 20 9.5 20H11V21C11 21.5523 11.4477 22 12 22C12.5523 22 13 21.5523 13 21V20H14.5C16.433 20 18 18.433 18 16.5C18 14.567 16.433 13 14.5 13H13V11H16.5C18.433 11 20 9.433 20 7.5C20 5.567 18.433 4 16.5 4H13V3C13 2.44772 12.5523 2 12 2ZM12 18H14.5C15.3284 18 16 17.3284 16 16.5C16 15.6716 15.3284 15 14.5 15H12H9.5C8.67157 15 8 15.6716 8 16.5C8 17.3284 8.67157 18 9.5 18H12ZM16.5 9H12H7.5C6.67157 9 6 8.32843 6 7.5C6 6.67157 6.67157 6 7.5 6H12H16.5C17.3284 6 18 6.67157 18 7.5C18 8.32843 17.3284 9 16.5 9Z"
+  />,
+  { width: 24 },
 );
 
 export const UsersIcon = createIcon(
@@ -1104,77 +1031,46 @@ export const FillSolidIcon = createIcon(
 );
 
 export const StrokeWidthBaseIcon = createIcon(
-  <>
-    <path
-      d="M4.167 10h11.666"
-      stroke="currentColor"
-      strokeWidth="1.25"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </>,
-  modifiedTablerIconProps,
+  createIcon(<rect y="11" width="24" height="2" rx="1" />, {
+    width: 24,
+    height: 24,
+  }),
 );
 
 export const StrokeWidthBoldIcon = createIcon(
-  <path
-    d="M5 10h10"
-    stroke="currentColor"
-    strokeWidth="2.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  />,
-  modifiedTablerIconProps,
+  createIcon(<rect y="10" width="24" height="4" rx="2" />, {
+    width: 24,
+    height: 24,
+  }),
 );
 
 export const StrokeWidthExtraBoldIcon = createIcon(
-  <path
-    d="M5 10h10"
-    stroke="currentColor"
-    strokeWidth="3.75"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  />,
-  modifiedTablerIconProps,
+  createIcon(<rect y="9" width="24" height="6" rx="3" />, {
+    width: 24,
+    height: 24,
+  }),
 );
 
 export const StrokeStyleSolidIcon = React.memo(({ theme }: { theme: Theme }) =>
-  createIcon(
-    <path
-      d="M6 10H34"
-      stroke={iconFillColor(theme)}
-      strokeWidth={2}
-      fill="none"
-      strokeLinecap="round"
-    />,
-    {
-      width: 40,
-      height: 20,
-    },
-  ),
+  createIcon(<rect y="11" width="24" height="2" rx="1" />, {
+    width: 24,
+    height: 24,
+  }),
 );
 
 export const StrokeStyleDashedIcon = createIcon(
-  <g strokeWidth="2">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <path d="M5 12h2" />
-    <path d="M17 12h2" />
-    <path d="M11 12h2" />
-  </g>,
-  tablerIconProps,
+  createIcon(
+    <path d="M1 11C0.447715 11 0 11.4477 0 12C0 12.5523 0.447716 13 1 13H9C9.55229 13 10 12.5523 10 12C10 11.4477 9.55228 11 9 11H1ZM15 11C14.4477 11 14 11.4477 14 12C14 12.5523 14.4477 13 15 13H23C23.5523 13 24 12.5523 24 12C24 11.4477 23.5523 11 23 11H15Z" />,
+    { width: 24, height: 24 },
+  ),
 );
 
 // tabler-icons: line-dotted
 export const StrokeStyleDottedIcon = createIcon(
-  <g strokeWidth="2">
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <path d="M4 12v.01" />
-    <path d="M8 12v.01" />
-    <path d="M12 12v.01" />
-    <path d="M16 12v.01" />
-    <path d="M20 12v.01" />
-  </g>,
-  tablerIconProps,
+  createIcon(
+    <path d="M0 12C0 11.4477 0.447715 11 1 11H3C3.55228 11 4 11.4477 4 12C4 12.5523 3.55228 13 3 13H1C0.447715 13 0 12.5523 0 12ZM15 12C15 11.4477 15.4477 11 16 11H18C18.5523 11 19 11.4477 19 12C19 12.5523 18.5523 13 18 13H16C15.4477 13 15 12.5523 15 12ZM21 11C20.4477 11 20 11.4477 20 12C20 12.5523 20.4477 13 21 13H23C23.5523 13 24 12.5523 24 12C24 11.4477 23.5523 11 23 11H21ZM10 12C10 11.4477 10.4477 11 11 11H13C13.5523 11 14 11.4477 14 12C14 12.5523 13.5523 13 13 13H11C10.4477 13 10 12.5523 10 12ZM6 11C5.44772 11 5 11.4477 5 12C5 12.5523 5.44772 13 6 13H8C8.55229 13 9 12.5523 9 12C9 11.4477 8.55229 11 8 11H6Z" />,
+    { width: 24, height: 24 },
+  ),
 );
 
 export const SloppinessArchitectIcon = createIcon(
@@ -1245,25 +1141,24 @@ export const EdgeRoundIcon = createIcon(
 );
 
 export const ArrowheadNoneIcon = createIcon(
-  <path d="M6 10H34" stroke="currentColor" strokeWidth={2} fill="none" />,
-  {
-    width: 40,
-    height: 20,
-  },
+  createIcon(
+    <path d="M6 12C6 11.4477 6.44772 11 7 11H17C17.5523 11 18 11.4477 18 12C18 12.5523 17.5523 13 17 13H7C6.44772 13 6 12.5523 6 12Z" />,
+    {
+      width: 24,
+      height: 24,
+    },
+  ),
 );
 
 export const ArrowheadArrowIcon = React.memo(
   ({ flip = false }: { flip?: boolean }) =>
     createIcon(
-      <g
-        transform={flip ? "translate(40, 0) scale(-1, 1)" : ""}
-        stroke="currentColor"
-        strokeWidth={2}
-        fill="none"
-      >
-        <path d="M34 10H6M34 10L27 5M34 10L27 15" />
-        <path d="M27.5 5L34.5 10L27.5 15" />
-      </g>,
+      <path
+        transform={flip ? "translate(32, -2) scale(-1, 1)" : "translate(8, -2)"}
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M19.6485 11.244C19.8619 11.4274 19.9971 11.6993 19.9971 12.0028C19.9971 12.2756 19.8878 12.523 19.7106 12.7034L19.6983 12.7159L15.7082 16.706C15.3177 17.0965 14.6845 17.0965 14.294 16.706C13.9035 16.3155 13.9035 15.6823 14.294 15.2918L16.583 13.0028L4.99707 13.0028C4.44478 13.0028 3.99707 12.5551 3.99707 12.0028C3.99707 11.4505 4.44478 11.0028 4.99707 11.0028L16.5788 11.0028L14.2841 8.70808C13.8936 8.31756 13.8936 7.68439 14.2841 7.29387C14.6746 6.90335 15.3078 6.90335 15.6983 7.29387L19.6485 11.244Z"
+      />,
       { width: 40, height: 20 },
     ),
 );
@@ -1271,253 +1166,147 @@ export const ArrowheadArrowIcon = React.memo(
 export const ArrowheadDotIcon = React.memo(
   ({ flip = false }: { flip?: boolean }) =>
     createIcon(
-      <g
-        stroke="currentColor"
-        fill="currentColor"
-        transform={flip ? "translate(40, 0) scale(-1, 1)" : ""}
-      >
-        <path d="M32 10L6 10" strokeWidth={2} />
-        <circle r="4" transform="matrix(-1 0 0 1 30 10)" />
-      </g>,
-      { width: 40, height: 20 },
+      <path
+        transform={flip ? "translate(24, 0) scale(-1, 1)" : ""}
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M15 15C16.6569 15 18 13.6569 18 12C18 10.3431 16.6569 9 15 9C13.6938 9 12.5825 9.83481 12.1707 11H7C6.44772 11 6 11.4477 6 12C6 12.5523 6.44771 13 7 13H12.1707C12.5825 14.1652 13.6938 15 15 15Z"
+      />,
+      { width: 24, height: 24 },
     ),
 );
 
 export const ArrowheadBarIcon = React.memo(
   ({ flip = false }: { flip?: boolean }) =>
     createIcon(
-      <g transform={flip ? "translate(40, 0) scale(-1, 1)" : ""}>
-        <path
-          d="M34 10H5.99996M34 10L34 5M34 10L34 15"
-          stroke="currentColor"
-          strokeWidth={2}
-          fill="none"
-        />
-      </g>,
-      { width: 40, height: 20 },
+      <path
+        transform={flip ? "translate(24, 0) scale(-1, 1)" : ""}
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M17 8C16.4477 8 16 8.44771 16 9V11H7C6.44772 11 6 11.4477 6 12C6 12.5523 6.44771 13 7 13H16V15C16 15.5523 16.4477 16 17 16C17.5523 16 18 15.5523 18 15V12V9C18 8.44771 17.5523 8 17 8Z"
+      />,
+      { width: 24, height: 24 },
     ),
 );
 
 export const ArrowheadTriangleIcon = React.memo(
   ({ flip = false }: { flip?: boolean }) =>
     createIcon(
-      <g
-        stroke="currentColor"
-        fill="currentColor"
-        transform={flip ? "translate(40, 0) scale(-1, 1)" : ""}
-      >
-        <path d="M32 10L6 10" strokeWidth={2} />
-        <path d="M27.5 5.5L34.5 10L27.5 14.5L27.5 5.5" />
-      </g>,
-      { width: 40, height: 20 },
+      <path
+        transform={flip ? "translate(24, 0) scale(-1, 1)" : ""}
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M17.6475 11.245C17.8609 11.4284 17.9961 11.7003 17.9961 12.0038C17.9961 12.2768 17.8866 12.5244 17.7092 12.7048L17.6973 12.7169L14.7068 15.7074C14.3163 16.0979 13.6831 16.0979 13.2926 15.7074C13.0982 15.513 13.0006 15.2585 12.9997 15.0038L12.9961 15.0038L12.9961 14.0038L12.9961 13.0038L6.99609 13.0038C6.44381 13.0038 5.99609 12.556 5.99609 12.0038C5.99609 11.4515 6.44381 11.0038 6.99609 11.0038L12.9961 11.0038L12.9961 10.0038L12.9961 9.12513C12.959 8.82929 13.054 8.52005 13.2812 8.29289C13.6717 7.90237 14.3049 7.90237 14.6954 8.29289L17.6475 11.245Z"
+      />,
+      { width: 24, height: 24 },
     ),
 );
 
 export const FontSizeSmallIcon = createIcon(
-  <>
-    <g clipPath="url(#a)">
-      <path
-        d="M14.167 6.667a3.333 3.333 0 0 0-3.334-3.334H9.167a3.333 3.333 0 0 0 0 6.667h1.666a3.333 3.333 0 0 1 0 6.667H9.167a3.333 3.333 0 0 1-3.334-3.334"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="#fff" d="M0 0h20v20H0z" />
-      </clipPath>
-    </defs>
-  </>,
-  modifiedTablerIconProps,
+  <path d="M7 8.5C7 6.01472 9.01472 4 11.5 4H13C15.2091 4 17 5.79086 17 8C17 8.55228 16.5523 9 16 9C15.4477 9 15 8.55228 15 8C15 6.89543 14.1046 6 13 6H11.5C10.1193 6 9 7.11929 9 8.5C9 9.88071 10.1193 11 11.5 11H12.5C14.9853 11 17 13.0147 17 15.5C17 17.9853 14.9853 20 12.5 20H11C8.79086 20 7 18.2091 7 16C7 15.4477 7.44772 15 8 15C8.55228 15 9 15.4477 9 16C9 17.1046 9.89543 18 11 18H12.5C13.8807 18 15 16.8807 15 15.5C15 14.1193 13.8807 13 12.5 13H11.5C9.01472 13 7 10.9853 7 8.5Z" />,
+  { width: 24, height: 24 },
 );
 
 export const FontSizeMediumIcon = createIcon(
-  <>
-    <g clipPath="url(#a)">
-      <path
-        d="M5 16.667V3.333L10 15l5-11.667v13.334"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="#fff" d="M0 0h20v20H0z" />
-      </clipPath>
-    </defs>
-  </>,
-  modifiedTablerIconProps,
+  <path d="M16.9107 4.62031C17.4211 3.57099 19 3.93424 19 5.10102V19.0005C19 19.5525 18.5523 20 18 20C17.4477 20 17 19.5525 17 19.0005V9.00852L12.9893 17.2537C12.588 18.0787 11.412 18.0787 11.0107 17.2537L7 9.00852V19.0005C7 19.5525 6.55228 20 6 20C5.44772 20 5 19.5525 5 19.0005V5.10102C5 3.93422 6.57886 3.571 7.08928 4.62031L12 14.7157L16.9107 4.62031Z" />,
+  { width: 24, height: 24 },
 );
 
 export const FontSizeLargeIcon = createIcon(
-  <>
-    <g clipPath="url(#a)">
-      <path
-        d="M5.833 3.333v13.334h8.334"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="#fff" d="M0 0h20v20H0z" />
-      </clipPath>
-    </defs>
-  </>,
-  modifiedTablerIconProps,
+  <path d="M9 4C9.55228 4 10 4.44772 10 5V18H16C16.5523 18 17 18.4477 17 19C17 19.5523 16.5523 20 16 20H10C8.89543 20 8 19.1046 8 18V5C8 4.44772 8.44772 4 9 4Z" />,
+  { width: 24, height: 24 },
 );
 
 export const FontSizeExtraLargeIcon = createIcon(
-  <>
-    <path
-      d="m1.667 3.333 6.666 13.334M8.333 3.333 1.667 16.667M11.667 3.333v13.334h6.666"
-      stroke="currentColor"
-      strokeWidth="1.25"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </>,
-  modifiedTablerIconProps,
+  <path d="M4.89465 4.55301C4.64766 4.05903 4.04698 3.8588 3.55301 4.10579C3.05903 4.35278 2.8588 4.95345 3.10579 5.44743L6.38219 12.0002L3.10579 18.553C2.8588 19.047 3.05903 19.6477 3.55301 19.8946C4.04698 20.1416 4.64766 19.9414 4.89465 19.4474L7.50022 14.2363L10.1058 19.4474C10.3528 19.9414 10.9535 20.1416 11.4474 19.8946C11.9414 19.6477 12.1416 19.047 11.8946 18.553L8.61825 12.0002L11.8946 5.44743C12.1416 4.95345 11.9414 4.35278 11.4474 4.10579C10.9535 3.8588 10.3528 4.05903 10.1058 4.55301L7.50022 9.76415L4.89465 4.55301ZM15.0002 5.00022C15.0002 4.44793 14.5525 4.00022 14.0002 4.00022C13.4479 4.00022 13.0002 4.44793 13.0002 5.00022V18.0002C13.0002 19.1048 13.8956 20.0002 15.0002 20.0002H21.0002C21.5525 20.0002 22.0002 19.5525 22.0002 19.0002C22.0002 18.4479 21.5525 18.0002 21.0002 18.0002H15.0002V5.00022Z" />,
+  { width: 24, height: 24 },
+);
+
+export const FontFamilyHandDrawnIcon = createIcon(
+  <path
+    fillRule="evenodd"
+    d="M15.4528 3.12425C16.9499 1.62915 19.3772 1.62916 20.8743 3.12425C22.3714 4.61934 22.3714 7.04337 20.8743 8.53846L9.54676 19.8508C8.84781 20.5488 7.95762 21.0246 6.98837 21.2182L3.31811 21.9513C2.54738 22.1052 1.86786 21.4266 2.022 20.6569L2.75605 16.9916C2.94991 16.0236 3.42632 15.1346 4.12526 14.4366L15.4528 3.12425ZM19.4582 4.53847C18.7432 3.82442 17.584 3.82442 16.869 4.53846L7.89522 13.5002L10.4845 16.0859L19.4582 7.12425C20.1732 6.41021 20.1732 5.25251 19.4582 4.53847ZM5.54138 15.8508L6.47911 14.9144L9.06837 17.5002L8.13064 18.4366C7.71127 18.8554 7.17716 19.1409 6.59561 19.2571L4.25091 19.7254L4.71985 17.3838C4.83616 16.803 5.12201 16.2696 5.54138 15.8508ZM11.9865 20.0001C11.4335 20.0001 10.9852 20.4478 10.9852 21.0001C10.9852 21.5524 11.4335 22.0001 11.9865 22.0001H20.9986C21.5517 22.0001 22 21.5524 22 21.0001C22 20.4478 21.5517 20.0001 20.9986 20.0001H11.9865Z"
+  />,
+  { width: 24, height: 24 },
 );
 
 export const FontFamilyNormalIcon = createIcon(
-  <>
-    <g
-      stroke="currentColor"
-      strokeWidth="1.25"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5.833 16.667v-10a3.333 3.333 0 0 1 3.334-3.334h1.666a3.333 3.333 0 0 1 3.334 3.334v10M5.833 10.833h8.334" />
-    </g>
-  </>,
-  modifiedTablerIconProps,
+  <path
+    fillRule="evenodd"
+    d="M12 7.57365L13.3512 11H10.6488L12 7.57365ZM15.0714 15.3621L14.1399 13H9.86014L8.92864 15.3621C8.72354 15.8823 8.1416 16.1352 7.62884 15.9272C7.11609 15.7191 6.86668 15.1289 7.07179 14.6088L10.9787 4.70135C11.3475 3.76623 12.6525 3.76621 13.0213 4.70135L16.9282 14.6088C17.1333 15.1289 16.8839 15.7191 16.3712 15.9272C15.8584 16.1352 15.2765 15.8823 15.0714 15.3621ZM7 18C6.44772 18 6 18.4477 6 19C6 19.5523 6.44772 20 7 20H17C17.5523 20 18 19.5523 18 19C18 18.4477 17.5523 18 17 18H7Z"
+  />,
+  { width: 24, height: 24 },
 );
 
 export const FontFamilyCodeIcon = createIcon(
-  <>
-    <g
-      clipPath="url(#a)"
-      stroke="currentColor"
-      strokeWidth="1.25"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5.833 6.667 2.5 10l3.333 3.333M14.167 6.667 17.5 10l-3.333 3.333M11.667 3.333 8.333 16.667" />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="#fff" d="M0 0h20v20H0z" />
-      </clipPath>
-    </defs>
-  </>,
-  modifiedTablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M13.7602 2.01731C13.2163 1.92141 12.6976 2.28458 12.6017 2.82847L9.42773 20.8292C9.33183 21.3731 9.695 21.8917 10.2389 21.9876C10.7828 22.0835 11.3014 21.7204 11.3974 21.1765L14.5714 3.17577C14.6673 2.63187 14.3041 2.11322 13.7602 2.01731ZM8.70711 7.70702C9.09763 7.3165 9.09763 6.68333 8.70711 6.29281C8.31658 5.90228 7.68342 5.90228 7.29289 6.29281L2.29289 11.2928C1.90237 11.6833 1.90237 12.3165 2.29289 12.707L7.29289 17.707C7.68342 18.0975 8.31658 18.0975 8.70711 17.707C9.09763 17.3165 9.09763 16.6833 8.70711 16.2928L4.41421 11.9999L8.70711 7.70702ZM16.7071 6.29281C16.3166 5.90228 15.6834 5.90228 15.2929 6.29281C14.9024 6.68333 14.9024 7.3165 15.2929 7.70702L19.5858 11.9999L15.2929 16.2928C14.9024 16.6833 14.9024 17.3165 15.2929 17.707C15.6834 18.0975 16.3166 18.0975 16.7071 17.707L21.7071 12.707C22.0976 12.3165 22.0976 11.6833 21.7071 11.2928L16.7071 6.29281Z"
+  />,
+  { width: 24, height: 24 },
 );
 
 export const TextAlignLeftIcon = createIcon(
-  <g
-    stroke="currentColor"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth={2}
-  >
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <line x1="4" y1="8" x2="20" y2="8" />
-    <line x1="4" y1="12" x2="12" y2="12" />
-    <line x1="4" y1="16" x2="16" y2="16" />
-  </g>,
-  tablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M4 5C3.44772 5 3 5.44772 3 6C3 6.55228 3.44772 7 4 7H20C20.5523 7 21 6.55228 21 6C21 5.44772 20.5523 5 20 5H4ZM4 13C3.44772 13 3 13.4477 3 14C3 14.5523 3.44772 15 4 15H18C18.5523 15 19 14.5523 19 14C19 13.4477 18.5523 13 18 13H4ZM3 10C3 9.44771 3.44772 9 4 9H10C10.5523 9 11 9.44771 11 10C11 10.5523 10.5523 11 10 11H4C3.44772 11 3 10.5523 3 10ZM4 17C3.44772 17 3 17.4477 3 18C3 18.5523 3.44772 19 4 19H14C14.5523 19 15 18.5523 15 18C15 17.4477 14.5523 17 14 17H4Z"
+  />,
+  { width: 24, height: 24 },
 );
 
 export const TextAlignCenterIcon = createIcon(
-  <g
-    stroke="currentColor"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <line x1="4" y1="8" x2="20" y2="8" />
-    <line x1="8" y1="12" x2="16" y2="12" />
-    <line x1="6" y1="16" x2="18" y2="16" />
-  </g>,
-  tablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M4 5C3.44772 5 3 5.44772 3 6C3 6.55228 3.44772 7 4 7H20C20.5523 7 21 6.55228 21 6C21 5.44772 20.5523 5 20 5H4ZM5 13C4.44772 13 4 13.4477 4 14C4 14.5523 4.44772 15 5 15H19C19.5523 15 20 14.5523 20 14C20 13.4477 19.5523 13 19 13H5ZM8 10C8 9.44771 8.44772 9 9 9H15C15.5523 9 16 9.44771 16 10C16 10.5523 15.5523 11 15 11H9C8.44772 11 8 10.5523 8 10ZM7 17C6.44772 17 6 17.4477 6 18C6 18.5523 6.44772 19 7 19H17C17.5523 19 18 18.5523 18 18C18 17.4477 17.5523 17 17 17H7Z"
+  />,
+  { width: 24, height: 24 },
 );
 
 export const TextAlignRightIcon = createIcon(
-  <g
-    stroke="currentColor"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-    <line x1="4" y1="8" x2="20" y2="8" />
-    <line x1="10" y1="12" x2="20" y2="12" />
-    <line x1="8" y1="16" x2="20" y2="16" />
-  </g>,
-  tablerIconProps,
+  <path
+    fillRule="evenodd"
+    clipRule="evenodd"
+    d="M4 5C3.44772 5 3 5.44772 3 6C3 6.55228 3.44772 7 4 7H20C20.5523 7 21 6.55228 21 6C21 5.44772 20.5523 5 20 5H4ZM6 13C5.44772 13 5 13.4477 5 14C5 14.5523 5.44772 15 6 15H20C20.5523 15 21 14.5523 21 14C21 13.4477 20.5523 13 20 13H6ZM13 10C13 9.44771 13.4477 9 14 9H20C20.5523 9 21 9.44771 21 10C21 10.5523 20.5523 11 20 11H14C13.4477 11 13 10.5523 13 10ZM10 17C9.44772 17 9 17.4477 9 18C9 18.5523 9.44771 19 10 19H20C20.5523 19 21 18.5523 21 18C21 17.4477 20.5523 17 20 17H10Z"
+  />,
+  { width: 24, height: 24 },
 );
 
 // tabler-icons: layout-align-top
 export const TextAlignTopIcon = React.memo(({ theme }: { theme: Theme }) =>
   createIcon(
-    <g
-      strokeWidth="1.5"
-      stroke="currentColor"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <line x1="4" y1="4" x2="20" y2="4" />
-      <rect x="9" y="8" width="6" height="12" rx="2" />
-    </g>,
-    tablerIconProps,
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4 4C3.44772 4 3 4.44772 3 5C3 5.55228 3.44772 6 4 6H20C20.5523 6 21 5.55228 21 5C21 4.44772 20.5523 4 20 4H4ZM3 9C3 8.44772 3.44772 8 4 8H20C20.5523 8 21 8.44772 21 9C21 9.55228 20.5523 10 20 10H4C3.44772 10 3 9.55228 3 9Z"
+    />,
+    { width: 24, height: 24 },
   ),
 );
 
 // tabler-icons: layout-align-bottom
 export const TextAlignBottomIcon = React.memo(({ theme }: { theme: Theme }) =>
   createIcon(
-    <g
-      strokeWidth="2"
-      stroke="currentColor"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <line x1="4" y1="20" x2="20" y2="20" />
-      <rect x="9" y="4" width="6" height="12" rx="2"></rect>
-    </g>,
-    tablerIconProps,
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4 14C3.44772 14 3 14.4477 3 15C3 15.5523 3.44772 16 4 16H20C20.5523 16 21 15.5523 21 15C21 14.4477 20.5523 14 20 14H4ZM3 19C3 18.4477 3.44772 18 4 18H20C20.5523 18 21 18.4477 21 19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19Z"
+    />,
+    { width: 24, height: 24 },
   ),
 );
 
 // tabler-icons: layout-align-middle
 export const TextAlignMiddleIcon = React.memo(({ theme }: { theme: Theme }) =>
   createIcon(
-    <g
-      strokeWidth="1.5"
-      stroke="currentColor"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <line x1="4" y1="12" x2="9" y2="12" />
-      <line x1="15" y1="12" x2="20" y2="12" />
-      <rect x="9" y="6" width="6" height="12" rx="2" />
-    </g>,
-    tablerIconProps,
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M4 13C3.44772 13 3 13.4477 3 14C3 14.5523 3.44772 15 4 15H20C20.5523 15 21 14.5523 21 14C21 13.4477 20.5523 13 20 13H4ZM3 10C3 9.44772 3.44772 9 4 9H20C20.5523 9 21 9.44772 21 10C21 10.5523 20.5523 11 20 11H4C3.44772 11 3 10.5523 3 10Z"
+    />,
+    { width: 24, height: 24 },
   ),
 );
 
@@ -1530,5 +1319,9 @@ export const publishIcon = createIcon(
 );
 
 export const eraser = createIcon(
-  <path d="M480 416C497.7 416 512 430.3 512 448C512 465.7 497.7 480 480 480H150.6C133.7 480 117.4 473.3 105.4 461.3L25.37 381.3C.3786 356.3 .3786 315.7 25.37 290.7L258.7 57.37C283.7 32.38 324.3 32.38 349.3 57.37L486.6 194.7C511.6 219.7 511.6 260.3 486.6 285.3L355.9 416H480zM265.4 416L332.7 348.7L195.3 211.3L70.63 336L150.6 416L265.4 416z" />,
+  <path
+    fillRule="evenodd"
+    d="M16.5765 4.58692C15.7955 3.80553 14.5292 3.80553 13.7482 4.58692L12.1294 6.20646L17.7861 11.8658L19.4048 10.2462C20.1859 9.46485 20.1859 8.19797 19.4048 7.41658L16.5765 4.58692ZM16.3719 13.2806L10.7153 7.62129L4.58569 13.7538C3.80467 14.5351 3.80467 15.802 4.58569 16.5834L7.41402 19.4131C8.19503 20.1945 9.46132 20.1945 10.2423 19.4131L16.3719 13.2806ZM17.9907 3.17208C16.4286 1.6093 13.8961 1.60931 12.334 3.17209L3.17153 12.3389C1.60949 13.9017 1.60949 16.4355 3.17153 17.9983L5.99985 20.8279C6.81368 21.6421 7.89094 22.0321 8.95713 21.9979C8.9715 21.9985 8.98595 21.9989 9.00047 21.9989H21C21.5523 21.9989 22 21.5509 22 20.9984C22 20.4459 21.5523 19.998 21 19.998H12.486L20.819 11.6611C22.381 10.0983 22.381 7.56453 20.819 6.00175L17.9907 3.17208Z"
+  />,
+  { width: 24 },
 );

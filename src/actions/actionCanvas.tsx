@@ -18,7 +18,6 @@ import { getStateForZoom } from "../scene/zoom";
 import { AppState, NormalizedZoomValue } from "../types";
 import { getShortcutKey, updateActiveTool } from "../utils";
 import { register } from "./register";
-import { Tooltip } from "../components/Tooltip";
 import { newElementWith } from "../element/mutateElement";
 import { getDefaultAppState, isEraserActive } from "../appState";
 import ClearCanvas from "../components/ClearCanvas";
@@ -180,19 +179,17 @@ export const actionResetZoom = register({
     };
   },
   PanelComponent: ({ updateData, appState }) => (
-    <Tooltip label={t("buttons.resetZoom")} style={{ height: "100%" }}>
-      <ToolButton
-        type="button"
-        className="reset-zoom-button zoom-button"
-        title={t("buttons.resetZoom")}
-        aria-label={t("buttons.resetZoom")}
-        onClick={() => {
-          updateData(null);
-        }}
-      >
-        {(appState.zoom.value * 100).toFixed(0)}%
-      </ToolButton>
-    </Tooltip>
+    <ToolButton
+      type="button"
+      className="reset-zoom-button zoom-button"
+      title={t("buttons.resetZoom")}
+      aria-label={t("buttons.resetZoom")}
+      onClick={() => {
+        updateData(null);
+      }}
+    >
+      {(appState.zoom.value * 100).toFixed(0)}%
+    </ToolButton>
   ),
   keyTest: (event) =>
     (event.code === CODES.ZERO || event.code === CODES.NUM_ZERO) &&
