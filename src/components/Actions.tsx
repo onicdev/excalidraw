@@ -217,7 +217,7 @@ export const ShapesSwitcher = ({
   appState: AppState;
 }) => (
   <>
-    {SHAPES.map(({ value, icon, key, numericKey, fillable }, index) => {
+    {SHAPES.map(({ value, icon, solidIcon, key, numericKey }, index) => {
       const label = t(`toolBar.${value}`);
       const letter = key && (typeof key === "string" ? key : key[0]);
       const shortcut = letter
@@ -225,10 +225,10 @@ export const ShapesSwitcher = ({
         : `${numericKey}`;
       return (
         <ToolButton
-          className={clsx("Shape", { fillable })}
+          className={clsx("Shape")}
           key={value}
           type="radio"
-          icon={icon}
+          icon={activeTool.type === value && solidIcon ? solidIcon : icon}
           checked={activeTool.type === value}
           name="editor-current-shape"
           title={`${capitalizeString(label)} — ${shortcut}`}

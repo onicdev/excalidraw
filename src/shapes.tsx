@@ -1,13 +1,17 @@
 import {
   ArrowIcon,
   DiamondIcon,
+  DiamondIconSolid,
   EllipseIcon,
+  EllipseIconSolid,
   // EraserIcon,
   // FreedrawIcon,
   // ImageIcon,
   LineIcon,
   RectangleIcon,
+  RectangleIconSolid,
   SelectionIcon,
+  SelectionIconSolid,
   // TextIcon,
 } from "./components/icons";
 import { KEYS } from "./keys";
@@ -15,6 +19,7 @@ import { KEYS } from "./keys";
 export const SHAPES = [
   {
     icon: SelectionIcon,
+    solidIcon: SelectionIconSolid,
     value: "selection",
     key: KEYS.V,
     numericKey: KEYS["1"],
@@ -22,6 +27,7 @@ export const SHAPES = [
   },
   {
     icon: RectangleIcon,
+    solidIcon: RectangleIconSolid,
     value: "rectangle",
     key: KEYS.R,
     numericKey: KEYS["2"],
@@ -29,6 +35,7 @@ export const SHAPES = [
   },
   {
     icon: DiamondIcon,
+    solidIcon: DiamondIconSolid,
     value: "diamond",
     key: KEYS.D,
     numericKey: KEYS["3"],
@@ -36,6 +43,7 @@ export const SHAPES = [
   },
   {
     icon: EllipseIcon,
+    solidIcon: EllipseIconSolid,
     value: "ellipse",
     key: KEYS.O,
     numericKey: KEYS["4"],
@@ -43,6 +51,7 @@ export const SHAPES = [
   },
   {
     icon: ArrowIcon,
+    solidIcon: null,
     value: "arrow",
     key: KEYS.A,
     numericKey: KEYS["5"],
@@ -50,6 +59,7 @@ export const SHAPES = [
   },
   {
     icon: LineIcon,
+    solidIcon: null,
     value: "line",
     key: KEYS.L,
     numericKey: KEYS["6"],
@@ -65,10 +75,19 @@ export const SHAPES = [
         />
       </svg>
     ),
+    solidIcon: (
+      <svg viewBox="0 0 24 24">
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M20.8674 3.13256C19.3574 1.62248 16.909 1.62248 15.399 3.13256L13.0783 5.45326L18.5467 10.9217L20.8674 8.60103C22.3775 7.09095 22.3775 4.64264 20.8674 3.13256ZM17.1325 12.3359L11.6641 6.86748L4.14368 14.3879C3.43868 15.0928 2.95814 15.9908 2.7626 16.9684L2.02219 20.6705C1.86671 21.4479 2.55213 22.1333 3.32953 21.9778L7.03159 21.2374C8.00925 21.0419 8.90715 20.5613 9.61215 19.8563L17.1325 12.3359Z"
+        />
+      </svg>
+    ),
     value: "freedraw",
     key: [KEYS.P, KEYS.X],
     numericKey: KEYS["7"],
-    fillable: false,
+    fillable: true,
   },
   {
     icon: (
@@ -77,6 +96,7 @@ export const SHAPES = [
         <path d="M5 5C5 4.44772 5.44772 4 6 4H18C18.5523 4 19 4.44772 19 5C19 5.55228 18.5523 6 18 6H13V19C13 19.5523 12.5523 20 12 20C11.4477 20 11 19.5523 11 19V6H6C5.44772 6 5 5.55228 5 5Z" />
       </svg>
     ),
+    solidIcon: null,
     value: "text",
     key: KEYS.T,
     numericKey: KEYS["8"],
@@ -92,10 +112,10 @@ export const SHAPES = [
         />
       </svg>
     ),
+    solidIcon: null,
     value: "image",
     key: null,
     numericKey: KEYS["9"],
-    fillable: false,
   },
   // {
   //   icon: EraserIcon,

@@ -1,6 +1,7 @@
 import { ColorPicker } from "../components/ColorPicker";
 import {
   eraser,
+  eraserSolid,
   MoonIcon,
   SunIcon,
   ZoomInIcon,
@@ -342,7 +343,7 @@ export const actionErase = register({
   PanelComponent: ({ elements, appState, updateData, data }) => (
     <ToolButton
       type="button"
-      icon={eraser}
+      icon={isEraserActive(appState) ? eraserSolid : eraser}
       className={clsx("eraser", { active: isEraserActive(appState) })}
       title={`${t("toolBar.eraser")}-${getShortcutKey("E")}`}
       aria-label={t("toolBar.eraser")}
