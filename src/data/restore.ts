@@ -43,6 +43,7 @@ export const AllowedExcalidrawActiveTools: Record<
 > = {
   selection: true,
   text: true,
+  sticker: true,
   rectangle: true,
   diamond: true,
   ellipse: true,
@@ -226,6 +227,8 @@ const restoreElement = (
     case "ellipse":
       return restoreElementWithProperties(element, {});
     case "rectangle":
+      return restoreElementWithProperties(element, {});
+    case "sticker":
       return restoreElementWithProperties(element, {});
     case "diamond":
       return restoreElementWithProperties(element, {});

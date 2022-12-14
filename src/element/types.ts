@@ -63,6 +63,10 @@ export type ExcalidrawSelectionElement = _ExcalidrawElementBase & {
   type: "selection";
 };
 
+export type ExcalidrawStickerElement = _ExcalidrawElementBase & {
+  type: "sticker";
+};
+
 export type ExcalidrawRectangleElement = _ExcalidrawElementBase & {
   type: "rectangle";
 };
@@ -97,7 +101,8 @@ export type ExcalidrawGenericElement =
   | ExcalidrawSelectionElement
   | ExcalidrawRectangleElement
   | ExcalidrawDiamondElement
-  | ExcalidrawEllipseElement;
+  | ExcalidrawEllipseElement
+  | ExcalidrawStickerElement;
 
 /**
  * ExcalidrawElement should be JSON serializable and (eventually) contain
@@ -135,14 +140,16 @@ export type ExcalidrawBindableElement =
   | ExcalidrawDiamondElement
   | ExcalidrawEllipseElement
   | ExcalidrawTextElement
-  | ExcalidrawImageElement;
+  | ExcalidrawImageElement
+  | ExcalidrawStickerElement;
 
 export type ExcalidrawTextContainer =
   | ExcalidrawRectangleElement
   | ExcalidrawDiamondElement
   | ExcalidrawEllipseElement
   | ExcalidrawImageElement
-  | ExcalidrawArrowEleement;
+  | ExcalidrawArrowEleement
+  | ExcalidrawStickerElement;
 
 export type ExcalidrawTextElementWithContainer = {
   containerId: ExcalidrawTextContainer["id"];

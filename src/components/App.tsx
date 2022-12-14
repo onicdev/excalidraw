@@ -6052,6 +6052,7 @@ class App extends React.Component<AppProps, AppState> {
       pointerCoords.y - pointerDownState.resize.offset.y,
       this.state.gridSize,
     );
+    // console.log(transformHandleType) direction - n w e s nw ne sw se
     if (
       transformElements(
         pointerDownState,
