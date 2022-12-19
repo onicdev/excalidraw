@@ -33,7 +33,6 @@ import {
 import clsx from "clsx";
 import { actionToggleZenMode } from "../actions";
 import "./Actions.scss";
-import { Tooltip } from "./Tooltip";
 import { shouldAllowVerticalAlign } from "../element/textElement";
 
 export const SelectedShapeActions = ({
@@ -302,19 +301,23 @@ export const ZoomActions = ({
 export const UndoRedoActions = ({
   renderAction,
   className,
+  disabled,
 }: {
   renderAction: ActionManager["renderAction"];
   className?: string;
-}) => (
-  <div className={`undo-redo-buttons ${className}`}>
-    <div className="undo-button-container">
-      <Tooltip label={t("buttons.undo")}>{renderAction("undo")}</Tooltip>
+  disabled?: boolean;
+}) => {
+  const data = {
+    disabled,
+    label: disabled ? t("alerts.cannotUndoRedoWithCollaborators") : "",
+  };
+  return (
+    <div className={`undo-redo-buttons ${className}`}>
+      <div className="undo-button-container">{renderAction("undo", data)}</div>
+      <div className="redo-button-container">{renderAction("redo", data)}</div>
     </div>
-    <div className="redo-button-container">
-      <Tooltip label={t("buttons.redo")}> {renderAction("redo")}</Tooltip>
-    </div>
-  </div>
-);
+  );
+};
 
 export const ExitZenModeAction = ({
   actionManager,
