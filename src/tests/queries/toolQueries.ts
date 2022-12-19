@@ -3,6 +3,7 @@ import { queries, buildQueries } from "@testing-library/react";
 const toolMap = {
   lock: "lock",
   selection: "selection",
+  sticker: "sticker",
   rectangle: "rectangle",
   diamond: "diamond",
   ellipse: "ellipse",

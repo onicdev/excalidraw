@@ -25,7 +25,11 @@ import Stack from "./Stack";
 import { ToolButton } from "./ToolButton";
 import { hasStrokeColor } from "../scene/comparisons";
 import { trackEvent } from "../analytics";
-import { hasBoundTextElement } from "../element/typeChecks";
+import {
+  hasBoundTextElement,
+  isStickerElement,
+  isStickerElementType,
+} from "../element/typeChecks";
 import clsx from "clsx";
 import { actionToggleZenMode } from "../actions";
 import "./Actions.scss";
@@ -64,9 +68,16 @@ export const SelectedShapeActions = ({
   //     (element) =>
   //       hasBackground(element.type) && !isTransparent(element.backgroundColor),
   //   );
+
   const showChangeBackgroundIcons =
-    hasBackground(appState.activeTool.type) ||
-    targetElements.some((element) => hasBackground(element.type));
+    (hasBackground(appState.activeTool.type) ||
+      targetElements.some((element) => hasBackground(element.type))) &&
+    !targetElements.some((element) => isStickerElement(element));
+
+  const showChangeStickerBackgroundIcons =
+    (isStickerElementType(appState.activeTool.type) ||
+      targetElements.some((element) => isStickerElement(element))) &&
+    !targetElements.some((element) => hasBackground(element.type));
 
   // const showLinkIcon =
   //   targetElements.length === 1 || isSingleElementBoundContainer;
@@ -80,17 +91,19 @@ export const SelectedShapeActions = ({
     }
   }
 
+  const showChangeStrokeColor =
+    hasStrokeColor(appState.activeTool.type) ||
+    (commonSelectedType && hasStrokeColor(commonSelectedType)) ||
+    targetElements.some((element) => hasStrokeColor(element.type));
+
   return (
     <div className="panelColumn">
-      <div>
-        {((hasStrokeColor(appState.activeTool.type) &&
-          appState.activeTool.type !== "image" &&
-          commonSelectedType !== "image") ||
-          targetElements.some((element) => hasStrokeColor(element.type))) &&
-          renderAction("changeStrokeColor")}
-      </div>
+      {showChangeStrokeColor && <div>{renderAction("changeStrokeColor")}</div>}
       {showChangeBackgroundIcons && (
         <div>{renderAction("changeBackgroundColor")}</div>
+      )}
+      {showChangeStickerBackgroundIcons && (
+        <div>{renderAction("changeStickerBackgroundColor")}</div>
       )}
       {/* {showFillIcons && renderAction("changeFillStyle")} */}
 

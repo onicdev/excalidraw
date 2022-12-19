@@ -207,6 +207,7 @@ const drawElementOnCanvas = (
 ) => {
   context.globalAlpha = element.opacity / 100;
   switch (element.type) {
+    case "sticker":
     case "rectangle":
     case "diamond":
     case "ellipse": {
@@ -376,6 +377,7 @@ export const generateRoughOptions = (
   switch (element.type) {
     case "rectangle":
     case "diamond":
+    case "sticker":
     case "ellipse": {
       options.fillStyle = element.fillStyle;
       options.fill =
@@ -423,6 +425,17 @@ const generateElementShape = (
     elementWithCanvasCache.delete(element);
 
     switch (element.type) {
+      case "sticker":
+        shape = generator.rectangle(
+          0,
+          0,
+          element.width,
+          element.height,
+          generateRoughOptions(element),
+        );
+        setShapeForElement(element, shape);
+
+        break;
       case "rectangle":
         if (element.strokeSharpness === "round") {
           const w = element.width;
@@ -873,6 +886,7 @@ export const renderElement = (
 
       break;
     }
+    case "sticker":
     case "rectangle":
     case "diamond":
     case "ellipse":

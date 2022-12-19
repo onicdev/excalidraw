@@ -4,6 +4,8 @@ import {
   DiamondIconSolid,
   EllipseIcon,
   EllipseIconSolid,
+  StickerIcon,
+  StickerIconSolid,
   // EraserIcon,
   // FreedrawIcon,
   // ImageIcon,
@@ -26,11 +28,19 @@ export const SHAPES = [
     fillable: true,
   },
   {
+    icon: StickerIcon,
+    solidIcon: StickerIconSolid,
+    value: "sticker",
+    key: KEYS.S,
+    numericKey: KEYS["2"],
+    fillable: true,
+  },
+  {
     icon: RectangleIcon,
     solidIcon: RectangleIconSolid,
     value: "rectangle",
     key: KEYS.R,
-    numericKey: KEYS["2"],
+    numericKey: KEYS["3"],
     fillable: true,
   },
   {
@@ -38,7 +48,7 @@ export const SHAPES = [
     solidIcon: DiamondIconSolid,
     value: "diamond",
     key: KEYS.D,
-    numericKey: KEYS["3"],
+    numericKey: KEYS["4"],
     fillable: true,
   },
   {
@@ -46,7 +56,7 @@ export const SHAPES = [
     solidIcon: EllipseIconSolid,
     value: "ellipse",
     key: KEYS.O,
-    numericKey: KEYS["4"],
+    numericKey: KEYS["5"],
     fillable: true,
   },
   {
@@ -54,7 +64,7 @@ export const SHAPES = [
     solidIcon: null,
     value: "arrow",
     key: KEYS.A,
-    numericKey: KEYS["5"],
+    numericKey: KEYS["6"],
     fillable: true,
   },
   {
@@ -62,7 +72,7 @@ export const SHAPES = [
     solidIcon: null,
     value: "line",
     key: KEYS.L,
-    numericKey: KEYS["6"],
+    numericKey: KEYS["7"],
     fillable: true,
   },
   {
@@ -86,7 +96,7 @@ export const SHAPES = [
     ),
     value: "freedraw",
     key: [KEYS.P, KEYS.X],
-    numericKey: KEYS["7"],
+    numericKey: KEYS["8"],
     fillable: true,
   },
   {
@@ -99,7 +109,7 @@ export const SHAPES = [
     solidIcon: null,
     value: "text",
     key: KEYS.T,
-    numericKey: KEYS["8"],
+    numericKey: KEYS["9"],
     fillable: false,
   },
   {
@@ -115,7 +125,7 @@ export const SHAPES = [
     solidIcon: null,
     value: "image",
     key: null,
-    numericKey: KEYS["9"],
+    numericKey: KEYS["0"],
   },
   // {
   //   icon: EraserIcon,

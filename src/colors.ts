@@ -51,6 +51,19 @@ const elementBackgroundColors = [
   "#FFB5AD",
 ];
 
+const stickerBackgroundColors = [
+  "#F4F4F5",
+  "#C1C3C7",
+  "#FFF2AD",
+  "#FFD7AD",
+  "#FFB5AD",
+  "#ADE9FF",
+  "#ADD8FF",
+  "#C7ADFF",
+  "#ADFFBD",
+  "#FFADD9",
+];
+
 const clientBackgroundColors = [
   "#1F2123",
   "#0678CB",
@@ -67,7 +80,8 @@ const clientBackgroundColors = [
 export default {
   canvasBackground: [oc.white, oc.gray[0], oc.gray[1], ...shades(0)],
   elementBackground: [...elementBackgroundColors],
-  clientBackgroundColors: [...clientBackgroundColors],
+  stickerBackground: [...stickerBackgroundColors],
+  clientBackground: [...clientBackgroundColors],
   elementStroke: [...elementStrokeColors],
 };
 

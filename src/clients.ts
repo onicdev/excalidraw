@@ -11,7 +11,7 @@ export const getClientColors = (clientId: string, appState: AppState) => {
   // Naive way of getting an integer out of the clientId
   const sum = clientId.split("").reduce((a, str) => a + str.charCodeAt(0), 0);
 
-  const backgrounds = colors.clientBackgroundColors;
+  const backgrounds = colors.clientBackground;
   return {
     background: backgrounds[sum % backgrounds.length],
     stroke: "#FFFFFF",
