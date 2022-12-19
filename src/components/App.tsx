@@ -6039,9 +6039,10 @@ class App extends React.Component<AppProps, AppState> {
         gridY,
         distance(pointerDownState.originInGrid.x, gridX),
         distance(pointerDownState.originInGrid.y, gridY),
-        isImageElement(draggingElement) || draggingElement.type === "sticker"
-          ? !shouldMaintainAspectRatio(event)
-          : shouldMaintainAspectRatio(event),
+        draggingElement.type === "sticker" ||
+          (isImageElement(draggingElement)
+            ? !shouldMaintainAspectRatio(event)
+            : shouldMaintainAspectRatio(event)),
         shouldResizeFromCenter(event),
         aspectRatio,
       );
@@ -6082,10 +6083,10 @@ class App extends React.Component<AppProps, AppState> {
         shouldRotateWithDiscreteAngle(event),
         shouldResizeFromCenter(event),
         selectedElements.length === 1 &&
-          (isImageElement(selectedElements[0]) ||
-            selectedElements[0].type === "sticker")
-          ? !shouldMaintainAspectRatio(event)
-          : shouldMaintainAspectRatio(event),
+          (selectedElements[0].type === "sticker" ||
+            (isImageElement(selectedElements[0])
+              ? !shouldMaintainAspectRatio(event)
+              : shouldMaintainAspectRatio(event))),
         resizeX,
         resizeY,
         pointerDownState.resize.center.x,
