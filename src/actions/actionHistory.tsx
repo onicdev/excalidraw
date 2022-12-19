@@ -72,8 +72,9 @@ export const createUndoAction: ActionCreator = (history) => ({
   PanelComponent: ({ updateData, data }) => (
     <ToolButton
       type="button"
+      disabled={!!data?.disabled}
       icon={UndoIcon}
-      aria-label={t("buttons.undo")}
+      aria-label={data?.label || t("buttons.undo")}
       onClick={updateData}
       size={data?.size || "medium"}
     />
@@ -94,8 +95,9 @@ export const createRedoAction: ActionCreator = (history) => ({
   PanelComponent: ({ updateData, data }) => (
     <ToolButton
       type="button"
+      disabled={!!data?.disabled}
       icon={RedoIcon}
-      aria-label={t("buttons.redo")}
+      aria-label={data?.label || t("buttons.redo")}
       onClick={updateData}
       size={data?.size || "medium"}
     />

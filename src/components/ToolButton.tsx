@@ -27,6 +27,7 @@ type ToolButtonBaseProps = {
   selected?: boolean;
   className?: string;
   isLoading?: boolean;
+  disabled?: boolean;
 };
 
 type ToolButtonProps =
@@ -104,7 +105,7 @@ export const ToolButton = React.forwardRef((props: ToolButtonProps, ref) => {
       <Tooltip
         label={props["aria-label"]}
         keyshortcuts={props["aria-keyshortcuts"]}
-        long={false}
+        long={true}
       >
         <button
           className={clsx(
@@ -126,7 +127,7 @@ export const ToolButton = React.forwardRef((props: ToolButtonProps, ref) => {
           type={type}
           onClick={onClick}
           ref={innerRef}
-          disabled={isLoading || props.isLoading}
+          disabled={isLoading || props.isLoading || props.disabled}
         >
           {(props.icon || props.label) && (
             <div className="ToolIcon__icon" aria-hidden="true">

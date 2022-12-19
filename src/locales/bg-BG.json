@@ -191,7 +191,8 @@
     "invalidSceneUrl": "",
     "resetLibrary": "",
     "removeItemsFromsLibrary": "",
-    "invalidEncryptionKey": ""
+    "invalidEncryptionKey": "",
+    "cannotUndoRedoWithCollaborators": ""
   },
   "errors": {
     "unsupportedFileType": "Този файлов формат не се поддържа.",

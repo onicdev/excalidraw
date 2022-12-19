@@ -52,6 +52,7 @@ const Footer = ({
               <>
                 <UndoRedoActions
                   renderAction={actionManager.renderAction}
+                  disabled={!!appState.collaborators.size}
                   className={clsx("zen-mode-transition", {
                     "layer-ui__wrapper__footer-left--transition-bottom":
                       appState.zenModeEnabled,

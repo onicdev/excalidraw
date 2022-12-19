@@ -74,8 +74,8 @@ const updateTooltip = debounce(
     keyshortcuts?: string,
   ) => {
     tooltip.classList.add("excalidraw-tooltip--visible");
-    tooltip.style.minWidth = long ? "50ch" : "10ch";
-    tooltip.style.maxWidth = long ? "50ch" : "15ch";
+    tooltip.style.minWidth = long ? "auto" : "10ch";
+    tooltip.style.maxWidth = long ? "auto" : "15ch";
 
     tooltip.textContent = label;
     if (keyshortcuts) {
