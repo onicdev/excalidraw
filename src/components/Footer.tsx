@@ -50,14 +50,15 @@ const Footer = ({
 
             {!appState.viewModeEnabled && (
               <>
-                <UndoRedoActions
-                  renderAction={actionManager.renderAction}
-                  className={clsx("zen-mode-transition", {
-                    "layer-ui__wrapper__footer-left--transition-bottom":
-                      appState.zenModeEnabled,
-                  })}
-                />
-
+                {!appState.collaborators.size && (
+                  <UndoRedoActions
+                    renderAction={actionManager.renderAction}
+                    className={clsx("zen-mode-transition", {
+                      "layer-ui__wrapper__footer-left--transition-bottom":
+                        appState.zenModeEnabled,
+                    })}
+                  />
+                )}
                 <div
                   className={clsx("eraser-buttons zen-mode-transition", {
                     "layer-ui__wrapper__footer-left--transition-left":
