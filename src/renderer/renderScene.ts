@@ -1,7 +1,7 @@
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { RoughSVG } from "roughjs/bin/svg";
 import oc from "open-color";
-import { getTextFillColor } from "../colors";
+import { getTextFillColor } from "../utils";
 
 import { AppState, BinaryFiles, Point, Zoom } from "../types";
 import {

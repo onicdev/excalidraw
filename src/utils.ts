@@ -457,6 +457,34 @@ export const isTransparent = (color: string) => {
   );
 };
 
+export function getTextFillColor(backgroundColor: string) {
+  return [
+    "#E4FFAD",
+    "#ADFFF6",
+    "#E8E9EA",
+    "#FFFFFF",
+    "#8CCA08",
+    "#00BAA5",
+    "#F59127",
+    "#FAD000",
+    "#00B3F5",
+    "#9E69D3",
+    "#E1EF42",
+    "#F4F4F5",
+    "#C1C3C7",
+    "#FFF2AD",
+    "#FFD7AD",
+    "#FFB5AD",
+    "#ADE9FF",
+    "#ADD8FF",
+    "#C7ADFF",
+    "#ADFFBD",
+    "#FFADD9",
+  ].includes(backgroundColor) || isTransparent(backgroundColor)
+    ? "#1F2123"
+    : oc.white;
+}
+
 export type ResolvablePromise<T> = Promise<T> & {
   resolve: [T] extends [undefined] ? (value?: T) => void : (value: T) => void;
   reject: (error: Error) => void;
