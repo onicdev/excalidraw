@@ -5,7 +5,7 @@ import { isTransparent } from "../utils";
 import "./ColorPicker.scss";
 import { isArrowKey, KEYS } from "../keys";
 import { t, getLanguage } from "../i18n";
-import { isWritableElement } from "../utils";
+import { isWritableElement, getTextFillColor } from "../utils";
 import colors from "../colors";
 import { ExcalidrawElement } from "../element/types";
 import { AppState } from "../types";
@@ -242,7 +242,12 @@ const Picker = ({
           {isTransparent(_color) ? (
             <div className="color-picker-transparent"></div>
           ) : undefined}
-          <span className="color-picker-keybinding">{keyBinding}</span>
+          <span
+            style={{ color: getTextFillColor(_color) }}
+            className="color-picker-keybinding"
+          >
+            {keyBinding}
+          </span>
         </button>
       );
     });

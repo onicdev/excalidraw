@@ -84,9 +84,3 @@ export default {
   clientBackground: [...clientBackgroundColors],
   elementStroke: [...elementStrokeColors],
 };
-
-export function getTextFillColor(backgroundColor: string) {
-  return ["#8CCA08", "#00BAA5", "#F59127", "#FAD000"].includes(backgroundColor)
-    ? "#1F2123"
-    : oc.white;
-}

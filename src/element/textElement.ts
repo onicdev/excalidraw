@@ -693,6 +693,7 @@ export const getTextBindableContainerAtPosition = (
 export const isValidTextContainer = (element: ExcalidrawElement) => {
   return (
     element.type === "rectangle" ||
+    element.type === "sticker" ||
     element.type === "ellipse" ||
     element.type === "diamond" ||
     isImageElement(element) ||
