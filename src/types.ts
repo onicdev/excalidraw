@@ -129,6 +129,7 @@ export type AppState = {
   exportScale: number;
   currentItemStrokeColor: string;
   currentItemBackgroundColor: string;
+  currentStickerBackgroundColor: string;
   currentItemFillStyle: ExcalidrawElement["fillStyle"];
   currentItemStrokeWidth: number;
   currentItemStrokeStyle: ExcalidrawElement["strokeStyle"];

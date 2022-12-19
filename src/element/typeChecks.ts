@@ -66,12 +66,24 @@ export const isArrowElement = (
   return element != null && element.type === "arrow";
 };
 
+export const isStickerElement = (
+  element?: ExcalidrawElement | null,
+): element is ExcalidrawLinearElement => {
+  return element != null && element.type === "sticker";
+};
+
 export const isLinearElementType = (
   elementType: AppState["activeTool"]["type"],
 ): boolean => {
   return (
     elementType === "arrow" || elementType === "line" // || elementType === "freedraw"
   );
+};
+
+export const isStickerElementType = (
+  elementType: AppState["activeTool"]["type"],
+): boolean => {
+  return elementType === "sticker";
 };
 
 export const isBindingElement = (
@@ -101,6 +113,7 @@ export const isBindableElement = (
     (element.type === "rectangle" ||
       element.type === "diamond" ||
       element.type === "ellipse" ||
+      element.type === "sticker" ||
       element.type === "image" ||
       (element.type === "text" && !element.containerId))
   );
@@ -116,6 +129,7 @@ export const isTextBindableContainer = (
     (element.type === "rectangle" ||
       element.type === "diamond" ||
       element.type === "ellipse" ||
+      element.type === "sticker" ||
       element.type === "image" ||
       isArrowElement(element))
   );

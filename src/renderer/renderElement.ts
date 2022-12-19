@@ -377,6 +377,7 @@ export const generateRoughOptions = (
   switch (element.type) {
     case "rectangle":
     case "diamond":
+    case "sticker":
     case "ellipse": {
       options.fillStyle = element.fillStyle;
       options.fill =

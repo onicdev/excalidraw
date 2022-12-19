@@ -4261,20 +4261,40 @@ class App extends React.Component<AppProps, AppState> {
       pointerDownState.origin.y,
       this.state.gridSize,
     );
-    const element = newElement({
-      type: elementType,
-      x: gridX,
-      y: gridY,
-      strokeColor: this.state.currentItemStrokeColor,
-      backgroundColor: this.state.currentItemBackgroundColor,
-      fillStyle: this.state.currentItemFillStyle,
-      strokeWidth: this.state.currentItemStrokeWidth,
-      strokeStyle: this.state.currentItemStrokeStyle,
-      roughness: this.state.currentItemRoughness,
-      opacity: this.state.currentItemOpacity,
-      strokeSharpness: this.state.currentItemStrokeSharpness,
-      locked: false,
-    });
+
+    let element = {} as ReturnType<typeof newElement>;
+
+    if (elementType === "sticker") {
+      element = newElement({
+        type: elementType,
+        x: gridX,
+        y: gridY,
+        strokeColor: "#000000",
+        backgroundColor: this.state.currentStickerBackgroundColor,
+        fillStyle: this.state.currentItemFillStyle,
+        strokeWidth: 1,
+        strokeStyle: "solid",
+        roughness: 0,
+        opacity: this.state.currentItemOpacity,
+        strokeSharpness: "sharp",
+        locked: false,
+      });
+    } else {
+      element = newElement({
+        type: elementType,
+        x: gridX,
+        y: gridY,
+        strokeColor: this.state.currentItemStrokeColor,
+        backgroundColor: this.state.currentItemBackgroundColor,
+        fillStyle: this.state.currentItemFillStyle,
+        strokeWidth: this.state.currentItemStrokeWidth,
+        strokeStyle: this.state.currentItemStrokeStyle,
+        roughness: this.state.currentItemRoughness,
+        opacity: this.state.currentItemOpacity,
+        strokeSharpness: this.state.currentItemStrokeSharpness,
+        locked: false,
+      });
+    }
 
     if (element.type === "selection") {
       this.setState({
@@ -6019,7 +6039,7 @@ class App extends React.Component<AppProps, AppState> {
         gridY,
         distance(pointerDownState.originInGrid.x, gridX),
         distance(pointerDownState.originInGrid.y, gridY),
-        isImageElement(draggingElement)
+        isImageElement(draggingElement) || draggingElement.type === "sticker"
           ? !shouldMaintainAspectRatio(event)
           : shouldMaintainAspectRatio(event),
         shouldResizeFromCenter(event),
@@ -6052,7 +6072,7 @@ class App extends React.Component<AppProps, AppState> {
       pointerCoords.y - pointerDownState.resize.offset.y,
       this.state.gridSize,
     );
-    // console.log(transformHandleType) direction - n w e s nw ne sw se
+
     if (
       transformElements(
         pointerDownState,
@@ -6061,7 +6081,9 @@ class App extends React.Component<AppProps, AppState> {
         pointerDownState.resize.arrowDirection,
         shouldRotateWithDiscreteAngle(event),
         shouldResizeFromCenter(event),
-        selectedElements.length === 1 && isImageElement(selectedElements[0])
+        selectedElements.length === 1 &&
+          (isImageElement(selectedElements[0]) ||
+            selectedElements[0].type === "sticker")
           ? !shouldMaintainAspectRatio(event)
           : shouldMaintainAspectRatio(event),
         resizeX,

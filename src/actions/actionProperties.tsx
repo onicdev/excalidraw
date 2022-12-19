@@ -79,7 +79,12 @@ import {
   getTargetElements,
   isSomeElementSelected,
 } from "../scene";
-import { hasStrokeColor } from "../scene/comparisons";
+import {
+  hasStrokeColor,
+  hasStrokeWidth,
+  hasStrokeStyle,
+  hasBackground,
+} from "../scene/comparisons";
 import { arrayToMap } from "../utils";
 import { register } from "./register";
 
@@ -108,7 +113,7 @@ const changeProperty = (
 const getFormValue = function <T>(
   elements: readonly ExcalidrawElement[],
   appState: AppState,
-  getAttribute: (element: ExcalidrawElement) => T,
+  getAttribute: (element: ExcalidrawElement) => T | null,
   defaultValue?: T,
 ): T | null {
   const editingElement = appState.editingElement;
@@ -231,7 +236,8 @@ export const actionChangeStrokeColor = register({
         color={getFormValue(
           elements,
           appState,
-          (element) => element.strokeColor,
+          (element) =>
+            hasStrokeColor(element.type) ? element.strokeColor : null,
           appState.currentItemStrokeColor,
         )}
         onChange={(color) => updateData({ currentItemStrokeColor: color })}
@@ -274,10 +280,58 @@ export const actionChangeBackgroundColor = register({
         color={getFormValue(
           elements,
           appState,
-          (element) => element.backgroundColor,
+          (element) =>
+            hasBackground(element.type) ? element.backgroundColor : null,
           appState.currentItemBackgroundColor,
         )}
         onChange={(color) => updateData({ currentItemBackgroundColor: color })}
+        isActive={appState.openPopup === "backgroundColorPicker"}
+        setActive={(active) =>
+          updateData({ openPopup: active ? "backgroundColorPicker" : null })
+        }
+        elements={elements}
+        appState={appState}
+      />
+    </>
+  ),
+});
+
+export const actionChangeStickerBackgroundColor = register({
+  name: "changeStickerBackgroundColor",
+  trackEvent: false,
+  perform: (elements, appState, value) => {
+    return {
+      ...(value.currentStickerBackgroundColor && {
+        elements: changeProperty(elements, appState, (el) =>
+          newElementWith(el, {
+            backgroundColor: value.currentStickerBackgroundColor,
+          }),
+        ),
+      }),
+      appState: {
+        ...appState,
+        ...value,
+      },
+      commitToHistory: !!value.currentStickerBackgroundColor,
+    };
+  },
+  PanelComponent: ({ elements, appState, updateData }) => (
+    <>
+      <h3 aria-hidden="true">{t("labels.background")}</h3>
+      <ColorPicker
+        type="stickerBackground"
+        label={t("labels.background")}
+        color={getFormValue(
+          elements,
+          appState,
+          (element) => element.backgroundColor,
+          appState.currentStickerBackgroundColor,
+        )}
+        onChange={(color) =>
+          updateData({
+            currentStickerBackgroundColor: color,
+          })
+        }
         isActive={appState.openPopup === "backgroundColorPicker"}
         setActive={(active) =>
           updateData({ openPopup: active ? "backgroundColorPicker" : null })
@@ -344,11 +398,13 @@ export const actionChangeStrokeWidth = register({
   trackEvent: false,
   perform: (elements, appState, value) => {
     return {
-      elements: changeProperty(elements, appState, (el) =>
-        newElementWith(el, {
-          strokeWidth: value,
-        }),
-      ),
+      elements: changeProperty(elements, appState, (el) => {
+        return hasStrokeWidth(el.type)
+          ? newElementWith(el, {
+              strokeWidth: value,
+            })
+          : el;
+      }),
       appState: { ...appState, currentItemStrokeWidth: value },
       commitToHistory: true,
     };
@@ -378,7 +434,8 @@ export const actionChangeStrokeWidth = register({
         value={getFormValue(
           elements,
           appState,
-          (element) => element.strokeWidth,
+          (element) =>
+            hasStrokeWidth(element.type) ? element.strokeWidth : null,
           appState.currentItemStrokeWidth,
         )}
         onChange={(value) => updateData(value)}
@@ -441,11 +498,13 @@ export const actionChangeStrokeStyle = register({
   trackEvent: false,
   perform: (elements, appState, value) => {
     return {
-      elements: changeProperty(elements, appState, (el) =>
-        newElementWith(el, {
-          strokeStyle: value,
-        }),
-      ),
+      elements: changeProperty(elements, appState, (el) => {
+        return hasStrokeStyle(el.type)
+          ? newElementWith(el, {
+              strokeStyle: value,
+            })
+          : el;
+      }),
       appState: { ...appState, currentItemStrokeStyle: value },
       commitToHistory: true,
     };
@@ -475,7 +534,8 @@ export const actionChangeStrokeStyle = register({
         value={getFormValue(
           elements,
           appState,
-          (element) => element.strokeStyle,
+          (element) =>
+            hasStrokeStyle(element.type) ? element.strokeStyle : null,
           appState.currentItemStrokeStyle,
         )}
         onChange={(value) => updateData(value)}

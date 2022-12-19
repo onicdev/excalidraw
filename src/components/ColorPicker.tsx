@@ -15,7 +15,7 @@ const MAX_DEFAULT_COLORS = 15;
 
 export const getCustomColors = (
   elements: readonly ExcalidrawElement[],
-  type: "elementBackground" | "elementStroke",
+  type: "elementBackground" | "elementStroke" | "stickerBackground",
 ) => {
   const customColors: string[] = [];
   const updatedElements = elements
@@ -25,6 +25,7 @@ export const getCustomColors = (
   let index = 0;
   const elementColorTypeMap = {
     elementBackground: "backgroundColor",
+    stickerBackground: "backgroundColor",
     elementStroke: "strokeColor",
   };
   const colorType = elementColorTypeMap[type] as
@@ -50,7 +51,7 @@ export const getCustomColors = (
 
 const isCustomColor = (
   color: string,
-  type: "elementBackground" | "elementStroke",
+  type: "elementBackground" | "stickerBackground" | "elementStroke",
 ) => {
   return !colors[type].includes(color);
 };
@@ -101,7 +102,11 @@ const Picker = ({
   onClose: () => void;
   label: string;
   showInput: boolean;
-  type: "canvasBackground" | "elementBackground" | "elementStroke";
+  type:
+    | "canvasBackground"
+    | "elementBackground"
+    | "elementStroke"
+    | "stickerBackground";
   elements: readonly ExcalidrawElement[];
 }) => {
   const firstItem = React.useRef<HTMLButtonElement>();
@@ -110,7 +115,7 @@ const Picker = ({
   const colorInput = React.useRef<HTMLInputElement>();
 
   const [customColors] = React.useState(() => {
-    if (type === "canvasBackground") {
+    if (type === "canvasBackground" || type === "stickerBackground") {
       return [];
     }
     return getCustomColors(elements, type);
@@ -355,7 +360,11 @@ export const ColorPicker = ({
   elements,
   appState,
 }: {
-  type: "canvasBackground" | "elementBackground" | "elementStroke";
+  type:
+    | "canvasBackground"
+    | "elementBackground"
+    | "elementStroke"
+    | "stickerBackground";
   color: string | null;
   onChange: (color: string) => void;
   label: string;
