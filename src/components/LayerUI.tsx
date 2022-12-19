@@ -191,6 +191,7 @@ const LayerUI = ({
       };
 
     return (
+      // @ts-ignore
       <CanvasExportPreview
         elements={elements}
         appState={appState}

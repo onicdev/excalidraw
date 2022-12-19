@@ -6,5 +6,7 @@
 !package.json
 !public/
 !src/
+!nginx/
+!tsconfig-types.json
 !tsconfig.json
 !yarn.lock
