@@ -3,7 +3,6 @@ FROM node:18.4.0-alpine AS builder
 WORKDIR /excalidraw
 
 ADD . .
-RUN cat ./tsconfig-types.json
 RUN yarn
 
 WORKDIR /excalidraw/src/packages/excalidraw
