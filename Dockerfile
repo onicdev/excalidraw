@@ -13,7 +13,7 @@ RUN yarn pack
 
 FROM nginx:stable-alpine AS nginx
 COPY --from=builder /excalidraw/src/packages/excalidraw/dist /usr/share/nginx/excalidraw
-COPY --from=builder /excalidraw/src/packages/excalidraw/excalidraw-excalidraw-*.tgz /usr/share/nginx/excalidraw
+COPY --from=builder /excalidraw/src/packages/excalidraw/excalidraw-excalidraw-*.tgz /usr/share/nginx/excalidraw/excalidraw-excalidraw.tgz
 COPY --from=builder /excalidraw/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
