@@ -1,17 +1,21 @@
-FROM node:14-alpine AS build
+FROM node:18.4.0-alpine AS builder
 
-WORKDIR /opt/node_app
+WORKDIR /excalidraw
 
-COPY package.json yarn.lock ./
-RUN yarn --ignore-optional
+ADD . .
+RUN yarn
 
-ARG NODE_ENV=production
+WORKDIR /excalidraw/src/packages/excalidraw
 
-COPY . .
-RUN yarn build:app:docker
+RUN yarn
+RUN yarn build:umd
+RUN yarn pack
+RUN mv excalidraw-excalidraw-*.tgz excalidraw-excalidraw.tgz
 
-FROM nginx:1.21-alpine
+FROM nginx:stable-alpine AS nginx
+COPY --from=builder /excalidraw/src/packages/excalidraw/dist /usr/share/nginx/excalidraw
+COPY --from=builder /excalidraw/src/packages/excalidraw/excalidraw-excalidraw.tgz /usr/share/nginx/excalidraw/excalidraw-excalidraw.tgz
+COPY --from=builder /excalidraw/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=build /opt/node_app/build /usr/share/nginx/html
-
-HEALTHCHECK CMD wget -q -O /dev/null http://localhost || exit 1
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
