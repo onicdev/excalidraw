@@ -1312,56 +1312,58 @@ class App extends React.Component<AppProps, AppState> {
           element.id !== this.state.editingElement.id
         );
       });
+    const excalidrawElement = document.querySelector(".excalidraw");
+    if (excalidrawElement) {
+      const selectionColor = getComputedStyle(
+        excalidrawElement!,
+      ).getPropertyValue("--color-selection");
 
-    const selectionColor = getComputedStyle(
-      document.querySelector(".excalidraw")!,
-    ).getPropertyValue("--color-selection");
+      renderScene(
+        {
+          elements: renderingElements,
+          appState: this.state,
+          scale: window.devicePixelRatio,
+          rc: this.rc!,
+          canvas: this.canvas!,
+          renderConfig: {
+            selectionColor,
+            scrollX: this.state.scrollX,
+            scrollY: this.state.scrollY,
+            viewBackgroundColor: this.state.viewBackgroundColor,
+            zoom: this.state.zoom,
+            remotePointerViewportCoords: pointerViewportCoords,
+            remotePointerButton: cursorButton,
+            remoteSelectedElementIds,
+            remotePointerUsernames: pointerUsernames,
+            remotePointerUserStates: pointerUserStates,
+            shouldCacheIgnoreZoom: this.state.shouldCacheIgnoreZoom,
+            theme: this.state.theme,
+            imageCache: this.imageCache,
+            isExporting: false,
+            renderScrollbars: !this.device.isMobile,
+          },
+          callback: ({ atLeastOneVisibleElement, scrollBars }) => {
+            if (scrollBars) {
+              currentScrollBars = scrollBars;
+            }
+            const scrolledOutside =
+              // hide when editing text
+              isTextElement(this.state.editingElement)
+                ? false
+                : !atLeastOneVisibleElement && renderingElements.length > 0;
+            if (this.state.scrolledOutside !== scrolledOutside) {
+              this.setState({ scrolledOutside });
+            }
 
-    renderScene(
-      {
-        elements: renderingElements,
-        appState: this.state,
-        scale: window.devicePixelRatio,
-        rc: this.rc!,
-        canvas: this.canvas!,
-        renderConfig: {
-          selectionColor,
-          scrollX: this.state.scrollX,
-          scrollY: this.state.scrollY,
-          viewBackgroundColor: this.state.viewBackgroundColor,
-          zoom: this.state.zoom,
-          remotePointerViewportCoords: pointerViewportCoords,
-          remotePointerButton: cursorButton,
-          remoteSelectedElementIds,
-          remotePointerUsernames: pointerUsernames,
-          remotePointerUserStates: pointerUserStates,
-          shouldCacheIgnoreZoom: this.state.shouldCacheIgnoreZoom,
-          theme: this.state.theme,
-          imageCache: this.imageCache,
-          isExporting: false,
-          renderScrollbars: !this.device.isMobile,
+            this.scheduleImageRefresh();
+          },
         },
-        callback: ({ atLeastOneVisibleElement, scrollBars }) => {
-          if (scrollBars) {
-            currentScrollBars = scrollBars;
-          }
-          const scrolledOutside =
-            // hide when editing text
-            isTextElement(this.state.editingElement)
-              ? false
-              : !atLeastOneVisibleElement && renderingElements.length > 0;
-          if (this.state.scrolledOutside !== scrolledOutside) {
-            this.setState({ scrolledOutside });
-          }
+        THROTTLE_NEXT_RENDER && window.EXCALIDRAW_THROTTLE_RENDER === true,
+      );
 
-          this.scheduleImageRefresh();
-        },
-      },
-      THROTTLE_NEXT_RENDER && window.EXCALIDRAW_THROTTLE_RENDER === true,
-    );
-
-    if (!THROTTLE_NEXT_RENDER) {
-      THROTTLE_NEXT_RENDER = true;
+      if (!THROTTLE_NEXT_RENDER) {
+        THROTTLE_NEXT_RENDER = true;
+      }
     }
   };
 
