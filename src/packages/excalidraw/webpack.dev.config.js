@@ -72,14 +72,14 @@ module.exports = {
       },
     },
   },
-  // plugins: [
-  //   new webpack.EvalSourceMapDevToolPlugin({ exclude: /vendor/ }),
-  //   new webpack.DefinePlugin({
-  //     "process.env": parseEnvVariables(
-  //       path.resolve(__dirname, "../../../.env.development"),
-  //     ),
-  //   }),
-  // ],
+  plugins: [
+    new webpack.EvalSourceMapDevToolPlugin({ exclude: /vendor/ }),
+    new webpack.DefinePlugin({
+      "process.env": parseEnvVariables(
+        path.resolve(__dirname, "../../../.env.development"),
+      ),
+    }),
+  ],
   externals: {
     react: {
       root: "React",

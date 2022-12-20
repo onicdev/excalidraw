@@ -94,14 +94,14 @@ module.exports = {
       },
     },
   },
-  // plugins: [
-  //   ...(process.env.ANALYZER === "true" ? [new BundleAnalyzerPlugin()] : []),
-  //   new webpack.DefinePlugin({
-  //     "process.env": parseEnvVariables(
-  //       path.resolve(__dirname, "../../../.env.production"),
-  //     ),
-  //   }),
-  // ],
+  plugins: [
+    ...(process.env.ANALYZER === "true" ? [new BundleAnalyzerPlugin()] : []),
+    new webpack.DefinePlugin({
+      "process.env": parseEnvVariables(
+        path.resolve(__dirname, "../../../.env.production"),
+      ),
+    }),
+  ],
   externals: {
     react: {
       root: "React",
