@@ -20,6 +20,9 @@ steps:
       <<: *docker_creds
 
 trigger:
+  branch:
+  - development
+  - production
   event:
   - push
   - pull_request
