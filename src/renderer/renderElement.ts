@@ -1070,6 +1070,7 @@ export const renderElementToSvg = (
       throw new Error("Selection rendering is not supported for SVG");
     }
     case "rectangle":
+    case "sticker":
     case "diamond":
     case "ellipse": {
       generateElementShape(element, generator);
