@@ -342,7 +342,7 @@ export const isPointHittingLinkIcon = (
   const threshold = 4 / appState.zoom.value;
   if (
     !isMobile &&
-    appState.viewModeEnabled &&
+    (appState.viewModeEnabled || appState.blockedModeEnabled) &&
     isPointHittingElementBoundingBox(element, [x, y], threshold)
   ) {
     return true;

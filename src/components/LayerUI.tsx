@@ -369,7 +369,7 @@ const LayerUI = ({
             {renderCanvasExportPreview()}
             {shouldRenderSelectedShapeActions && renderSelectedShapeActions()}
           </Stack.Col>
-          {!appState.viewModeEnabled && (
+          {!appState.viewModeEnabled && !appState.blockedModeEnabled && (
             <Section heading="shapes" className="shapes-section">
               {(heading: React.ReactNode) => (
                 <div style={{ position: "relative" }}>

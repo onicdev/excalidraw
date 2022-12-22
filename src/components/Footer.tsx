@@ -29,7 +29,10 @@ const Footer = ({
 }) => {
   const device = useDevice();
   const showFinalize =
-    !appState.viewModeEnabled && appState.multiElement && device.isTouchScreen;
+    !appState.viewModeEnabled &&
+    !appState.blockedModeEnabled &&
+    appState.multiElement &&
+    device.isTouchScreen;
   return (
     <footer
       role="contentinfo"
@@ -48,7 +51,7 @@ const Footer = ({
               zoom={appState.zoom}
             /> */}
 
-            {!appState.viewModeEnabled && (
+            {!appState.viewModeEnabled && !appState.blockedModeEnabled && (
               <>
                 <UndoRedoActions
                   renderAction={actionManager.renderAction}

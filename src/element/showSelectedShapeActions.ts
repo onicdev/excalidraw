@@ -6,14 +6,15 @@ export const showSelectedShapeActions = (
   elements: readonly NonDeletedExcalidrawElement[],
 ) =>
   Boolean(
-    (!appState.viewModeEnabled &&
-      appState.activeTool.type !== "image" &&
-      appState.activeTool.type !== "custom" &&
-      (appState.editingElement ||
-        (appState.activeTool.type !== "selection" &&
-          appState.activeTool.type !== "eraser"))) ||
-      (getSelectedElements(elements, appState).length &&
-        !isOnlyImageSelected(appState, elements)),
+    !appState.viewModeEnabled &&
+      !appState.blockedModeEnabled &&
+      ((appState.activeTool.type !== "image" &&
+        appState.activeTool.type !== "custom" &&
+        (appState.editingElement ||
+          (appState.activeTool.type !== "selection" &&
+            appState.activeTool.type !== "eraser"))) ||
+        (getSelectedElements(elements, appState).length &&
+          !isOnlyImageSelected(appState, elements))),
   );
 
 // Dont show shape actions for image

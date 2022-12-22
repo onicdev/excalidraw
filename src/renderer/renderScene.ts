@@ -594,7 +594,11 @@ export const _renderScene = ({
           renderConfig.zoom,
           "mouse", // when we render we don't know which pointer type so use mouse
         );
-        if (!appState.viewModeEnabled && showBoundingBox) {
+        if (
+          !appState.viewModeEnabled &&
+          !appState.blockedModeEnabled &&
+          showBoundingBox
+        ) {
           renderTransformHandles(
             context,
             renderConfig,

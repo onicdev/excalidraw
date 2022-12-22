@@ -170,6 +170,7 @@ export type AppState = {
   theme: Theme;
   gridSize: number | null;
   viewModeEnabled: boolean;
+  blockedModeEnabled: boolean;
 
   /** top-most selected groups (i.e. does not include nested groups) */
   selectedGroupIds: { [groupId: string]: boolean };
@@ -303,6 +304,7 @@ export interface ExcalidrawProps {
   renderFooter?: (isMobile: boolean, appState: AppState) => JSX.Element | null;
   langCode?: Language["code"];
   viewModeEnabled?: boolean;
+  blockedModeEnabled?: boolean;
   zenModeEnabled?: boolean;
   gridModeEnabled?: boolean;
   libraryReturnUrl?: string;
