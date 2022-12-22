@@ -104,6 +104,7 @@ export type ActionName =
   | "flipHorizontal"
   | "flipVertical"
   | "viewMode"
+  | "blockedMode"
   | "exportWithDarkMode"
   | "toggleTheme"
   | "increaseFontSize"

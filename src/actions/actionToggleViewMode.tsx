@@ -21,3 +21,18 @@ export const actionToggleViewMode = register({
   keyTest: (event) =>
     !event[KEYS.CTRL_OR_CMD] && event.altKey && event.code === CODES.R,
 });
+
+export const actionToggleBlockedMode = register({
+  name: "blockedMode",
+  trackEvent: false,
+  perform(elements, appState) {
+    return {
+      appState: {
+        ...appState,
+        onlyViewModeEnabled: !this.checked!(appState),
+      },
+      commitToHistory: false,
+    };
+  },
+  checked: (appState) => appState.blockedModeEnabled,
+});

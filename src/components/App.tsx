@@ -8,7 +8,6 @@ import clsx from "clsx";
 import { nanoid } from "nanoid";
 
 import {
-  actionAddToLibrary,
   actionBringForward,
   actionBringToFront,
   actionCopy,
@@ -29,11 +28,9 @@ import {
   actionSendToBack,
   actionToggleGridMode,
   actionToggleStats,
-  actionToggleZenMode,
   actionUnbindText,
   actionBindText,
   actionUngroup,
-  actionLink,
   actionToggleLock,
   actionToggleLinearEditor,
 } from "../actions";
@@ -231,7 +228,7 @@ import {
 import ContextMenu, { ContextMenuOption } from "./ContextMenu";
 import LayerUI from "./LayerUI";
 import { Toast } from "./Toast";
-import { actionToggleViewMode } from "../actions/actionToggleViewMode";
+import { actionToggleViewMode, actionToggleBlockedMode } from "../actions/actionToggleViewMode";
 import {
   dataURLToFile,
   generateIdFromFile,
@@ -388,6 +385,7 @@ class App extends React.Component<AppProps, AppState> {
     const {
       excalidrawRef,
       viewModeEnabled = false,
+      blockedModeEnabled = false,
       zenModeEnabled = false,
       gridModeEnabled = false,
       theme = defaultAppState.theme,
@@ -399,6 +397,7 @@ class App extends React.Component<AppProps, AppState> {
       isLoading: true,
       ...this.getCanvasOffsets(),
       viewModeEnabled,
+      blockedModeEnabled,
       zenModeEnabled,
       gridSize: gridModeEnabled ? GRID_SIZE : null,
       name,
@@ -478,10 +477,11 @@ class App extends React.Component<AppProps, AppState> {
       width: canvasDOMWidth,
       height: canvasDOMHeight,
       viewModeEnabled,
+      blockedModeEnabled,
     } = this.state;
     const canvasWidth = canvasDOMWidth * canvasScale;
     const canvasHeight = canvasDOMHeight * canvasScale;
-    if (viewModeEnabled) {
+    if (viewModeEnabled || blockedModeEnabled) {
       return (
         <canvas
           className="excalidraw__canvas"
@@ -542,7 +542,8 @@ class App extends React.Component<AppProps, AppState> {
     return (
       <div
         className={clsx("excalidraw excalidraw-container", {
-          "excalidraw--view-mode": this.state.viewModeEnabled,
+          "excalidraw--view-mode":
+            this.state.viewModeEnabled || this.state.blockedModeEnabled,
           "excalidraw--mobile": this.device.isMobile,
         })}
         ref={this.excalidrawContainerRef}
@@ -682,11 +683,17 @@ class App extends React.Component<AppProps, AppState> {
         }
 
         let viewModeEnabled = actionResult?.appState?.viewModeEnabled || false;
+        let blockedModeEnabled =
+          actionResult?.appState?.blockedModeEnabled || false;
         let zenModeEnabled = actionResult?.appState?.zenModeEnabled || false;
         let gridSize = actionResult?.appState?.gridSize || null;
         const theme =
           actionResult?.appState?.theme || this.props.theme || THEME.LIGHT;
         let name = actionResult?.appState?.name ?? this.state.name;
+        if (typeof this.props.blockedModeEnabled !== "undefined") {
+          blockedModeEnabled = this.props.blockedModeEnabled;
+        }
+
         if (typeof this.props.viewModeEnabled !== "undefined") {
           viewModeEnabled = this.props.viewModeEnabled;
         }
@@ -710,6 +717,7 @@ class App extends React.Component<AppProps, AppState> {
             return Object.assign(actionResult.appState || {}, {
               editingElement:
                 editingElement || actionResult.appState?.editingElement || null,
+              blockedModeEnabled,
               viewModeEnabled,
               zenModeEnabled,
               gridSize,
@@ -1084,7 +1092,7 @@ class App extends React.Component<AppProps, AppState> {
       this.onGestureEnd as any,
       false,
     );
-    if (this.state.viewModeEnabled) {
+    if (this.state.viewModeEnabled || this.state.blockedModeEnabled) {
       return;
     }
 
@@ -1163,11 +1171,18 @@ class App extends React.Component<AppProps, AppState> {
       this.updateLanguage();
     }
 
+    if (prevProps.blockedModeEnabled !== this.props.blockedModeEnabled) {
+      this.setState({ blockedModeEnabled: !!this.props.blockedModeEnabled });
+    }
+
     if (prevProps.viewModeEnabled !== this.props.viewModeEnabled) {
       this.setState({ viewModeEnabled: !!this.props.viewModeEnabled });
     }
 
-    if (prevState.viewModeEnabled !== this.state.viewModeEnabled) {
+    if (
+      prevState.viewModeEnabled !== this.state.viewModeEnabled ||
+      prevState.blockedModeEnabled !== this.state.blockedModeEnabled
+    ) {
       this.addEventListeners();
       this.deselectElements();
     }
@@ -1312,56 +1327,58 @@ class App extends React.Component<AppProps, AppState> {
           element.id !== this.state.editingElement.id
         );
       });
+    const excalidrawElement = document.querySelector(".excalidraw");
+    if (excalidrawElement) {
+      const selectionColor = getComputedStyle(
+        excalidrawElement!,
+      ).getPropertyValue("--color-selection");
 
-    const selectionColor = getComputedStyle(
-      document.querySelector(".excalidraw")!,
-    ).getPropertyValue("--color-selection");
+      renderScene(
+        {
+          elements: renderingElements,
+          appState: this.state,
+          scale: window.devicePixelRatio,
+          rc: this.rc!,
+          canvas: this.canvas!,
+          renderConfig: {
+            selectionColor,
+            scrollX: this.state.scrollX,
+            scrollY: this.state.scrollY,
+            viewBackgroundColor: this.state.viewBackgroundColor,
+            zoom: this.state.zoom,
+            remotePointerViewportCoords: pointerViewportCoords,
+            remotePointerButton: cursorButton,
+            remoteSelectedElementIds,
+            remotePointerUsernames: pointerUsernames,
+            remotePointerUserStates: pointerUserStates,
+            shouldCacheIgnoreZoom: this.state.shouldCacheIgnoreZoom,
+            theme: this.state.theme,
+            imageCache: this.imageCache,
+            isExporting: false,
+            renderScrollbars: !this.device.isMobile,
+          },
+          callback: ({ atLeastOneVisibleElement, scrollBars }) => {
+            if (scrollBars) {
+              currentScrollBars = scrollBars;
+            }
+            const scrolledOutside =
+              // hide when editing text
+              isTextElement(this.state.editingElement)
+                ? false
+                : !atLeastOneVisibleElement && renderingElements.length > 0;
+            if (this.state.scrolledOutside !== scrolledOutside) {
+              this.setState({ scrolledOutside });
+            }
 
-    renderScene(
-      {
-        elements: renderingElements,
-        appState: this.state,
-        scale: window.devicePixelRatio,
-        rc: this.rc!,
-        canvas: this.canvas!,
-        renderConfig: {
-          selectionColor,
-          scrollX: this.state.scrollX,
-          scrollY: this.state.scrollY,
-          viewBackgroundColor: this.state.viewBackgroundColor,
-          zoom: this.state.zoom,
-          remotePointerViewportCoords: pointerViewportCoords,
-          remotePointerButton: cursorButton,
-          remoteSelectedElementIds,
-          remotePointerUsernames: pointerUsernames,
-          remotePointerUserStates: pointerUserStates,
-          shouldCacheIgnoreZoom: this.state.shouldCacheIgnoreZoom,
-          theme: this.state.theme,
-          imageCache: this.imageCache,
-          isExporting: false,
-          renderScrollbars: !this.device.isMobile,
+            this.scheduleImageRefresh();
+          },
         },
-        callback: ({ atLeastOneVisibleElement, scrollBars }) => {
-          if (scrollBars) {
-            currentScrollBars = scrollBars;
-          }
-          const scrolledOutside =
-            // hide when editing text
-            isTextElement(this.state.editingElement)
-              ? false
-              : !atLeastOneVisibleElement && renderingElements.length > 0;
-          if (this.state.scrolledOutside !== scrolledOutside) {
-            this.setState({ scrolledOutside });
-          }
+        THROTTLE_NEXT_RENDER && window.EXCALIDRAW_THROTTLE_RENDER === true,
+      );
 
-          this.scheduleImageRefresh();
-        },
-      },
-      THROTTLE_NEXT_RENDER && window.EXCALIDRAW_THROTTLE_RENDER === true,
-    );
-
-    if (!THROTTLE_NEXT_RENDER) {
-      THROTTLE_NEXT_RENDER = true;
+      if (!THROTTLE_NEXT_RENDER) {
+        THROTTLE_NEXT_RENDER = true;
+      }
     }
   };
 
@@ -2001,7 +2018,7 @@ class App extends React.Component<AppProps, AppState> {
         return;
       }
 
-      if (this.state.viewModeEnabled) {
+      if (this.state.viewModeEnabled || this.state.blockedModeEnabled) {
         return;
       }
 
@@ -2164,7 +2181,7 @@ class App extends React.Component<AppProps, AppState> {
 
   private onKeyUp = withBatchedUpdates((event: KeyboardEvent) => {
     if (event.key === KEYS.SPACE) {
-      if (this.state.viewModeEnabled) {
+      if (this.state.viewModeEnabled || this.state.blockedModeEnabled) {
         setCursor(this.canvas, CURSOR_TYPE.GRAB);
       } else if (this.state.activeTool.type === "selection") {
         resetCursor(this.canvas);
@@ -2702,7 +2719,11 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     resetCursor(this.canvas);
-    if (!event[KEYS.CTRL_OR_CMD] && !this.state.viewModeEnabled) {
+    if (
+      !event[KEYS.CTRL_OR_CMD] &&
+      !this.state.viewModeEnabled &&
+      !this.state.blockedModeEnabled
+    ) {
       const container = getTextBindableContainerAtPosition(
         this.scene.getNonDeletedElements(),
         this.state,
@@ -3112,7 +3133,7 @@ class App extends React.Component<AppProps, AppState> {
           this.canvas,
           isTextElement(hitElement) ? CURSOR_TYPE.TEXT : CURSOR_TYPE.CROSSHAIR,
         );
-      } else if (this.state.viewModeEnabled) {
+      } else if (this.state.viewModeEnabled || this.state.blockedModeEnabled) {
         setCursor(this.canvas, CURSOR_TYPE.GRAB);
       } else if (isOverScrollBar) {
         setCursor(this.canvas, CURSOR_TYPE.AUTO);
@@ -3476,7 +3497,7 @@ class App extends React.Component<AppProps, AppState> {
 
     lastPointerUp = onPointerUp;
 
-    if (!this.state.viewModeEnabled) {
+    if (!this.state.viewModeEnabled && !this.state.blockedModeEnabled) {
       window.addEventListener(EVENT.POINTER_MOVE, onPointerMove);
       window.addEventListener(EVENT.POINTER_UP, onPointerUp);
       window.addEventListener(EVENT.KEYDOWN, onKeyDown);
@@ -3567,7 +3588,8 @@ class App extends React.Component<AppProps, AppState> {
         gesture.pointers.size <= 1 &&
         (event.button === POINTER_BUTTON.WHEEL ||
           (event.button === POINTER_BUTTON.MAIN && isHoldingSpace) ||
-          this.state.viewModeEnabled)
+          this.state.viewModeEnabled ||
+          this.state.blockedModeEnabled)
       ) ||
       isTextElement(this.state.editingElement)
     ) {
@@ -3631,7 +3653,7 @@ class App extends React.Component<AppProps, AppState> {
         lastPointerUp = null;
         isPanning = false;
         if (!isHoldingSpace) {
-          if (this.state.viewModeEnabled) {
+          if (this.state.viewModeEnabled || this.state.blockedModeEnabled) {
             setCursor(this.canvas, CURSOR_TYPE.GRAB);
           } else {
             setCursorForShape(this.canvas, this.state);
@@ -5963,11 +5985,11 @@ class App extends React.Component<AppProps, AppState> {
 
     const type = element ? "element" : "canvas";
 
-    const container = this.excalidrawContainerRef.current!;
-    const { top: offsetTop, left: offsetLeft } =
-      container.getBoundingClientRect();
-    const left = event.clientX - offsetLeft;
-    const top = event.clientY - offsetTop;
+    // const container = this.excalidrawContainerRef.current!;
+    // const { top: offsetTop, left: offsetLeft } =
+    //   container.getBoundingClientRect();
+    const left = event.clientX;
+    const top = event.clientY;
 
     if (element && !this.state.selectedElementIds[element.id]) {
       this.setState(
@@ -5986,6 +6008,7 @@ class App extends React.Component<AppProps, AppState> {
         },
       );
     } else {
+      this.clearSelection(null);
       this._openContextMenu({ top, left }, type);
     }
   };
@@ -6177,17 +6200,31 @@ class App extends React.Component<AppProps, AppState> {
       options.push(copyText);
     }
     if (type === "canvas") {
-      const viewModeOptions = [
-        ...options,
-        typeof this.props.gridModeEnabled === "undefined" &&
-          actionToggleGridMode,
-        typeof this.props.zenModeEnabled === "undefined" && actionToggleZenMode,
-        typeof this.props.viewModeEnabled === "undefined" &&
-          actionToggleViewMode,
-        actionToggleStats,
-      ];
-
-      if (this.state.viewModeEnabled) {
+      if (this.state.blockedModeEnabled) {
+        const blockedModeOptions = [
+          ...options,
+          typeof this.props.gridModeEnabled === "undefined" &&
+            actionToggleGridMode,
+          actionToggleStats,
+        ];
+        ContextMenu.push({
+          options: blockedModeOptions,
+          top,
+          left,
+          actionManager: this.actionManager,
+          appState: this.state,
+          container: this.excalidrawContainerRef.current!,
+          elements,
+        });
+      } else if (this.state.viewModeEnabled) {
+        const viewModeOptions = [
+          ...options,
+          typeof this.props.gridModeEnabled === "undefined" &&
+            actionToggleGridMode,
+          typeof this.props.viewModeEnabled === "undefined" &&
+            actionToggleViewMode,
+          actionToggleStats,
+        ];
         ContextMenu.push({
           options: viewModeOptions,
           top,
@@ -6229,8 +6266,6 @@ class App extends React.Component<AppProps, AppState> {
             separator,
             typeof this.props.gridModeEnabled === "undefined" &&
               actionToggleGridMode,
-            typeof this.props.zenModeEnabled === "undefined" &&
-              actionToggleZenMode,
             typeof this.props.viewModeEnabled === "undefined" &&
               actionToggleViewMode,
             actionToggleStats,
@@ -6244,7 +6279,7 @@ class App extends React.Component<AppProps, AppState> {
         });
       }
     } else if (type === "element") {
-      if (this.state.viewModeEnabled) {
+      if (this.state.viewModeEnabled || this.state.blockedModeEnabled) {
         ContextMenu.push({
           options: [navigator.clipboard && actionCopy, ...options],
           top,
@@ -6282,8 +6317,6 @@ class App extends React.Component<AppProps, AppState> {
             mayBeAllowBinding && actionBindText,
             maybeUngroupAction && actionUngroup,
             (maybeGroupAction || maybeUngroupAction) && separator,
-            actionAddToLibrary,
-            separator,
             actionSendBackward,
             actionBringForward,
             actionSendToBack,
@@ -6293,7 +6326,6 @@ class App extends React.Component<AppProps, AppState> {
             maybeFlipVertical && actionFlipVertical,
             (maybeFlipHorizontal || maybeFlipVertical) && separator,
             mayBeAllowToggleLineEditing && actionToggleLinearEditor,
-            actionLink.contextItemPredicate(elements, this.state) && actionLink,
             actionDuplicateSelection,
             actionToggleLock,
             separator,

@@ -102,7 +102,7 @@ const WelcomeScreen = ({
         {subheadingJSX}
       </div>
       <div className="WelcomeScreen-items">
-        {!appState.viewModeEnabled && (
+        {!appState.viewModeEnabled && !appState.blockedModeEnabled && (
           <WelcomeScreenItem
             // TODO barnabasmolnar/editor-redesign
             // do we want the internationalized labels here that are currently

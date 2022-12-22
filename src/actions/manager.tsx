@@ -104,8 +104,8 @@ export class ActionManager {
 
     const action = data[0];
 
-    const { viewModeEnabled } = this.getAppState();
-    if (viewModeEnabled) {
+    const { viewModeEnabled, blockedModeEnabled } = this.getAppState();
+    if (viewModeEnabled || blockedModeEnabled) {
       if (!Object.values(MODES).includes(data[0].name)) {
         return false;
       }
