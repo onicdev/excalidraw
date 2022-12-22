@@ -4,10 +4,7 @@ import { Popover } from "./Popover";
 import { t } from "../i18n";
 
 import "./ContextMenu.scss";
-import {
-  getShortcutFromShortcutName,
-  ShortcutName,
-} from "../actions/shortcuts";
+import { CheckIcon } from "./icons";
 import { Action } from "../actions/types";
 import { ActionManager } from "../actions/manager";
 import { AppState } from "../types";
@@ -68,18 +65,17 @@ const ContextMenu = ({
               <button
                 className={clsx("context-menu-option", {
                   dangerous: actionName === "deleteSelectedElements",
-                  checkmark: option.checked?.(appState),
                 })}
                 onClick={() =>
                   actionManager.executeAction(option, "contextMenu")
                 }
               >
                 <div className="context-menu-option__label">{label}</div>
-                <kbd className="context-menu-option__shortcut">
-                  {actionName
-                    ? getShortcutFromShortcutName(actionName as ShortcutName)
-                    : ""}
-                </kbd>
+                {option.checked?.(appState) && (
+                  <div className="context-menu-option__checkmark">
+                    {CheckIcon}
+                  </div>
+                )}
               </button>
             </li>
           );

@@ -42,6 +42,14 @@
       content: "\2713";
     }
 
+    &__checkmark {
+      width: 24px;
+      height: 24px;
+      svg {
+        fill: #2563F4;
+      }
+    }
+
     &.dangerous {
       .context-menu-option__label {
         color: $oc-red-7;
