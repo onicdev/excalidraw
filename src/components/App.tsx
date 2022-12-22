@@ -6201,14 +6201,14 @@ class App extends React.Component<AppProps, AppState> {
     }
     if (type === "canvas") {
       if (this.state.blockedModeEnabled) {
-        const blockedModeOptions = [
-          ...options,
-          typeof this.props.gridModeEnabled === "undefined" &&
-            actionToggleGridMode,
-          actionToggleStats,
-        ];
         ContextMenu.push({
-          options: blockedModeOptions,
+          options: [
+            ...options,
+            separator,
+            typeof this.props.gridModeEnabled === "undefined" &&
+              actionToggleGridMode,
+            actionToggleStats,
+          ],
           top,
           left,
           actionManager: this.actionManager,
@@ -6217,16 +6217,16 @@ class App extends React.Component<AppProps, AppState> {
           elements,
         });
       } else if (this.state.viewModeEnabled) {
-        const viewModeOptions = [
-          ...options,
-          typeof this.props.gridModeEnabled === "undefined" &&
-            actionToggleGridMode,
-          typeof this.props.viewModeEnabled === "undefined" &&
-            actionToggleViewMode,
-          actionToggleStats,
-        ];
         ContextMenu.push({
-          options: viewModeOptions,
+          options: [
+            ...options,
+            separator,
+            typeof this.props.gridModeEnabled === "undefined" &&
+              actionToggleGridMode,
+            typeof this.props.viewModeEnabled === "undefined" &&
+              actionToggleViewMode,
+            actionToggleStats,
+          ],
           top,
           left,
           actionManager: this.actionManager,
