@@ -25,4 +25,3 @@ trigger:
   - production
   event:
   - push
-  - pull_request
