@@ -5990,23 +5990,28 @@ class App extends React.Component<AppProps, AppState> {
     //   container.getBoundingClientRect();
     const left = event.clientX;
     const top = event.clientY;
-
-    if (element && !this.state.selectedElementIds[element.id]) {
-      this.setState(
-        selectGroupsForSelectedElements(
-          {
-            ...this.state,
-            selectedElementIds: { [element.id]: true },
-            selectedLinearElement: isLinearElement(element)
-              ? new LinearElementEditor(element, this.scene)
-              : null,
+    console.log(element)
+    console.log(element && this.state.selectedElementIds[element.id])
+    if (element) {
+      if (!this.state.selectedElementIds[element.id]) {
+        this.setState(
+          selectGroupsForSelectedElements(
+            {
+              ...this.state,
+              selectedElementIds: { [element.id]: true },
+              selectedLinearElement: isLinearElement(element)
+                ? new LinearElementEditor(element, this.scene)
+                : null,
+            },
+            this.scene.getNonDeletedElements(),
+          ),
+          () => {
+            this._openContextMenu({ top, left }, type);
           },
-          this.scene.getNonDeletedElements(),
-        ),
-        () => {
-          this._openContextMenu({ top, left }, type);
-        },
-      );
+        );
+      } else {
+        this._openContextMenu({ top, left }, type);
+      }
     } else {
       this.clearSelection(null);
       this._openContextMenu({ top, left }, type);
