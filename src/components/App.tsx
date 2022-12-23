@@ -5990,8 +5990,7 @@ class App extends React.Component<AppProps, AppState> {
     //   container.getBoundingClientRect();
     const left = event.clientX;
     const top = event.clientY;
-    console.log(element)
-    console.log(element && this.state.selectedElementIds[element.id])
+
     if (element) {
       if (!this.state.selectedElementIds[element.id]) {
         this.setState(
