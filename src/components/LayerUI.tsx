@@ -450,10 +450,10 @@ const LayerUI = ({
               },
             )}
           >
-            <UserList
+            {/* <UserList
               collaborators={appState.collaborators}
               actionManager={actionManager}
-            />
+            /> */}
             {/* {onCollabButtonClick && (
               <CollabButton
                 isInHamburgerMenu={false}
