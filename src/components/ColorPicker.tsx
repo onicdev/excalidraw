@@ -407,8 +407,8 @@ export const ColorPicker = ({
             className="color-picker-popover-container"
             style={{
               position: "fixed",
-              top: coords?.top,
-              left: coords?.right,
+              top: coords?.bottom,
+              left: coords?.left,
               zIndex: 1,
             }}
           >
