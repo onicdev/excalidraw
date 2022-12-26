@@ -134,12 +134,20 @@ export const SelectedShapeActions = ({
 
           {renderAction("changeFontFamily")}
 
-          {renderAction("changeTextAlign")}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              rowGap: "0.5rem",
+            }}
+          >
+            {renderAction("changeTextAlign")}
+
+            {shouldAllowVerticalAlign(targetElements) &&
+              renderAction("changeVerticalAlign")}
+          </div>
         </>
       )}
-
-      {shouldAllowVerticalAlign(targetElements) &&
-        renderAction("changeVerticalAlign")}
       {(canHaveArrowheads(appState.activeTool.type) ||
         targetElements.some((element) => canHaveArrowheads(element.type))) && (
         <>{renderAction("changeArrowhead")}</>
