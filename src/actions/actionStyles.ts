@@ -36,7 +36,7 @@ export const actionCopyStyles = register({
     return {
       appState: {
         ...appState,
-        toast: { message: t("toast.copyStyles") },
+        successMessageType: "copiedStyles",
       },
       commitToHistory: false,
     };
