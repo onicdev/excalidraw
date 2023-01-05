@@ -613,14 +613,14 @@ class App extends React.Component<AppProps, AppState> {
                         onLinkOpen={this.props.onLinkOpen}
                       />
                     )}
-                  {this.state.toast !== null && (
+                  {/* {this.state.toast !== null && (
                     <Toast
                       message={this.state.toast.message}
                       onClose={() => this.setToast(null)}
                       duration={this.state.toast.duration}
                       closable={this.state.toast.closable}
                     />
-                  )}
+                  )} */}
                   <main>{this.renderCanvas()}</main>
                 </ExcalidrawElementsContext.Provider>{" "}
               </ExcalidrawAppStateContext.Provider>
