@@ -1,0 +1,27 @@
+kind: pipeline
+type: docker
+name: excalidraw
+
+globals:
+  - &docker_creds
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+
+steps:
+  - name: build
+    image: plugins/docker
+    settings:
+      repo: registry.nisdev.work/excalidraw
+      registry: registry.nisdev.work
+      dockerfile: ./Dockerfile
+      tags: ["${DRONE_COMMIT_BRANCH}-latest"]
+      <<: *docker_creds
+
+trigger:
+  branch:
+  - development
+  - production
+  event:
+  - push

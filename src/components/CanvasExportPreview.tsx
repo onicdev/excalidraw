@@ -149,7 +149,9 @@ export class CanvasExportPreview extends React.Component<
     this.props.onExportToClipboard(this.exportedElements);
   };
 
-  render() {
+  // @ts-ignore
+  render(): React.ReactPortal {
+    // @ts-ignore
     return createPortal(
       // @ts-ignore
       <div className="ExportDialog__preview" ref={this.previewRef} />,
