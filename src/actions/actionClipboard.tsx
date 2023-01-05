@@ -64,6 +64,12 @@ export const actionCopyAsSvg = register({
         appState,
       );
       return {
+        appState: {
+          ...appState,
+          successMessageType: selectedElements.length
+            ? "copiedSelectionToClipboardAsSVG"
+            : "copiedCanvasToClipboardAsSVG",
+        },
         commitToHistory: false,
       };
     } catch (error: any) {
@@ -107,16 +113,9 @@ export const actionCopyAsPng = register({
       return {
         appState: {
           ...appState,
-          toast: {
-            message: t("toast.copyToClipboardAsPng", {
-              exportSelection: selectedElements.length
-                ? t("toast.selection")
-                : t("toast.canvas"),
-              exportColorScheme: appState.exportWithDarkMode
-                ? t("buttons.darkMode")
-                : t("buttons.lightMode"),
-            }),
-          },
+          successMessageType: selectedElements.length
+            ? "copiedSelectionToClipboardAsPNG"
+            : "copiedCanvasToClipboardAsPNG",
         },
         commitToHistory: false,
       };

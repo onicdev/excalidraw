@@ -79,7 +79,14 @@ export type BinaryFileMetadata = Omit<BinaryFileData, "dataURL">;
 
 export type BinaryFiles = Record<ExcalidrawElement["id"], BinaryFileData>;
 
-export type SuccessMessage = "exportToClipboard" | null;
+export type SuccessMessage =
+  | "exportToClipboard"
+  | "copiedCanvasToClipboardAsPNG"
+  | "copiedSelectionToClipboardAsPNG"
+  | "copiedCanvasToClipboardAsSVG"
+  | "copiedSelectionToClipboardAsSVG"
+  | "copiedStyles"
+  | null;
 
 export type LastActiveToolBeforeEraser =
   | {
