@@ -60,7 +60,7 @@ import {
   GRID_SIZE,
   IMAGE_RENDER_TIMEOUT,
   LINE_CONFIRM_THRESHOLD,
-  MAX_ALLOWED_FILE_BYTES,
+  DEFAULT_MAX_ALLOWED_FILE_BYTES,
   MIME_TYPES,
   MQ_MAX_HEIGHT_LANDSCAPE,
   MQ_MAX_WIDTH_LANDSCAPE,
@@ -228,7 +228,10 @@ import {
 import ContextMenu, { ContextMenuOption } from "./ContextMenu";
 import LayerUI from "./LayerUI";
 import { Toast } from "./Toast";
-import { actionToggleViewMode, actionToggleBlockedMode } from "../actions/actionToggleViewMode";
+import {
+  actionToggleViewMode,
+  actionToggleBlockedMode,
+} from "../actions/actionToggleViewMode";
 import {
   dataURLToFile,
   generateIdFromFile,
@@ -5407,19 +5410,28 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     const existingFileData = this.files[fileId];
+    let maxImageWidthOrHeight = DEFAULT_MAX_IMAGE_WIDTH_OR_HEIGHT;
+    if (this.props.maxImageWidthOrHeight) {
+      maxImageWidthOrHeight = this.props.maxImageWidthOrHeight;
+    }
     if (!existingFileData?.dataURL) {
       try {
         imageFile = await resizeImageFile(imageFile, {
-          maxWidthOrHeight: DEFAULT_MAX_IMAGE_WIDTH_OR_HEIGHT,
+          maxWidthOrHeight: maxImageWidthOrHeight,
         });
       } catch (error: any) {
         console.error("error trying to resing image file on insertion", error);
       }
 
-      if (imageFile.size > MAX_ALLOWED_FILE_BYTES) {
+      let maxAllowedFileBytes = DEFAULT_MAX_ALLOWED_FILE_BYTES;
+      if (this.props.maxAllowedFileBytes) {
+        maxAllowedFileBytes = this.props.maxAllowedFileBytes;
+      }
+
+      if (imageFile.size > maxAllowedFileBytes) {
         throw new Error(
           t("errors.fileTooBig", {
-            maxSize: `${Math.trunc(MAX_ALLOWED_FILE_BYTES / 1024 / 1024)}MB`,
+            maxSize: `${Math.trunc(maxAllowedFileBytes / 1024 / 1024)}MB`,
           }),
         );
       }

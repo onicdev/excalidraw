@@ -401,6 +401,8 @@ export type AppProps = Merge<
     handleKeyboardGlobally: boolean;
     isCollaborating: boolean;
     children?: React.ReactNode;
+    maxAllowedFileBytes?: number;
+    maxImageWidthOrHeight?: number;
   }
 >;
 
