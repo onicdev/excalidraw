@@ -40,6 +40,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onLinkOpen,
     onPointerDown,
     onScrollChange,
+    maxAllowedFileBytes,
+    maxImageWidthOrHeight,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -115,6 +117,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           onPointerDown={onPointerDown}
           onScrollChange={onScrollChange}
           renderSidebar={renderSidebar}
+          maxAllowedFileBytes={maxAllowedFileBytes}
+          maxImageWidthOrHeight={maxImageWidthOrHeight}
         />
       </Provider>
     </InitializeApp>

@@ -345,6 +345,8 @@ export interface ExcalidrawProps {
    * Render function that renders custom <Sidebar /> component.
    */
   renderSidebar?: () => JSX.Element | null;
+  maxAllowedFileBytes?: number;
+  maxImageWidthOrHeight?: number;
 }
 
 export type SceneData = {
