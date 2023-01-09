@@ -79,7 +79,14 @@ export type BinaryFileMetadata = Omit<BinaryFileData, "dataURL">;
 
 export type BinaryFiles = Record<ExcalidrawElement["id"], BinaryFileData>;
 
-export type SuccessMessage = "exportToClipboard" | null;
+export type SuccessMessage =
+  | "exportToClipboard"
+  | "copiedCanvasToClipboardAsPNG"
+  | "copiedSelectionToClipboardAsPNG"
+  | "copiedCanvasToClipboardAsSVG"
+  | "copiedSelectionToClipboardAsSVG"
+  | "copiedStyles"
+  | null;
 
 export type LastActiveToolBeforeEraser =
   | {
@@ -338,6 +345,8 @@ export interface ExcalidrawProps {
    * Render function that renders custom <Sidebar /> component.
    */
   renderSidebar?: () => JSX.Element | null;
+  maxAllowedFileBytes?: number;
+  maxImageWidthOrHeight?: number;
 }
 
 export type SceneData = {
@@ -394,6 +403,8 @@ export type AppProps = Merge<
     handleKeyboardGlobally: boolean;
     isCollaborating: boolean;
     children?: React.ReactNode;
+    maxAllowedFileBytes?: number;
+    maxImageWidthOrHeight?: number;
   }
 >;
 

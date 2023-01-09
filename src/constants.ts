@@ -177,7 +177,7 @@ export const MAX_DECIMALS_FOR_SVG_EXPORT = 2;
 export const EXPORT_SCALES = [1, 2, 3];
 export const DEFAULT_EXPORT_PADDING = 10; // px
 
-export const DEFAULT_MAX_IMAGE_WIDTH_OR_HEIGHT = 1440;
+export const DEFAULT_MAX_IMAGE_WIDTH_OR_HEIGHT = 1920;
 
 export const ALLOWED_IMAGE_MIME_TYPES = [
   MIME_TYPES.png,
@@ -189,7 +189,7 @@ export const ALLOWED_IMAGE_MIME_TYPES = [
   MIME_TYPES.ico,
 ] as const;
 
-export const MAX_ALLOWED_FILE_BYTES = 2 * 1024 * 1024;
+export const DEFAULT_MAX_ALLOWED_FILE_BYTES = 5 * 1024 * 1024;
 
 export const SVG_NS = "http://www.w3.org/2000/svg";
 
