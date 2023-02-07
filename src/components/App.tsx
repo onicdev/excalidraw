@@ -227,10 +227,10 @@ import {
 } from "../utils";
 import ContextMenu, { ContextMenuOption } from "./ContextMenu";
 import LayerUI from "./LayerUI";
-import { Toast } from "./Toast";
+// import { Toast } from "./Toast";
 import {
   actionToggleViewMode,
-  actionToggleBlockedMode,
+  // actionToggleBlockedMode,
 } from "../actions/actionToggleViewMode";
 import {
   dataURLToFile,
@@ -4289,37 +4289,36 @@ class App extends React.Component<AppProps, AppState> {
 
     let element = {} as ReturnType<typeof newElement>;
 
-    if (elementType === "sticker") {
-      element = newElement({
-        type: elementType,
-        x: gridX,
-        y: gridY,
-        strokeColor: "#000000",
-        backgroundColor: this.state.currentStickerBackgroundColor,
-        fillStyle: this.state.currentItemFillStyle,
-        strokeWidth: 1,
-        strokeStyle: "solid",
-        roughness: 0,
-        opacity: this.state.currentItemOpacity,
-        strokeSharpness: "sharp",
-        locked: false,
-      });
-    } else {
-      element = newElement({
-        type: elementType,
-        x: gridX,
-        y: gridY,
-        strokeColor: this.state.currentItemStrokeColor,
-        backgroundColor: this.state.currentItemBackgroundColor,
-        fillStyle: this.state.currentItemFillStyle,
-        strokeWidth: this.state.currentItemStrokeWidth,
-        strokeStyle: this.state.currentItemStrokeStyle,
-        roughness: this.state.currentItemRoughness,
-        opacity: this.state.currentItemOpacity,
-        strokeSharpness: this.state.currentItemStrokeSharpness,
-        locked: false,
-      });
-    }
+    const backgroundColor =
+      elementType === "sticker"
+        ? this.state.currentStickerBackgroundColor
+        : this.state.currentItemBackgroundColor;
+    const strokeColor =
+      elementType === "sticker"
+        ? "transparent"
+        : this.state.currentItemStrokeColor;
+    const strokeWidth =
+      elementType === "sticker" ? 0 : this.state.currentItemStrokeWidth;
+    const strokeSharpness =
+      elementType === "sticker"
+        ? "sharp"
+        : this.state.currentItemStrokeSharpness;
+    const roughness =
+      elementType === "sticker" ? 0 : this.state.currentItemRoughness;
+    element = newElement({
+      type: elementType,
+      x: gridX,
+      y: gridY,
+      strokeColor,
+      backgroundColor,
+      fillStyle: this.state.currentItemFillStyle,
+      strokeWidth,
+      strokeStyle: this.state.currentItemStrokeStyle,
+      roughness,
+      opacity: this.state.currentItemOpacity,
+      strokeSharpness,
+      locked: false,
+    });
 
     if (element.type === "selection") {
       this.setState({
