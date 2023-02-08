@@ -3,6 +3,7 @@ import {
   ExcalidrawSelectionElement,
   ExcalidrawTextElement,
   FontFamilyValues,
+  StrokeRoundness,
 } from "../element/types";
 import {
   AppState,
@@ -17,7 +18,7 @@ import {
   isInvisiblySmallElement,
   refreshTextDimensions,
 } from "../element";
-import { isLinearElementType, isTextElement } from "../element/typeChecks";
+import { isTextElement, isUsingAdaptiveRadius } from "../element/typeChecks";
 import { randomId } from "../random";
 import {
   DEFAULT_FONT_FAMILY,
@@ -25,12 +26,14 @@ import {
   DEFAULT_VERTICAL_ALIGN,
   PRECEDING_ELEMENT_KEY,
   FONT_FAMILY,
+  ROUNDNESS,
 } from "../constants";
 import { getDefaultAppState } from "../appState";
 import { LinearElementEditor } from "../element/linearElementEditor";
 import { bumpVersion } from "../element/mutateElement";
 import { getUpdatedTimestamp, updateActiveTool } from "../utils";
 import { arrayToMap } from "../utils";
+import oc from "open-color";
 
 type RestoredAppState = Omit<
   AppState,
@@ -53,6 +56,7 @@ export const AllowedExcalidrawActiveTools: Record<
   freedraw: true,
   eraser: false,
   custom: true,
+  hand: true,
 };
 
 export type RestoredDataState = {
@@ -75,6 +79,8 @@ const restoreElementWithProperties = <
     customData?: ExcalidrawElement["customData"];
     /** @deprecated */
     boundElementIds?: readonly ExcalidrawElement["id"][];
+    /** @deprecated */
+    strokeSharpness?: StrokeRoundness;
     /** metadata that may be present in elements during collaboration */
     [PRECEDING_ELEMENT_KEY]?: string;
   },
@@ -107,15 +113,23 @@ const restoreElementWithProperties = <
     angle: element.angle || 0,
     x: extra.x ?? element.x ?? 0,
     y: extra.y ?? element.y ?? 0,
-    strokeColor: element.strokeColor,
-    backgroundColor: element.backgroundColor,
+    strokeColor: element.strokeColor || oc.black,
+    backgroundColor: element.backgroundColor || "transparent",
     width: element.width || 0,
     height: element.height || 0,
     seed: element.seed ?? 1,
     groupIds: element.groupIds ?? [],
-    strokeSharpness:
-      element.strokeSharpness ??
-      (isLinearElementType(element.type) ? "round" : "sharp"),
+    roundness: element.roundness
+      ? element.roundness
+      : element.strokeSharpness === "round"
+      ? {
+          // for old elements that would now use adaptive radius algo,
+          // use legacy algo instead
+          type: isUsingAdaptiveRadius(element.type)
+            ? ROUNDNESS.LEGACY
+            : ROUNDNESS.PROPORTIONAL_RADIUS,
+        }
+      : null,
     boundElements: element.boundElementIds
       ? element.boundElementIds.map((id) => ({ type: "arrow", id }))
       : element.boundElements ?? [],
@@ -263,6 +277,14 @@ const repairContainerElement = (
       ) => {
         const boundElement = elementsMap.get(binding.id);
         if (boundElement && !boundIds.has(binding.id)) {
+          boundIds.add(binding.id);
+
+          if (boundElement.isDeleted) {
+            return acc;
+          }
+
+          acc.push(binding);
+
           if (
             isTextElement(boundElement) &&
             // being slightly conservative here, preserving existing containerId
@@ -272,9 +294,6 @@ const repairContainerElement = (
             (boundElement as Mutable<ExcalidrawTextElement>).containerId =
               container.id;
           }
-
-          acc.push(binding);
-          boundIds.add(binding.id);
         }
         return acc;
       },
@@ -299,6 +318,10 @@ const repairBoundElement = (
 
   if (!container) {
     boundElement.containerId = null;
+    return;
+  }
+
+  if (boundElement.isDeleted) {
     return;
   }
 
@@ -446,7 +469,7 @@ export const restoreAppState = (
           ? nextAppState.activeTool
           : { type: "selection" },
       ),
-      lastActiveToolBeforeEraser: null,
+      lastActiveTool: null,
       locked: nextAppState.activeTool.locked ?? false,
     },
     // Migrates from previous version where appState.zoom was a number

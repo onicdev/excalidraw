@@ -834,7 +834,7 @@ export const CenterHorizontallyIcon = createIcon(
   { width: 24 },
 );
 
-export const UsersIcon = createIcon(
+export const usersIcon = createIcon(
   <g strokeWidth="1.5">
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
     <circle cx="9" cy="7" r="4"></circle>
@@ -1372,4 +1372,15 @@ export const StickerIconSolid = createIcon(
 export const CheckIcon = createIcon(
   <path d="M18.7071 7.29289C19.0976 7.68342 19.0976 8.31658 18.7071 8.70711L10.7071 16.7071C10.3166 17.0976 9.68342 17.0976 9.29289 16.7071L5.29289 12.7071C4.90237 12.3166 4.90237 11.6834 5.29289 11.2929C5.68342 10.9024 6.31658 10.9024 6.70711 11.2929L10 14.5858L17.2929 7.29289C17.6834 6.90237 18.3166 6.90237 18.7071 7.29289Z"/>,
   { ...tablerIconProps, fillRule: "evenodd", strokeWidth: 0 },
+);
+
+export const handIcon = createIcon(
+  <g strokeWidth={1.25}>
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M8 13v-7.5a1.5 1.5 0 0 1 3 0v6.5"></path>
+    <path d="M11 5.5v-2a1.5 1.5 0 1 1 3 0v8.5"></path>
+    <path d="M14 5.5a1.5 1.5 0 0 1 3 0v6.5"></path>
+    <path d="M17 7.5a1.5 1.5 0 0 1 3 0v8.5a6 6 0 0 1 -6 6h-2h.208a6 6 0 0 1 -5.012 -2.7a69.74 69.74 0 0 1 -.196 -.3c-.312 -.479 -1.407 -2.388 -3.286 -5.728a1.5 1.5 0 0 1 .536 -2.022a1.867 1.867 0 0 1 2.28 .28l1.47 1.47"></path>
+  </g>,
+  tablerIconProps,
 );

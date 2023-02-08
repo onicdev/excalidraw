@@ -50,7 +50,7 @@ export const actionFlipHorizontal = register({
   },
   keyTest: (event) => event.shiftKey && event.code === "KeyH",
   contextItemLabel: "labels.flipHorizontal",
-  contextItemPredicate: (elements, appState) =>
+  predicate: (elements, appState) =>
     enableActionFlipHorizontal(elements, appState),
 });
 
@@ -67,7 +67,7 @@ export const actionFlipVertical = register({
   keyTest: (event) =>
     event.shiftKey && event.code === "KeyV" && !event[KEYS.CTRL_OR_CMD],
   contextItemLabel: "labels.flipVertical",
-  contextItemPredicate: (elements, appState) =>
+  predicate: (elements, appState) =>
     enableActionFlipVertical(elements, appState),
 });
 
@@ -153,11 +153,7 @@ const flipElement = (
 
   let initialPointsCoords;
   if (isLinearElement(element)) {
-    initialPointsCoords = getElementPointsCoords(
-      element,
-      element.points,
-      element.strokeSharpness,
-    );
+    initialPointsCoords = getElementPointsCoords(element, element.points);
   }
   const initialElementAbsoluteCoords = getElementAbsoluteCoords(element);
 
@@ -215,11 +211,7 @@ const flipElement = (
     // Adjusting origin because when a beizer curve path exceeds min/max points it offsets the origin.
     // There's still room for improvement since when the line roughness is > 1
     // we still have a small offset of the origin when fliipping the element.
-    const finalPointsCoords = getElementPointsCoords(
-      element,
-      element.points,
-      element.strokeSharpness,
-    );
+    const finalPointsCoords = getElementPointsCoords(element, element.points);
 
     const topLeftCoordsDiff = initialPointsCoords[0] - finalPointsCoords[0];
     const topRightCoordDiff = initialPointsCoords[2] - finalPointsCoords[2];
