@@ -41,6 +41,7 @@ import App from "../components/App";
 import { getMaxContainerHeight, getMaxContainerWidth } from "./newElement";
 import { LinearElementEditor } from "./linearElementEditor";
 import { parseClipboard } from "../clipboard";
+import { measureFontSizeFromWH } from "./resizeElements";
 
 const getTransform = (
   width: number,
@@ -205,9 +206,20 @@ export const textWysiwyg = ({
 
         maxWidth = getMaxContainerWidth(container);
         maxHeight = getMaxContainerHeight(container);
+        console.log(textElementHeight)
+        console.log(maxHeight)
 
         // autogrow container height if text exceeds
         if (!isArrowElement(container) && textElementHeight > maxHeight) {
+          console.log('1')
+          const boundTextElementPadding =
+            getBoundTextElementOffset(updatedTextElement);
+          const nextFont = measureFontSizeFromWH(
+            updatedTextElement,
+            container.width - boundTextElementPadding * 2,
+            container.height - boundTextElementPadding * 2,
+          );
+          console.log(nextFont)
           const diff = Math.min(
             textElementHeight - maxHeight,
             approxLineHeight,
@@ -221,6 +233,7 @@ export const textWysiwyg = ({
           containerDims.height > originalContainerData.height &&
           textElementHeight < maxHeight
         ) {
+          console.log('2')
           const diff = Math.min(
             maxHeight - textElementHeight,
             approxLineHeight,
@@ -230,6 +243,7 @@ export const textWysiwyg = ({
         // Start pushing text upward until a diff of 30px (padding)
         // is reached
         else {
+          console.log('3')
           // vertically center align the text
           if (verticalAlign === VERTICAL_ALIGN.MIDDLE) {
             if (!isArrowElement(container)) {
@@ -246,6 +260,7 @@ export const textWysiwyg = ({
           }
         }
       }
+      console.log('===============')
       const [viewportX, viewportY] = getViewportCoords(coordX, coordY);
       const initialSelectionStart = editable.selectionStart;
       const initialSelectionEnd = editable.selectionEnd;
