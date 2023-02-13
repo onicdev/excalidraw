@@ -27,6 +27,7 @@ import {
   isFreeDrawElement,
   isLinearElement,
   isTextElement,
+  isStickerElement,
 } from "./typeChecks";
 import { mutateElement } from "./mutateElement";
 import { getFontString } from "../utils";
@@ -97,6 +98,18 @@ export const transformElements = (
         pointerY,
       );
       updateBoundElements(element);
+    } else if (
+      isStickerElement(element) &&
+      (transformHandleType === "e" || transformHandleType === "w")
+    ) {
+      resizeStickerElementHorizontaly(
+        pointerDownState.originalElements,
+        element,
+        transformHandleType,
+        shouldResizeFromCenter,
+        pointerX,
+        pointerY,
+      );
     } else if (transformHandleType) {
       resizeSingleElement(
         pointerDownState.originalElements,
@@ -192,7 +205,7 @@ const rescalePointsInElement = (
 
 const MIN_FONT_SIZE = 1;
 
-const measureFontSizeFromWH = (
+export const measureFontSizeFromWH = (
   element: NonDeleted<ExcalidrawTextElement>,
   nextWidth: number,
   nextHeight: number,
@@ -325,16 +338,16 @@ const resizeSingleTextElement = (
   }
 };
 
-export const resizeSingleElement = (
+export const resizeStickerElementHorizontaly = (
   originalElements: PointerDownState["originalElements"],
-  shouldMaintainAspectRatio: boolean,
   element: NonDeletedExcalidrawElement,
   transformHandleDirection: TransformHandleDirection,
   shouldResizeFromCenter: boolean,
-  pointerX: number,
-  pointerY: number,
+  pointerX: number, //current pointer position X
+  pointerY: number, //current pointer position Y
 ) => {
   const stateAtResizeStart = originalElements.get(element.id)!;
+
   // Gets bounds corners
   const [x1, y1, x2, y2] = getResizedElementAbsoluteCoords(
     stateAtResizeStart,
@@ -342,10 +355,192 @@ export const resizeSingleElement = (
     stateAtResizeStart.height,
     true,
   );
+
   const startTopLeft: Point = [x1, y1];
   const startBottomRight: Point = [x2, y2];
   const startCenter: Point = centerPoint(startTopLeft, startBottomRight);
+  // Calculate new dimensions based on cursor position
+  const rotatedPointer = rotatePoint(
+    [pointerX, pointerY],
+    startCenter,
+    -stateAtResizeStart.angle,
+  );
 
+  // Get bounds corners rendered on screen
+  const [esx1, , esx2] = getResizedElementAbsoluteCoords(
+    element,
+    element.width,
+    element.height,
+    true,
+  );
+
+  const boundsCurrentWidth = esx2 - esx1;
+
+  // It's important we set the initial scale value based on the width and height at resize start,
+  // otherwise previous dimensions affected by modifiers will be taken into account.
+  const atStartBoundsWidth = startBottomRight[0] - startTopLeft[0];
+
+  /** 7. Calculate aspect ratio */
+  let scaleX = atStartBoundsWidth / boundsCurrentWidth;
+  let boundTextFont: { fontSize?: number; baseline?: number } = {};
+  const boundTextElement = getBoundTextElement(element);
+
+  if (transformHandleDirection === "e") {
+    scaleX = (rotatedPointer[0] - startTopLeft[0]) / boundsCurrentWidth;
+  }
+  if (transformHandleDirection === "w") {
+    scaleX = (startBottomRight[0] - rotatedPointer[0]) / boundsCurrentWidth;
+  }
+
+  const scaleAccumulator = 1.8;
+  const currentAspecRatio = element.width / element.height;
+  let maxScaleDiff = 1.4;
+  let minScaleDiff = 0.7;
+  let eleNewWidth = element.width;
+  if (shouldResizeFromCenter) {
+    scaleX -= 0.5
+    maxScaleDiff -= 0.5
+    minScaleDiff -= 0.5
+  }
+  if (currentAspecRatio === 1) {
+    if (Math.abs(scaleX) > maxScaleDiff) {
+      eleNewWidth = element.width * scaleAccumulator;
+    }
+  } else if (Math.abs(scaleX) < minScaleDiff) {
+    eleNewWidth = element.height;
+  }
+
+  if (scaleX < 0 && !shouldResizeFromCenter) {
+    eleNewWidth = -1 * eleNewWidth;
+  }
+
+  // Linear elements dimensions differ from bounds dimensions
+  const eleInitialHeight = stateAtResizeStart.height;
+
+  if (boundTextElement) {
+    const stateOfBoundTextElementAtResize = originalElements.get(
+      boundTextElement.id,
+    ) as typeof boundTextElement | undefined;
+    if (stateOfBoundTextElementAtResize) {
+      boundTextFont = {
+        fontSize: stateOfBoundTextElementAtResize.fontSize,
+        baseline: stateOfBoundTextElementAtResize.baseline,
+      };
+    }
+  }
+
+  const [newBoundsX1, newBoundsY1, newBoundsX2, newBoundsY2] =
+    getResizedElementAbsoluteCoords(
+      stateAtResizeStart,
+      eleNewWidth,
+      eleInitialHeight,
+      true,
+    );
+  const newBoundsWidth = newBoundsX2 - newBoundsX1;
+  const newBoundsHeight = newBoundsY2 - newBoundsY1;
+
+  // Calculate new topLeft based on fixed corner during resize
+  let newTopLeft = [...startTopLeft] as [number, number];
+  if (transformHandleDirection === "w") {
+    newTopLeft = [
+      startBottomRight[0] - Math.abs(newBoundsWidth),
+      startBottomRight[1] - Math.abs(newBoundsHeight),
+    ];
+  }
+
+  // Flip horizontally
+  if (eleNewWidth < 0) {
+    if (transformHandleDirection.includes("e")) {
+      newTopLeft[0] -= Math.abs(newBoundsWidth);
+    }
+    if (transformHandleDirection.includes("w")) {
+      newTopLeft[0] += Math.abs(newBoundsWidth);
+    }
+  }
+
+  if (shouldResizeFromCenter) {
+    newTopLeft[0] = startCenter[0] - Math.abs(newBoundsWidth) / 2;
+    newTopLeft[1] = startCenter[1] - Math.abs(newBoundsHeight) / 2;
+  }
+
+  // adjust topLeft to new rotation point
+  const angle = stateAtResizeStart.angle;
+  const rotatedTopLeft = rotatePoint(newTopLeft, startCenter, angle);
+  const newCenter: Point = [
+    newTopLeft[0] + Math.abs(newBoundsWidth) / 2,
+    newTopLeft[1] + Math.abs(newBoundsHeight) / 2,
+  ];
+  const rotatedNewCenter = rotatePoint(newCenter, startCenter, angle);
+  newTopLeft = rotatePoint(rotatedTopLeft, rotatedNewCenter, -angle);
+
+  // Readjust points for linear elements
+  let rescaledPoints;
+
+  // For linear elements (x,y) are the coordinates of the first drawn point not the top-left corner
+  // So we need to readjust (x,y) to be where the first point should be
+  const newOrigin = [...newTopLeft];
+  newOrigin[0] += stateAtResizeStart.x - newBoundsX1;
+  newOrigin[1] += stateAtResizeStart.y - newBoundsY1;
+  const resizedElement = {
+    width: Math.abs(eleNewWidth),
+    height: Math.abs(eleInitialHeight),
+    x: newOrigin[0],
+    y: newOrigin[1],
+    points: rescaledPoints,
+  };
+
+  if ("scale" in element && "scale" in stateAtResizeStart) {
+    mutateElement(element, {
+      scale: [
+        // defaulting because scaleX/Y can be 0/-0
+        (Math.sign(newBoundsX2 - stateAtResizeStart.x) ||
+          stateAtResizeStart.scale[0]) * stateAtResizeStart.scale[0],
+        (Math.sign(newBoundsY2 - stateAtResizeStart.y) ||
+          stateAtResizeStart.scale[1]) * stateAtResizeStart.scale[1],
+      ],
+    });
+  }
+
+  if (
+    resizedElement.width !== 0 &&
+    resizedElement.height !== 0 &&
+    Number.isFinite(resizedElement.x) &&
+    Number.isFinite(resizedElement.y)
+  ) {
+    updateBoundElements(element, {
+      newSize: { width: resizedElement.width, height: resizedElement.height },
+    });
+
+    mutateElement(element, resizedElement);
+    if (boundTextElement && boundTextFont) {
+      mutateElement(boundTextElement, { fontSize: boundTextFont.fontSize });
+    }
+    handleBindTextResize(element, transformHandleDirection);
+  }
+};
+
+export const resizeSingleElement = (
+  originalElements: PointerDownState["originalElements"],
+  shouldMaintainAspectRatio: boolean,
+  element: NonDeletedExcalidrawElement,
+  transformHandleDirection: TransformHandleDirection,
+  shouldResizeFromCenter: boolean,
+  pointerX: number, //current pointer position X
+  pointerY: number, //current pointer position Y
+) => {
+  const stateAtResizeStart = originalElements.get(element.id)!;
+
+  // Gets bounds corners
+  const [x1, y1, x2, y2] = getResizedElementAbsoluteCoords(
+    stateAtResizeStart,
+    stateAtResizeStart.width,
+    stateAtResizeStart.height,
+    true,
+  );
+
+  const startTopLeft: Point = [x1, y1];
+  const startBottomRight: Point = [x2, y2];
+  const startCenter: Point = centerPoint(startTopLeft, startBottomRight);
   // Calculate new dimensions based on cursor position
   const rotatedPointer = rotatePoint(
     [pointerX, pointerY],
