@@ -2579,7 +2579,7 @@ class App extends React.Component<AppProps, AppState> {
   }) => {
     let shouldBindToContainer = false;
 
-    let parentCenterPosition =
+    const parentCenterPosition =
       insertAtParentCenter &&
       this.getTextWysiwygSnappedToCenterPosition(
         sceneX,
@@ -2587,7 +2587,8 @@ class App extends React.Component<AppProps, AppState> {
         this.state,
         container,
       );
-    if (container && parentCenterPosition) {
+    // if (container && parentCenterPosition) {
+    if (container) {
       shouldBindToContainer = true;
     }
     let existingTextElement: NonDeleted<ExcalidrawTextElement> | null = null;
@@ -2627,14 +2628,14 @@ class App extends React.Component<AppProps, AppState> {
       mutateElement(container, { height: newHeight, width: newWidth });
       sceneX = container.x + newWidth / 2;
       sceneY = container.y + newHeight / 2;
-      if (parentCenterPosition) {
-        parentCenterPosition = this.getTextWysiwygSnappedToCenterPosition(
-          sceneX,
-          sceneY,
-          this.state,
-          container,
-        );
-      }
+      // if (parentCenterPosition) {
+      //   parentCenterPosition = this.getTextWysiwygSnappedToCenterPosition(
+      //     sceneX,
+      //     sceneY,
+      //     this.state,
+      //     container,
+      //   );
+      // }
     }
     const element = existingTextElement
       ? existingTextElement
@@ -2793,7 +2794,6 @@ class App extends React.Component<AppProps, AppState> {
       if (container) {
         if (isArrowElement(container) || hasBoundTextElement(container)) {
           const midPoint = getContainerCenter(container, this.state);
-
           sceneX = midPoint.x;
           sceneY = midPoint.y;
         }
@@ -4118,30 +4118,31 @@ class App extends React.Component<AppProps, AppState> {
     if (isTextElement(this.state.editingElement)) {
       return;
     }
-    let sceneX = pointerDownState.origin.x;
-    let sceneY = pointerDownState.origin.y;
+    const sceneX = pointerDownState.origin.x;
+    const sceneY = pointerDownState.origin.y;
 
-    const element = this.getElementAtPosition(sceneX, sceneY, {
-      includeBoundTextElement: true,
-    });
+    // const element = this.getElementAtPosition(sceneX, sceneY, {
+    //   includeBoundTextElement: true,
+    // });
 
-    let container = getTextBindableContainerAtPosition(
-      this.scene.getNonDeletedElements(),
-      this.state,
-      sceneX,
-      sceneY,
-    );
+    // let container = getTextBindableContainerAtPosition(
+    //   this.scene.getNonDeletedElements(),
+    //   this.state,
+    //   sceneX,
+    //   sceneY,
+    // );
 
-    if (hasBoundTextElement(element)) {
-      container = element as ExcalidrawTextContainer;
-      sceneX = element.x + element.width / 2;
-      sceneY = element.y + element.height / 2;
-    }
+    // if (hasBoundTextElement(element)) {
+    //   container = element as ExcalidrawTextContainer;
+    //   sceneX = element.x + element.width / 2;
+    //   sceneY = element.y + element.height / 2;
+    // }
     this.startTextEditing({
       sceneX,
       sceneY,
       insertAtParentCenter: !event.altKey,
-      container,
+      container: null,
+      // container,
     });
 
     resetCursor(this.canvas);
@@ -4364,6 +4365,7 @@ class App extends React.Component<AppProps, AppState> {
 
     let element = {} as ReturnType<typeof newElement>;
 
+    // Overwrite sticker styles if such tool selected
     const backgroundColor =
       elementType === "sticker"
         ? this.state.currentStickerBackgroundColor
@@ -4375,11 +4377,10 @@ class App extends React.Component<AppProps, AppState> {
     const strokeWidth =
       elementType === "sticker" ? 0 : this.state.currentItemStrokeWidth;
     const roundness =
-      elementType === "sticker"
-        ? "sharp"
-        : this.state.currentItemRoundness;
+      elementType === "sticker" ? "sharp" : this.state.currentItemRoundness;
     const roughness =
       elementType === "sticker" ? 0 : this.state.currentItemRoughness;
+
     element = newElement({
       type: elementType,
       x: gridX,
