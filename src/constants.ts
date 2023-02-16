@@ -203,7 +203,7 @@ export const VERSIONS = {
   excalidrawLibrary: 2,
 } as const;
 
-export const BOUND_TEXT_PADDING = 15;
+export const BOUND_TEXT_PADDING = 5;
 
 export const VERTICAL_ALIGN = {
   TOP: "top",
