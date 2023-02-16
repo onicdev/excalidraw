@@ -5,6 +5,7 @@ import { queryFocusableElements } from "../utils";
 import { KEYS } from "../keys";
 
 type Props = {
+  className?: string;
   top?: number;
   left?: number;
   children?: React.ReactNode;
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export const Popover = ({
+  className,
   children,
   left,
   top,
@@ -105,7 +107,11 @@ export const Popover = ({
   }, [onCloseRequest]);
 
   return (
-    <div className="popover" style={{ top, left }} ref={popoverRef}>
+    <div
+      className={`popover ${className}`}
+      style={{ top, left }}
+      ref={popoverRef}
+    >
       {children}
     </div>
   );
