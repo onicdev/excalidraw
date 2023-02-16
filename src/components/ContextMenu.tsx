@@ -51,6 +51,7 @@ export const ContextMenu = React.memo(
 
     return (
       <Popover
+        className="context-menu-popover"
         onCloseRequest={() => setAppState({ contextMenu: null })}
         top={top}
         left={left}
