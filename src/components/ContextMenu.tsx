@@ -101,7 +101,7 @@ export const ContextMenu = React.memo(
                 <button className={clsx("context-menu-item")}>
                   <div className="context-menu-item__label">{label}</div>
                   {item.checked?.(appState) && (
-                    <div className="context-menu-option__checkmark">
+                    <div className="context-menu-item__checkmark">
                       {CheckIcon}
                     </div>
                   )}
