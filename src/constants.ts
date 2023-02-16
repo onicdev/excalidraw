@@ -2,6 +2,14 @@ import cssVariables from "./css/variables.module.scss";
 import { AppProps } from "./types";
 import { FontFamilyValues } from "./element/types";
 
+export const isDarwin = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+export const isWindows = /^Win/.test(navigator.platform);
+export const isAndroid = /\b(android)\b/i.test(navigator.userAgent);
+export const isFirefox =
+  "netscape" in window &&
+  navigator.userAgent.indexOf("rv:") > 1 &&
+  navigator.userAgent.indexOf("Gecko") > 1;
+
 export const APP_NAME = "Excalidraw";
 
 export const DRAGGING_THRESHOLD = 10; // px
@@ -54,6 +62,7 @@ export enum EVENT {
   SCROLL = "scroll",
   // custom events
   EXCALIDRAW_LINK = "excalidraw-link",
+  MENU_ITEM_SELECT = "menu.itemSelect",
 }
 
 export const ENV = {
@@ -130,12 +139,6 @@ export const IDLE_THRESHOLD = 60_000;
 // Report a user active each ACTIVE_THRESHOLD milliseconds
 export const ACTIVE_THRESHOLD = 3_000;
 
-export const MODES = {
-  VIEW: "viewMode",
-  ZEN: "zenMode",
-  GRID: "gridMode",
-};
-
 export const THEME_FILTER = cssVariables.themeFilter;
 
 export const URL_QUERY_KEYS = {
@@ -200,7 +203,7 @@ export const VERSIONS = {
   excalidrawLibrary: 2,
 } as const;
 
-export const BOUND_TEXT_PADDING = 5;
+export const BOUND_TEXT_PADDING = 15;
 
 export const VERTICAL_ALIGN = {
   TOP: "top",
@@ -216,8 +219,30 @@ export const TEXT_ALIGN = {
 
 export const ELEMENT_READY_TO_ERASE_OPACITY = 20;
 
-export const COOKIES = {
-  AUTH_STATE_COOKIE: "excplus-auth",
+// Radius represented as 25% of element's largest side (width/height).
+// Used for LEGACY and PROPORTIONAL_RADIUS algorithms, or when the element is
+// below the cutoff size.
+export const DEFAULT_PROPORTIONAL_RADIUS = 0.25;
+// Fixed radius for the ADAPTIVE_RADIUS algorithm. In pixels.
+export const DEFAULT_ADAPTIVE_RADIUS = 32;
+// roundness type (algorithm)
+export const ROUNDNESS = {
+  // Used for legacy rounding (rectangles), which currently works the same
+  // as PROPORTIONAL_RADIUS, but we need to differentiate for UI purposes and
+  // forwards-compat.
+  LEGACY: 1,
+
+  // Used for linear elements & diamonds
+  PROPORTIONAL_RADIUS: 2,
+
+  // Current default algorithm for rectangles, using fixed pixel radius.
+  // It's working similarly to a regular border-radius, but attemps to make
+  // radius visually similar across differnt element sizes, especially
+  // very large and very small elements.
+  //
+  // NOTE right now we don't allow configuration and use a constant radius
+  // (see DEFAULT_ADAPTIVE_RADIUS constant)
+  ADAPTIVE_RADIUS: 3,
 } as const;
 
 /** key containt id of precedeing elemnt id we use in reconciliation during

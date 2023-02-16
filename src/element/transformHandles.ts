@@ -8,7 +8,7 @@ import { getElementAbsoluteCoords } from "./bounds";
 import { rotate } from "../math";
 import { AppState, Zoom } from "../types";
 import { isTextElement } from ".";
-import { isLinearElement } from "./typeChecks";
+import { isLinearElement, isStickerElement } from "./typeChecks";
 import { DEFAULT_SPACING } from "../renderer/renderScene";
 
 export type TransformHandleDirection =
@@ -49,6 +49,11 @@ const OMIT_SIDES_FOR_TEXT_ELEMENT = {
   s: true,
   n: true,
   w: true,
+};
+
+const OMIT_SIDES_FOR_STICKER_ELEMENT = {
+  n: true,
+  s: true,
 };
 
 const OMIT_SIDES_FOR_LINE_SLASH = {
@@ -249,6 +254,8 @@ export const getTransformHandles = (
     }
   } else if (isTextElement(element)) {
     omitSides = OMIT_SIDES_FOR_TEXT_ELEMENT;
+  } else if (isStickerElement(element)) {
+    omitSides = OMIT_SIDES_FOR_STICKER_ELEMENT;
   }
   const dashedLineMargin = isLinearElement(element)
     ? DEFAULT_SPACING + 8

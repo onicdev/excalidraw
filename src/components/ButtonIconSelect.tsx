@@ -8,7 +8,12 @@ export const ButtonIconSelect = <T extends Object>({
   onChange,
   group,
 }: {
-  options: { value: T; text: string; icon: JSX.Element; testId?: string }[];
+  options: {
+    value: T;
+    text: string;
+    icon: JSX.Element;
+    testId?: string;
+  }[];
   value: T | null;
   onChange: (value: T) => void;
   group: string;
