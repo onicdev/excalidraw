@@ -17,7 +17,6 @@ import {
   ExcalidrawLinearElement,
   ExcalidrawTextElementWithContainer,
   ExcalidrawTextElement,
-  ExcalidrawTextContainer,
 } from "./types";
 import { AppState } from "../types";
 import { mutateElement } from "./mutateElement";
@@ -31,6 +30,8 @@ import {
   getTextWidth,
   normalizeText,
   wrapText,
+  getMaxFontSizeForBoundedText,
+  isTextHigherThatBounding,
 } from "./textElement";
 import {
   actionDecreaseFontSize,
@@ -38,10 +39,9 @@ import {
 } from "../actions/actionProperties";
 import { actionZoomIn, actionZoomOut } from "../actions/actionCanvas";
 import App from "../components/App";
-import { getMaxContainerHeight, getMaxContainerWidth } from "./newElement";
+import { getMaxContainerWidth } from "./newElement";
 import { LinearElementEditor } from "./linearElementEditor";
 import { parseClipboard } from "../clipboard";
-import { measureFontSizeFromWH } from "./resizeElements";
 
 const getTransform = (
   width: number,
@@ -64,37 +64,41 @@ const getTransform = (
   return `translate(${translateX}px, ${translateY}px) scale(${zoom.value}) rotate(${degree}deg)`;
 };
 
-const originalContainerCache: {
-  [id: ExcalidrawTextContainer["id"]]:
-    | {
-        height: ExcalidrawTextContainer["height"];
-      }
-    | undefined;
-} = {};
+/** CHANGE:NEEMB
+ * No need to store container's original scale as we dont fit it to text size
+ * We mutate text fontSize instead
+ */
+// const originalContainerCache: {
+//   [id: ExcalidrawTextContainer["id"]]:
+//     | {
+//         height: ExcalidrawTextContainer["height"];
+//       }
+//     | undefined;
+// } = {};
 
-export const updateOriginalContainerCache = (
-  id: ExcalidrawTextContainer["id"],
-  height: ExcalidrawTextContainer["height"],
-) => {
-  const data =
-    originalContainerCache[id] || (originalContainerCache[id] = { height });
-  data.height = height;
-  return data;
-};
+// export const updateOriginalContainerCache = (
+//   id: ExcalidrawTextContainer["id"],
+//   height: ExcalidrawTextContainer["height"],
+// ) => {
+//   const data =
+//     originalContainerCache[id] || (originalContainerCache[id] = { height });
+//   data.height = height;
+//   return data;
+// };
 
-export const resetOriginalContainerCache = (
-  id: ExcalidrawTextContainer["id"],
-) => {
-  if (originalContainerCache[id]) {
-    delete originalContainerCache[id];
-  }
-};
+// export const resetOriginalContainerCache = (
+//   id: ExcalidrawTextContainer["id"],
+// ) => {
+//   if (originalContainerCache[id]) {
+//     delete originalContainerCache[id];
+//   }
+// };
 
-export const getOriginalContainerHeightFromCache = (
-  id: ExcalidrawTextContainer["id"],
-) => {
-  return originalContainerCache[id]?.height ?? null;
-};
+// export const getOriginalContainerHeightFromCache = (
+//   id: ExcalidrawTextContainer["id"],
+// ) => {
+//   return originalContainerCache[id]?.height ?? null;
+// };
 
 export const textWysiwyg = ({
   id,
@@ -157,7 +161,7 @@ export const textWysiwyg = ({
       const container = getContainerElement(updatedTextElement);
       let maxWidth = updatedTextElement.width;
 
-      let maxHeight = updatedTextElement.height;
+      // let maxHeight = updatedTextElement.height;
       const width = updatedTextElement.width;
       // Set to element height by default since that's
       // what is going to be used for unbounded text
@@ -188,79 +192,31 @@ export const textWysiwyg = ({
           textElementHeight = updatedTextElement.height;
         }
 
-        let originalContainerData;
-        if (propertiesUpdated) {
-          originalContainerData = updateOriginalContainerCache(
-            container.id,
-            containerDims.height,
-          );
-        } else {
-          originalContainerData = originalContainerCache[container.id];
-          if (!originalContainerData) {
-            originalContainerData = updateOriginalContainerCache(
-              container.id,
-              containerDims.height,
-            );
-          }
-        }
+        /** CHANGE:NEEMB
+         * Disable storing original container data
+         * Disable measuring container height dependng on text height
+         * Text fontSize mutates instead
+         */
+
+        // CHANGE:NEEMB - code removed here
 
         maxWidth = getMaxContainerWidth(container);
-        maxHeight = getMaxContainerHeight(container);
-        console.log(textElementHeight)
-        console.log(maxHeight)
-
-        // autogrow container height if text exceeds
-        if (!isArrowElement(container) && textElementHeight > maxHeight) {
-          console.log('1')
-          const boundTextElementPadding =
-            getBoundTextElementOffset(updatedTextElement);
-          const nextFont = measureFontSizeFromWH(
-            updatedTextElement,
-            container.width - boundTextElementPadding * 2,
-            container.height - boundTextElementPadding * 2,
-          );
-          console.log(nextFont)
-          const diff = Math.min(
-            textElementHeight - maxHeight,
-            approxLineHeight,
-          );
-          mutateElement(container, { height: containerDims.height + diff });
-          return;
-        } else if (
-          // autoshrink container height until original container height
-          // is reached when text is removed
-          !isArrowElement(container) &&
-          containerDims.height > originalContainerData.height &&
-          textElementHeight < maxHeight
-        ) {
-          console.log('2')
-          const diff = Math.min(
-            maxHeight - textElementHeight,
-            approxLineHeight,
-          );
-          mutateElement(container, { height: containerDims.height - diff });
-        }
-        // Start pushing text upward until a diff of 30px (padding)
-        // is reached
-        else {
-          console.log('3')
-          // vertically center align the text
-          if (verticalAlign === VERTICAL_ALIGN.MIDDLE) {
-            if (!isArrowElement(container)) {
-              coordY =
-                container.y + containerDims.height / 2 - textElementHeight / 2;
-            }
-          }
-          if (verticalAlign === VERTICAL_ALIGN.BOTTOM) {
+        // CHANGE:NEEMB - code removed here
+        // vertically center align the text
+        if (verticalAlign === VERTICAL_ALIGN.MIDDLE) {
+          if (!isArrowElement(container)) {
             coordY =
-              container.y +
-              containerDims.height -
-              textElementHeight -
-              getBoundTextElementOffset(updatedTextElement);
+              container.y + containerDims.height / 2 - textElementHeight / 2;
           }
+        }
+        if (verticalAlign === VERTICAL_ALIGN.BOTTOM) {
+          coordY =
+            container.y +
+            containerDims.height -
+            textElementHeight -
+            getBoundTextElementOffset(updatedTextElement);
         }
       }
-      console.log('===============')
       const [viewportX, viewportY] = getViewportCoords(coordX, coordY);
       const initialSelectionStart = editable.selectionStart;
       const initialSelectionEnd = editable.selectionEnd;

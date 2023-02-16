@@ -15,7 +15,7 @@ import {
 } from "../element/types";
 import { getFontString, getUpdatedTimestamp, isTestEnv } from "../utils";
 import { randomInteger, randomId } from "../random";
-import { mutateElement, newElementWith } from "./mutateElement";
+import { newElementWith } from "./mutateElement";
 import { getNewGroupIdsForDuplication } from "../groups";
 import { AppState } from "../types";
 import { getElementAbsoluteCoords } from ".";
@@ -23,15 +23,17 @@ import { adjustXYWithRotation } from "../math";
 import { getResizedElementAbsoluteCoords } from "./bounds";
 import {
   getBoundTextElement,
-  getBoundTextElementOffset,
+  // getBoundTextElementOffset,
   getContainerDims,
   getContainerElement,
+  getMaxFontSizeForBoundedText,
   measureText,
   normalizeText,
   wrapText,
 } from "./textElement";
 import { BOUND_TEXT_PADDING, VERTICAL_ALIGN } from "../constants";
 import { isArrowElement } from "./typeChecks";
+import { measureElementFontSizeFromHeight } from "./resizeElements";
 
 type ElementConstructorOpts = MarkOptional<
   Omit<ExcalidrawGenericElement, "id" | "type" | "isDeleted" | "updated">,
@@ -171,17 +173,39 @@ const getAdjustedDimensions = (
   width: number;
   height: number;
   baseline: number;
+  fontSize: number;
 } => {
+  const nextFont = {
+    fontSize: element.fontSize,
+    fontFamily: element.fontFamily,
+  };
   let maxWidth = null;
   const container = getContainerElement(element);
   if (container) {
     maxWidth = getMaxContainerWidth(container);
   }
+  let maxFontSize = nextFont.fontSize;
+  if (nextText.length - element.originalText.length > 1) {
+    maxFontSize = getMaxFontSizeForBoundedText(nextText, nextFont, container);
+  } else {
+    const { height: currHeight } = measureText(
+      nextText,
+      getFontString(nextFont),
+      maxWidth,
+    );
+    maxFontSize = measureElementFontSizeFromHeight(element, {
+      height: currHeight,
+      fontSize: nextFont.fontSize,
+    });
+  }
+  if (maxFontSize < nextFont.fontSize) {
+    nextFont.fontSize = maxFontSize;
+  }
   const {
     width: nextWidth,
     height: nextHeight,
     baseline: nextBaseline,
-  } = measureText(nextText, getFontString(element), maxWidth);
+  } = measureText(nextText, getFontString(nextFont), maxWidth);
   const { textAlign, verticalAlign } = element;
   let x: number;
   let y: number;
@@ -231,34 +255,13 @@ const getAdjustedDimensions = (
       deltaY2,
     );
   }
-
-  // make sure container dimensions are set properly when
-  // text editor overflows beyond viewport dimensions
-  if (container) {
-    const boundTextElementPadding = getBoundTextElementOffset(element);
-
-    const containerDims = getContainerDims(container);
-    let height = containerDims.height;
-    let width = containerDims.width;
-    if (nextHeight > height - boundTextElementPadding * 2) {
-      height = nextHeight + boundTextElementPadding * 2;
-    }
-    if (nextWidth > width - boundTextElementPadding * 2) {
-      width = nextWidth + boundTextElementPadding * 2;
-    }
-    if (
-      !isArrowElement(container) &&
-      (height !== containerDims.height || width !== containerDims.width)
-    ) {
-      mutateElement(container, { height, width });
-    }
-  }
   return {
     width: nextWidth,
     height: nextHeight,
     x: Number.isFinite(x) ? x : element.x,
     y: Number.isFinite(y) ? y : element.y,
     baseline: nextBaseline,
+    fontSize: nextFont.fontSize,
   };
 };
 
@@ -267,14 +270,14 @@ export const refreshTextDimensions = (
   text = textElement.text,
 ) => {
   const container = getContainerElement(textElement);
-  if (container) {
-    text = wrapText(
-      text,
-      getFontString(textElement),
-      getMaxContainerWidth(container),
-    );
-  }
   const dimensions = getAdjustedDimensions(textElement, text);
+  if (container) {
+    const font = {
+      fontSize: dimensions.fontSize,
+      fontFamily: textElement.fontFamily,
+    };
+    text = wrapText(text, getFontString(font), getMaxContainerWidth(container));
+  }
   return { text, ...dimensions };
 };
 

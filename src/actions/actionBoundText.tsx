@@ -5,11 +5,12 @@ import {
   getBoundTextElement,
   measureText,
   redrawTextBoundingBox,
+  getMaxFontSizeForBoundedTextElement,
 } from "../element/textElement";
-import {
-  getOriginalContainerHeightFromCache,
-  resetOriginalContainerCache,
-} from "../element/textWysiwyg";
+// import {
+//   getOriginalContainerHeightFromCache,
+//   resetOriginalContainerCache,
+// } from "../element/textWysiwyg";
 import {
   hasBoundTextElement,
   isTextBindableContainer,
@@ -42,10 +43,14 @@ export const actionUnbindText = register({
           boundTextElement.originalText,
           getFontString(boundTextElement),
         );
-        const originalContainerHeight = getOriginalContainerHeightFromCache(
-          element.id,
-        );
-        resetOriginalContainerCache(element.id);
+        /** CHANGE:NEEMB
+         * Dont restore original height of container as we dont mutate it depending on text
+         * We are resizing text fontSize instead
+         */
+        // const originalContainerHeight = getOriginalContainerHeightFromCache(
+        //   element.id,
+        // );
+        // resetOriginalContainerCache(element.id);
 
         mutateElement(boundTextElement as ExcalidrawTextElement, {
           containerId: null,
@@ -58,9 +63,9 @@ export const actionUnbindText = register({
           boundElements: element.boundElements?.filter(
             (ele) => ele.id !== boundTextElement.id,
           ),
-          height: originalContainerHeight
-            ? originalContainerHeight
-            : element.height,
+          // height: originalContainerHeight
+          //   ? originalContainerHeight
+          //   : element.height,
         });
       }
     });
@@ -119,9 +124,19 @@ export const actionBindText = register({
       textElement = selectedElements[1] as ExcalidrawTextElement;
       container = selectedElements[0] as ExcalidrawTextContainer;
     }
+
+    let fontSize = textElement.fontSize;
+    const maxFontSize = getMaxFontSizeForBoundedTextElement(
+      textElement,
+      container,
+    );
+    if (maxFontSize < fontSize) {
+      fontSize = maxFontSize;
+    }
     mutateElement(textElement, {
       containerId: container.id,
       verticalAlign: VERTICAL_ALIGN.MIDDLE,
+      fontSize,
     });
     mutateElement(container, {
       boundElements: (container.boundElements || []).concat({

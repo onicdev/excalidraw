@@ -48,8 +48,9 @@ import {
   getContainerElement,
   handleBindTextResize,
   measureText,
+  getMaxFontSizeForBoundedTextElement,
 } from "./textElement";
-import { getMaxContainerWidth } from "./newElement";
+import { getMaxContainerWidth, getMaxContainerHeight } from "./newElement";
 
 export const normalizeAngle = (angle: number): number => {
   if (angle >= 2 * Math.PI) {
@@ -235,6 +236,67 @@ export const measureFontSizeFromWH = (
   };
 };
 
+export const measureElementFontSizeFromHeight = (
+  element: NonDeleted<ExcalidrawTextElement>,
+  options: {
+    height?: number;
+    container?: ExcalidrawElement | null;
+    fontSize?: number;
+  },
+): number => {
+  const container = options.container ?? getContainerElement(element);
+  const fontSize = options.fontSize ?? element.fontSize;
+  let nextTextHeight = options.height;
+  if (container) {
+    if (!nextTextHeight) {
+      const fontFamily = element.fontFamily;
+      const maxWidth = getMaxContainerWidth(container);
+      nextTextHeight = measureText(
+        element.text,
+        getFontString({
+          fontSize,
+          fontFamily,
+        }),
+        maxWidth,
+      ).height;
+    }
+    return measureFontSizeFromHeight(
+      {
+        height: nextTextHeight,
+        font: {
+          fontSize,
+          fontFamily: element.fontFamily,
+        },
+      },
+      container,
+    );
+  }
+  return fontSize;
+};
+
+export const measureFontSizeFromHeight = (
+  textElement: {
+    height: number;
+    font: {
+      fontSize: number;
+      fontFamily: number;
+    };
+  },
+  container: ExcalidrawElement,
+): number => {
+  const textHeight = textElement.height;
+  let nextFontSize = textElement.font.fontSize;
+  if (!isArrowElement(container)) {
+    const maxHeight = getMaxContainerHeight(container);
+    nextFontSize = textElement.font.fontSize * (maxHeight / textHeight);
+    if (nextFontSize < MIN_FONT_SIZE) {
+      return MIN_FONT_SIZE;
+    }
+  }
+
+  return nextFontSize;
+};
+
 const getSidesForTransformHandle = (
   transformHandleType: TransformHandleType,
   shouldResizeFromCenter: boolean,
@@ -380,7 +442,6 @@ export const resizeStickerElementHorizontaly = (
   // otherwise previous dimensions affected by modifiers will be taken into account.
   const atStartBoundsWidth = startBottomRight[0] - startTopLeft[0];
 
-  /** 7. Calculate aspect ratio */
   let scaleX = atStartBoundsWidth / boundsCurrentWidth;
   let boundTextFont: { fontSize?: number; baseline?: number } = {};
   const boundTextElement = getBoundTextElement(element);
@@ -392,22 +453,23 @@ export const resizeStickerElementHorizontaly = (
     scaleX = (startBottomRight[0] - rotatedPointer[0]) / boundsCurrentWidth;
   }
 
+  const STICKER_DEFAULT_ASPEC_RATIO = 1; // sticker = square
   const scaleAccumulator = 1.8;
   const currentAspecRatio = element.width / element.height;
   let maxScaleDiff = 1.4;
   let minScaleDiff = 0.7;
   let eleNewWidth = element.width;
   if (shouldResizeFromCenter) {
-    scaleX -= 0.5
-    maxScaleDiff -= 0.5
-    minScaleDiff -= 0.5
+    scaleX -= 0.5;
+    maxScaleDiff -= 0.5;
+    minScaleDiff -= 0.5;
   }
-  if (currentAspecRatio === 1) {
+  if (currentAspecRatio === STICKER_DEFAULT_ASPEC_RATIO) {
     if (Math.abs(scaleX) > maxScaleDiff) {
       eleNewWidth = element.width * scaleAccumulator;
     }
   } else if (Math.abs(scaleX) < minScaleDiff) {
-    eleNewWidth = element.height;
+    eleNewWidth = element.height * STICKER_DEFAULT_ASPEC_RATIO;
   }
 
   if (scaleX < 0 && !shouldResizeFromCenter) {
@@ -418,15 +480,27 @@ export const resizeStickerElementHorizontaly = (
   const eleInitialHeight = stateAtResizeStart.height;
 
   if (boundTextElement) {
-    const stateOfBoundTextElementAtResize = originalElements.get(
-      boundTextElement.id,
-    ) as typeof boundTextElement | undefined;
-    if (stateOfBoundTextElementAtResize) {
-      boundTextFont = {
-        fontSize: stateOfBoundTextElementAtResize.fontSize,
-        baseline: stateOfBoundTextElementAtResize.baseline,
-      };
+    const boundTextElementPadding: number =
+      getBoundTextElementOffset(boundTextElement);
+    const nextFont = measureFontSizeFromWH(
+      boundTextElement,
+      Math.abs(eleNewWidth) - boundTextElementPadding * 2,
+      element.height - boundTextElementPadding * 2,
+    );
+    if (nextFont === null) {
+      return;
     }
+    const maxFontSize = getMaxFontSizeForBoundedTextElement(
+      boundTextElement,
+      element,
+    );
+    if (maxFontSize < nextFont.size) {
+      nextFont.size = maxFontSize;
+    }
+    boundTextFont = {
+      fontSize: nextFont.size,
+      baseline: nextFont.baseline,
+    };
   }
 
   const [newBoundsX1, newBoundsY1, newBoundsX2, newBoundsY2] =

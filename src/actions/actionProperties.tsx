@@ -54,6 +54,8 @@ import { mutateElement, newElementWith } from "../element/mutateElement";
 import {
   getBoundTextElement,
   getContainerElement,
+  isTextHigherThatBounding,
+  getMaxFontSizeForBoundedTextElement,
 } from "../element/textElement";
 import {
   isBoundToContainer,
@@ -176,11 +178,16 @@ const changeFontSize = (
           let newElement: ExcalidrawTextElement = newElementWith(oldElement, {
             fontSize: newFontSize,
           });
-          redrawTextBoundingBox(newElement, getContainerElement(oldElement));
-
-          newElement = offsetElementAfterFontResize(oldElement, newElement);
-
-          return newElement;
+          const container = getContainerElement(oldElement);
+          const canIncreaseFont = !isTextHigherThatBounding(
+            newElement,
+            container,
+          );
+          if (canIncreaseFont) {
+            redrawTextBoundingBox(newElement, container);
+            newElement = offsetElementAfterFontResize(oldElement, newElement);
+            return newElement;
+          }
         }
 
         return oldElement;
@@ -669,9 +676,12 @@ export const actionIncreaseFontSize = register({
   name: "increaseFontSize",
   trackEvent: false,
   perform: (elements, appState, value) => {
-    return changeFontSize(elements, appState, (element) =>
-      Math.round(element.fontSize * (1 + FONT_SIZE_RELATIVE_INCREASE_STEP)),
-    );
+    return changeFontSize(elements, appState, (element) => {
+      const result = Math.round(
+        element.fontSize * (1 + FONT_SIZE_RELATIVE_INCREASE_STEP),
+      );
+      return result !== element.fontSize ? result : result + 1;
+    });
   },
   keyTest: (event) => {
     return (
@@ -699,7 +709,16 @@ export const actionChangeFontFamily = register({
                 fontFamily: value,
               },
             );
-            redrawTextBoundingBox(newElement, getContainerElement(oldElement));
+            const container = getContainerElement(oldElement);
+            let fontSize = newElement.fontSize;
+            const maxFontSize = getMaxFontSizeForBoundedTextElement(
+              newElement,
+              container,
+            );
+            if (maxFontSize < fontSize) {
+              fontSize = maxFontSize;
+            }
+            redrawTextBoundingBox(newElement, container);
             return newElement;
           }
 

@@ -19,6 +19,7 @@ import {
   getDefaultRoundnessTypeForElement,
 } from "../element/typeChecks";
 import { getSelectedElements } from "../scene";
+import { measureElementFontSizeFromHeight } from "../element/resizeElements";
 
 // `copiedStyles` is exported only for tests.
 export let copiedStyles: string = "{}";
@@ -65,7 +66,10 @@ export const actionPasteStyles = register({
     const selectedElementIds = selectedElements.map((element) => element.id);
     return {
       elements: elements.map((element) => {
-        if (selectedElementIds.includes(element.id)) {
+        if (
+          selectedElementIds.includes(element.id) &&
+          element.type !== "sticker"
+        ) {
           let elementStylesToCopyFrom = pastedElement;
           if (isTextElement(element) && element.containerId) {
             elementStylesToCopyFrom = boundTextElement;
@@ -81,14 +85,14 @@ export const actionPasteStyles = register({
             fillStyle: elementStylesToCopyFrom?.fillStyle,
             opacity: elementStylesToCopyFrom?.opacity,
             roughness: elementStylesToCopyFrom?.roughness,
-            roundness: elementStylesToCopyFrom.roundness
-              ? canApplyRoundnessTypeToElement(
-                  elementStylesToCopyFrom.roundness.type,
-                  element,
-                )
-                ? elementStylesToCopyFrom.roundness
-                : getDefaultRoundnessTypeForElement(element)
-              : null,
+            // roundness: elementStylesToCopyFrom.roundness
+            //   ? canApplyRoundnessTypeToElement(
+            //       elementStylesToCopyFrom.roundness.type,
+            //       element,
+            //     )
+            //     ? elementStylesToCopyFrom.roundness
+            //     : getDefaultRoundnessTypeForElement(element)
+            //   : null,
           });
 
           if (isTextElement(newElement)) {
@@ -107,6 +111,19 @@ export const actionPasteStyles = register({
                     isTextElement(newElement) &&
                     element.id === newElement.containerId,
                 ) || null;
+              if (container) {
+                const maxFontSize = measureElementFontSizeFromHeight(
+                  newElement,
+                  {
+                    container,
+                  },
+                );
+                if (maxFontSize < newElement.fontSize) {
+                  newElement = newElementWith(newElement, {
+                    fontSize: maxFontSize,
+                  });
+                }
+              }
             }
             redrawTextBoundingBox(newElement, container);
           }

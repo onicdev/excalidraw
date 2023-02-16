@@ -6242,11 +6242,7 @@ class App extends React.Component<AppProps, AppState> {
 
     if (type === "canvas") {
       if (this.state.blockedModeEnabled) {
-        return [
-          ...options,
-          actionToggleGridMode,
-          actionToggleStats,
-        ];
+        return [...options, actionToggleGridMode, actionToggleStats];
       }
 
       if (this.state.viewModeEnabled) {

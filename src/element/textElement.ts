@@ -24,10 +24,11 @@ import { isTextBindableContainer } from "./typeChecks";
 import { getElementAbsoluteCoords } from "../element";
 import { getSelectedElements } from "../scene";
 import { isHittingElementNotConsideringBoundingBox } from "./collision";
-import {
-  resetOriginalContainerCache,
-  updateOriginalContainerCache,
-} from "./textWysiwyg";
+import { measureFontSizeFromHeight } from "./resizeElements";
+// import {
+//   resetOriginalContainerCache,
+//   updateOriginalContainerCache,
+// } from "./textWysiwyg";
 
 export const normalizeText = (text: string) => {
   return (
@@ -56,11 +57,15 @@ export const redrawTextBoundingBox = (
   const metrics = measureText(text, getFontString(textElement), maxWidth);
   let coordY = textElement.y;
   let coordX = textElement.x;
-  // Resize container and vertically center align the text
+
+  /** CHANGE:NEEMB
+   * Disabled container resizing.
+   * Check & Change fontSize before running redrawTextBoundingBox()
+   */
   if (container) {
     if (!isArrowElement(container)) {
       const containerDims = getContainerDims(container);
-      let nextHeight = containerDims.height;
+      // let nextHeight = containerDims.height;
       if (textElement.verticalAlign === VERTICAL_ALIGN.TOP) {
         coordY = container.y;
       } else if (textElement.verticalAlign === VERTICAL_ALIGN.BOTTOM) {
@@ -71,10 +76,10 @@ export const redrawTextBoundingBox = (
           BOUND_TEXT_PADDING;
       } else {
         coordY = container.y + containerDims.height / 2 - metrics.height / 2;
-        if (metrics.height > getMaxContainerHeight(container)) {
-          nextHeight = metrics.height + BOUND_TEXT_PADDING * 2;
-          coordY = container.y + nextHeight / 2 - metrics.height / 2;
-        }
+        // if (metrics.height > getMaxContainerHeight(container)) {
+        //   nextHeight = metrics.height + BOUND_TEXT_PADDING * 2;
+        //   coordY = container.y + nextHeight / 2 - metrics.height / 2;
+        // }
       }
       if (textElement.textAlign === TEXT_ALIGN.LEFT) {
         coordX = container.x + BOUND_TEXT_PADDING;
@@ -87,8 +92,8 @@ export const redrawTextBoundingBox = (
       } else {
         coordX = container.x + containerDims.width / 2 - metrics.width / 2;
       }
-      updateOriginalContainerCache(container.id, nextHeight);
-      mutateElement(container, { height: nextHeight });
+      // updateOriginalContainerCache(container.id, nextHeight);
+      // mutateElement(container, { height: nextHeight });
     } else {
       const centerX = textElement.x + textElement.width / 2;
       const centerY = textElement.y + textElement.height / 2;
@@ -158,7 +163,7 @@ export const handleBindTextResize = (
   if (!boundTextElementId) {
     return;
   }
-  resetOriginalContainerCache(container.id);
+  // resetOriginalContainerCache(container.id);
   let textElement = Scene.getScene(container)!.getElement(
     boundTextElementId,
   ) as ExcalidrawTextElement;
@@ -259,6 +264,121 @@ const updateBoundTextPosition = (
 
   mutateElement(boundTextElement, { x, y });
 };
+
+/**
+ * CHANGE:NEEMB
+ * isTextHigherThatBounding
+ */
+export const isTextHigherThatBounding = (
+  element: {
+    originalText: string;
+    fontSize: number;
+    fontFamily: number;
+  },
+  container: ExcalidrawElement | null,
+): boolean => {
+  if (container && !isArrowElement(container)) {
+    const maxWidth = getMaxContainerWidth(container);
+    const maxHeight = getMaxContainerHeight(container);
+    const text = wrapText(
+      element.originalText,
+      getFontString(element),
+      maxWidth,
+    );
+
+    const nextTextHeight = measureText(
+      text,
+      getFontString({
+        fontSize: element.fontSize,
+        fontFamily: element.fontFamily,
+      }),
+      getMaxContainerWidth(container),
+    ).height;
+    return nextTextHeight > maxHeight;
+  }
+
+  return false;
+};
+
+/**
+ * CHANGE:NEEMB
+ * getMaxFontSizeForBoundedTextElement
+ * MAX_FONT_SIZE - we are sure that font cannot reach 60000 size
+ * 
+ * TODO:NEEMB
+ * carry out repeated code in a single function
+ * getMaxFontSizeForBoundedTextElement
+ * getMaxFontSizeForBoundedText
+ */
+const MAX_FONT_SIZE = 6000;
+const MIN_FONT_SIZE = 1;
+export const getMaxFontSizeForBoundedTextElement = (
+  element: ExcalidrawTextElement,
+  container: ExcalidrawElement | null,
+): number => {
+  return getMaxFontSizeForBoundedText(
+    element.originalText,
+    {
+      fontSize: element.fontSize,
+      fontFamily: element.fontFamily,
+    },
+    container,
+  );
+};
+
+export const getMaxFontSizeForBoundedText = (
+  text: string,
+  font: {
+    fontSize: number;
+    fontFamily: number;
+  },
+  container: ExcalidrawElement | null,
+): number => {
+  if (container && !isArrowElement(container)) {
+    let min = MIN_FONT_SIZE;
+    let max = MAX_FONT_SIZE;
+    const maxWidth = getMaxContainerWidth(container);
+    const maxHeight = getMaxContainerHeight(container);
+    const nextFont = {
+      fontSize: font.fontSize,
+      fontFamily: font.fontFamily,
+    };
+    let textHeight = 0;
+    while (min <= max) {
+      const middle = (max + min) >> 1;
+      nextFont.fontSize = middle;
+      const wrappedText = wrapText(text, getFontString(nextFont), maxWidth);
+
+      textHeight = measureText(
+        wrappedText,
+        getFontString(nextFont),
+        maxWidth,
+      ).height;
+      if (textHeight < maxHeight) {
+        nextFont.fontSize = middle;
+        min = middle + 1;
+      } else {
+        max = middle - 1;
+      }
+    }
+    // We have to make sure the text height is equal or lower that the container
+    // Binary search can end up with wrong font size when text is higher...
+    // ... sometimes with specific container and text parameters (width, height, etc)
+    if (textHeight > maxHeight) {
+      return measureFontSizeFromHeight(
+        {
+          height: textHeight,
+          font: nextFont,
+        },
+        container,
+      );
+    }
+    return nextFont.fontSize;
+  }
+
+  return font.fontSize;
+};
+
 // https://github.com/grassator/canvas-text-editor/blob/master/lib/FontMetrics.js
 export const measureText = (
   text: string,
