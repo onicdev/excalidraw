@@ -658,7 +658,7 @@ export const getContainerDims = (element: ExcalidrawElement) => {
 export const getContainerCenter = (
   container: ExcalidrawElement,
   appState: AppState,
-) => {
+): { x: number; y: number } => {
   if (!isArrowElement(container)) {
     return {
       x: container.x + container.width / 2,
