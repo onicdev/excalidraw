@@ -6374,27 +6374,23 @@ class App extends React.Component<AppProps, AppState> {
     container?: ExcalidrawTextContainer | null,
   ) {
     if (container) {
-      let elementCenterX = container.x + container.width / 2;
-      let elementCenterY = container.y + container.height / 2;
-
-      const elementCenter = getContainerCenter(container, appState);
-      if (elementCenter) {
-        elementCenterX = elementCenter.x;
-        elementCenterY = elementCenter.y;
-      }
-      const distanceToCenter = Math.hypot(
-        x - elementCenterX,
-        y - elementCenterY,
+      const { x: elementCenterX, y: elementCenterY } = getContainerCenter(
+        container,
+        appState,
       );
-      const isSnappedToCenter =
-        distanceToCenter < TEXT_TO_CENTER_SNAP_THRESHOLD;
-      if (isSnappedToCenter) {
-        const { x: viewportX, y: viewportY } = sceneCoordsToViewportCoords(
-          { sceneX: elementCenterX, sceneY: elementCenterY },
-          appState,
-        );
-        return { viewportX, viewportY, elementCenterX, elementCenterY };
-      }
+      // const distanceToCenter = Math.hypot(
+      //   x - elementCenterX,
+      //   y - elementCenterY,
+      // );
+      // const isSnappedToCenter =
+      //   distanceToCenter < TEXT_TO_CENTER_SNAP_THRESHOLD;
+      // if (isSnappedToCenter) {
+      const { x: viewportX, y: viewportY } = sceneCoordsToViewportCoords(
+        { sceneX: elementCenterX, sceneY: elementCenterY },
+        appState,
+      );
+      return { viewportX, viewportY, elementCenterX, elementCenterY };
+      // }
     }
   }
 
