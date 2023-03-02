@@ -2,7 +2,7 @@ import { MIN_ZOOM } from "../constants";
 import { AppState, NormalizedZoomValue } from "../types";
 
 export const getNormalizedZoom = (zoom: number): NormalizedZoomValue => {
-  return Math.max(MIN_ZOOM, Math.min(zoom, 30)) as NormalizedZoomValue;
+  return Math.max(MIN_ZOOM, Math.min(zoom, 3)) as NormalizedZoomValue;
 };
 
 export const getStateForZoom = (

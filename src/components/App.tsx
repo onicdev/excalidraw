@@ -106,6 +106,7 @@ import {
   textWysiwyg,
   transformElements,
   updateTextElement,
+  redrawTextBoundingBox,
 } from "../element";
 import {
   bindOrUnbindLinearElement,
@@ -125,7 +126,7 @@ import { LinearElementEditor } from "../element/linearElementEditor";
 import { mutateElement, newElementWith } from "../element/mutateElement";
 import { deepCopyElement, newFreeDrawElement } from "../element/newElement";
 import {
-  hasBoundTextElement,
+  // hasBoundTextElement,
   isArrowElement,
   isBindingElement,
   isBindingElementType,
@@ -135,6 +136,8 @@ import {
   isLinearElement,
   isLinearElementType,
   isUsingAdaptiveRadius,
+  isTextBinableToolType,
+  isTextBindableContainer,
 } from "../element/typeChecks";
 import {
   ExcalidrawBindableElement,
@@ -266,8 +269,13 @@ import {
   getBoundTextElement,
   getContainerCenter,
   getContainerDims,
+  getContainerElement,
   getTextBindableContainerAtPosition,
   isValidTextContainer,
+  getTextLengthBeforeLine,
+  getLineWidth,
+  getLineText,
+  getCaretPosition,
 } from "../element/textElement";
 import { isHittingElementNotConsideringBoundingBox } from "../element/collision";
 import {
@@ -284,6 +292,7 @@ import { actionPaste } from "../actions/actionClipboard";
 import { actionToggleHandTool } from "../actions/actionCanvas";
 import { jotaiStore } from "../jotai";
 import { activeConfirmDialogAtom } from "./ActiveConfirmDialog";
+import { getElementAbsoluteCoords } from "../element/bounds";
 
 const deviceContextInitialValue = {
   isSmScreen: false,
@@ -852,7 +861,7 @@ class App extends React.Component<AppProps, AppState> {
         },
       };
     }
-    const scene = restore(initialData, null, null);
+    const scene = restore(initialData, null, null, { repairBindings: true });
     scene.appState = {
       ...scene.appState,
       theme: this.props.theme || scene.appState.theme,
@@ -1661,6 +1670,14 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     this.scene.replaceAllElements(nextElements);
+
+    newElements.forEach((newElement) => {
+      if (isTextElement(newElement) && isBoundToContainer(newElement)) {
+        const container = getContainerElement(newElement);
+        redrawTextBoundingBox(newElement, container);
+      }
+    });
+
     this.history.resumeRecording();
 
     this.setState(
@@ -2383,8 +2400,10 @@ class App extends React.Component<AppProps, AppState> {
     element: ExcalidrawTextElement,
     {
       isExistingElement = false,
+      caretPosition = null,
     }: {
       isExistingElement?: boolean;
+      caretPosition: number | null;
     },
   ) {
     const updateElement = (
@@ -2466,6 +2485,7 @@ class App extends React.Component<AppProps, AppState> {
       element,
       excalidrawContainer: this.excalidrawContainerRef.current,
       app: this,
+      caretPosition,
     });
     // deselect all other elements when inserting text
     this.deselectElements();
@@ -2568,25 +2588,28 @@ class App extends React.Component<AppProps, AppState> {
     sceneY,
     insertAtParentCenter = true,
     container,
+    setSelectionRangeOverCursor = false,
   }: {
-    /** X position to insert text at */
+    /** X position to insert text at (cursor position) */
     sceneX: number;
-    /** Y position to insert text at */
+    /** Y position to insert text at (cursor position) */
     sceneY: number;
     /** whether to attempt to insert at element center if applicable */
     insertAtParentCenter?: boolean;
     container?: ExcalidrawTextContainer | null;
+    /** whether to set selection range on existing text on point the mouse points to */
+    setSelectionRangeOverCursor?: boolean;
   }) => {
     let shouldBindToContainer = false;
 
-    const parentCenterPosition =
-      insertAtParentCenter &&
-      this.getTextWysiwygSnappedToCenterPosition(
-        sceneX,
-        sceneY,
-        this.state,
-        container,
-      );
+    // const parentCenterPosition =
+    //   insertAtParentCenter &&
+    //   this.getTextWysiwygSnappedToCenterPosition(
+    //     sceneX,
+    //     sceneY,
+    //     this.state,
+    //     container,
+    //   );
     // if (container && parentCenterPosition) {
     if (container) {
       shouldBindToContainer = true;
@@ -2640,12 +2663,8 @@ class App extends React.Component<AppProps, AppState> {
     const element = existingTextElement
       ? existingTextElement
       : newTextElement({
-          x: parentCenterPosition
-            ? parentCenterPosition.elementCenterX
-            : sceneX,
-          y: parentCenterPosition
-            ? parentCenterPosition.elementCenterY
-            : sceneY,
+          x: sceneX,
+          y: sceneY,
           strokeColor: this.state.currentItemStrokeColor,
           backgroundColor: this.state.currentItemBackgroundColor,
           fillStyle: this.state.currentItemFillStyle,
@@ -2657,12 +2676,8 @@ class App extends React.Component<AppProps, AppState> {
           text: "",
           fontSize: this.state.currentItemFontSize,
           fontFamily: this.state.currentItemFontFamily,
-          textAlign: parentCenterPosition
-            ? "center"
-            : this.state.currentItemTextAlign,
-          verticalAlign: parentCenterPosition
-            ? VERTICAL_ALIGN.MIDDLE
-            : DEFAULT_VERTICAL_ALIGN,
+          textAlign: "center",
+          verticalAlign: VERTICAL_ALIGN.MIDDLE,
           containerId: shouldBindToContainer ? container?.id : undefined,
           groupIds: container?.groupIds ?? [],
           locked: false,
@@ -2688,13 +2703,56 @@ class App extends React.Component<AppProps, AppState> {
           element,
         ]);
       }
+    }
 
-      // case: creating new text not centered to parent element → offset Y
-      // so that the text is centered to cursor position
-      if (!parentCenterPosition) {
-        mutateElement(element, {
-          y: element.y - element.baseline / 2,
-        });
+    /** CHNAGE:NEEMB
+     * get caretPosition if double click on text element
+     * or container with bounded text
+     */
+    let caretPosition: number | null = 0;
+    if (existingTextElement) {
+      caretPosition = existingTextElement.text.length;
+      if (setSelectionRangeOverCursor) {
+        const [startX, startY, endX, endY] =
+          getElementAbsoluteCoords(existingTextElement);
+        if (sceneY < startY) {
+          caretPosition = 0;
+        } else if (sceneY > endY) {
+          caretPosition = existingTextElement.text.length;
+        } else if (sceneX < startX) {
+          caretPosition = 0;
+        } else if (sceneX > endX) {
+          caretPosition = existingTextElement.text.length;
+        } else {
+          const font = {
+            fontSize: existingTextElement.fontSize,
+            fontFamily: existingTextElement.fontFamily,
+          };
+          const fontString = getFontString(font);
+          const lineHeight = getApproxLineHeight(fontString);
+          const deltaX = sceneX - startX;
+          const deltaY = sceneY - startY;
+          const lineNumber = (deltaY - (deltaY % lineHeight)) / lineHeight;
+          const targetLineStartIndex = getTextLengthBeforeLine(
+            existingTextElement.text,
+            lineNumber,
+          );
+          caretPosition = targetLineStartIndex;
+          const lineText = getLineText(existingTextElement.text, lineNumber);
+          const lineWidth = getLineWidth(lineText, fontString);
+          let lineShift: number = 0;
+          if (existingTextElement.textAlign === "right") {
+            lineShift = existingTextElement.width - lineWidth;
+          } else if (existingTextElement.textAlign === "center") {
+            lineShift = Math.round((existingTextElement.width - lineWidth) / 2);
+          }
+          const delta = deltaX - lineShift;
+          if (delta > lineWidth) {
+            caretPosition += lineText.length;
+          } else if (delta > 0) {
+            caretPosition += getCaretPosition(lineText, fontString, delta);
+          }
+        }
       }
     }
 
@@ -2704,6 +2762,7 @@ class App extends React.Component<AppProps, AppState> {
 
     this.handleTextWysiwyg(element, {
       isExistingElement: !!existingTextElement,
+      caretPosition,
     });
   };
 
@@ -2792,7 +2851,7 @@ class App extends React.Component<AppProps, AppState> {
         sceneY,
       );
       if (container) {
-        if (isArrowElement(container) || hasBoundTextElement(container)) {
+        if (isArrowElement(container)) {
           const midPoint = getContainerCenter(container, this.state);
           sceneX = midPoint.x;
           sceneY = midPoint.y;
@@ -2803,6 +2862,7 @@ class App extends React.Component<AppProps, AppState> {
         sceneY,
         insertAtParentCenter: !event.altKey,
         container,
+        setSelectionRangeOverCursor: true,
       });
     }
   };
@@ -4915,6 +4975,7 @@ class App extends React.Component<AppProps, AppState> {
         isResizing,
         isRotating,
       } = this.state;
+
       this.setState({
         isResizing: false,
         isRotating: false,
@@ -5355,6 +5416,16 @@ class App extends React.Component<AppProps, AppState> {
           });
         }
         return;
+      }
+
+      if (isTextBinableToolType(activeTool.type) && draggingElement) {
+        const { x, y } = getContainerCenter(draggingElement, this.state);
+        this.startTextEditing({
+          sceneX: x,
+          sceneY: y,
+          container: draggingElement as ExcalidrawTextContainer,
+        });
+        // return;
       }
 
       if (
@@ -6372,27 +6443,23 @@ class App extends React.Component<AppProps, AppState> {
     container?: ExcalidrawTextContainer | null,
   ) {
     if (container) {
-      let elementCenterX = container.x + container.width / 2;
-      let elementCenterY = container.y + container.height / 2;
-
-      const elementCenter = getContainerCenter(container, appState);
-      if (elementCenter) {
-        elementCenterX = elementCenter.x;
-        elementCenterY = elementCenter.y;
-      }
-      const distanceToCenter = Math.hypot(
-        x - elementCenterX,
-        y - elementCenterY,
+      const { x: elementCenterX, y: elementCenterY } = getContainerCenter(
+        container,
+        appState,
       );
-      const isSnappedToCenter =
-        distanceToCenter < TEXT_TO_CENTER_SNAP_THRESHOLD;
-      if (isSnappedToCenter) {
-        const { x: viewportX, y: viewportY } = sceneCoordsToViewportCoords(
-          { sceneX: elementCenterX, sceneY: elementCenterY },
-          appState,
-        );
-        return { viewportX, viewportY, elementCenterX, elementCenterY };
-      }
+      // const distanceToCenter = Math.hypot(
+      //   x - elementCenterX,
+      //   y - elementCenterY,
+      // );
+      // const isSnappedToCenter =
+      //   distanceToCenter < TEXT_TO_CENTER_SNAP_THRESHOLD;
+      // if (isSnappedToCenter) {
+      const { x: viewportX, y: viewportY } = sceneCoordsToViewportCoords(
+        { sceneX: elementCenterX, sceneY: elementCenterY },
+        appState,
+      );
+      return { viewportX, viewportY, elementCenterX, elementCenterY };
+      // }
     }
   }
 
