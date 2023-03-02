@@ -109,6 +109,7 @@ export const textWysiwyg = ({
   canvas,
   excalidrawContainer,
   app,
+  caretPosition,
 }: {
   id: ExcalidrawElement["id"];
   onChange?: (text: string) => void;
@@ -122,6 +123,7 @@ export const textWysiwyg = ({
   canvas: HTMLCanvasElement | null;
   excalidrawContainer: HTMLDivElement | null;
   app: App;
+  caretPosition: number | null;
 }) => {
   const textPropertiesUpdated = (
     updatedTextElement: ExcalidrawTextElement,
@@ -646,7 +648,8 @@ export const textWysiwyg = ({
 
   // select on init (focusing is done separately inside the bindBlurEvent()
   // because we need it to happen *after* the blur event from `pointerdown`)
-  editable.select();
+  const originalCaretPosition = caretPosition ?? 0;
+  editable.setSelectionRange(originalCaretPosition, originalCaretPosition);
   bindBlurEvent();
 
   // reposition wysiwyg in case of canvas is resized. Using ResizeObserver

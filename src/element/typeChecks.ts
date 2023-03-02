@@ -82,6 +82,17 @@ export const isLinearElementType = (
   );
 };
 
+export const isTextBinableToolType = (
+  elementType: AppState["activeTool"]["type"],
+): boolean => {
+  return (
+    elementType === "sticker" ||
+    elementType === "rectangle" ||
+    elementType === "diamond" ||
+    elementType === "ellipse"
+  );
+};
+
 export const isStickerElementType = (
   elementType: AppState["activeTool"]["type"],
 ): boolean => {

@@ -378,7 +378,7 @@ export const getApproxLineHeight = (font: FontString) => {
 
 let canvas: HTMLCanvasElement | undefined;
 
-const getLineWidth = (text: string, font: FontString) => {
+export const getLineWidth = (text: string, font: FontString): number => {
   if (!canvas) {
     canvas = document.createElement("canvas");
   }
@@ -886,4 +886,43 @@ export const getMaxContainerHeight = (container: ExcalidrawElement) => {
     return Math.round(height / 2) - BOUND_TEXT_PADDING * 2;
   }
   return height - BOUND_TEXT_PADDING * 2;
+};
+
+export const getTextLengthBeforeLine = (
+  text: string,
+  lineNumber: number,
+): number => {
+  const lines = text.replace(/\r\n?/g, "\n").split("\n");
+  let length = 0;
+  let i = 0;
+  while (lineNumber > i) {
+    length += lines[i].length;
+    i++;
+  }
+  return length;
+};
+
+export const getLineText = (text: string, lineNumber: number): string => {
+  const lines = text.replace(/\r\n?/g, "\n").split("\n");
+  return lines[lineNumber];
+};
+
+export const getCaretPosition = (
+  text: string,
+  font: FontString,
+  maxWidth: number,
+) => {
+  const chars = text.split("");
+  let currText = "";
+  let currWidth = 0;
+  let i = 0;
+  while (currWidth < maxWidth) {
+    currText += chars[i];
+    currWidth = measureText(currText, font).width;
+    i++;
+  }
+  if (currWidth > maxWidth + getLineWidth(chars[i], font) / 2) {
+    i--;
+  }
+  return i;
 };
