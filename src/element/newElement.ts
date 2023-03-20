@@ -15,23 +15,22 @@ import {
 } from "../element/types";
 import { getFontString, getUpdatedTimestamp, isTestEnv } from "../utils";
 import { randomInteger, randomId } from "../random";
-import { mutateElement, newElementWith } from "./mutateElement";
+import { newElementWith } from "./mutateElement";
 import { getNewGroupIdsForDuplication } from "../groups";
 import { AppState } from "../types";
 import { getElementAbsoluteCoords } from ".";
 import { adjustXYWithRotation } from "../math";
 import { getResizedElementAbsoluteCoords } from "./bounds";
 import {
-  getBoundTextElement,
-  getBoundTextElementOffset,
-  getContainerDims,
   getContainerElement,
+  getMaxFontSizeForBoundedText,
   measureText,
   normalizeText,
   wrapText,
+  getMaxContainerWidth,
 } from "./textElement";
-import { BOUND_TEXT_PADDING, VERTICAL_ALIGN } from "../constants";
-import { isArrowElement } from "./typeChecks";
+import { VERTICAL_ALIGN } from "../constants";
+import { measureElementFontSizeFromHeight } from "./resizeElements";
 
 type ElementConstructorOpts = MarkOptional<
   Omit<ExcalidrawGenericElement, "id" | "type" | "isDeleted" | "updated">,
@@ -62,14 +61,15 @@ const _newElementBase = <T extends ExcalidrawElement>(
     height = 0,
     angle = 0,
     groupIds = [],
-    strokeSharpness,
+    roundness = null,
     boundElements = null,
     link = null,
     locked,
     ...rest
   }: ElementConstructorOpts & Omit<Partial<ExcalidrawGenericElement>, "type">,
 ) => {
-  const element = {
+  // assign type to guard against excess properties
+  const element: Merge<ExcalidrawGenericElement, { type: T["type"] }> = {
     id: rest.id || randomId(),
     type,
     x,
@@ -85,7 +85,7 @@ const _newElementBase = <T extends ExcalidrawElement>(
     roughness,
     opacity,
     groupIds,
-    strokeSharpness,
+    roundness,
     seed: rest.seed ?? randomInteger(),
     version: rest.version || 1,
     versionNonce: rest.versionNonce ?? 0,
@@ -152,7 +152,6 @@ export const newTextElement = (
       y: opts.y - offsets.y,
       width: metrics.width,
       height: metrics.height,
-      baseline: metrics.baseline,
       containerId: opts.containerId || null,
       originalText: text,
     },
@@ -169,18 +168,33 @@ const getAdjustedDimensions = (
   y: number;
   width: number;
   height: number;
-  baseline: number;
+  fontSize: number;
 } => {
-  let maxWidth = null;
+  const nextFont = {
+    fontSize: element.fontSize,
+    fontFamily: element.fontFamily,
+  };
   const container = getContainerElement(element);
-  if (container) {
-    maxWidth = getMaxContainerWidth(container);
+  let maxFontSize = nextFont.fontSize;
+  if (nextText.length - element.text.length > 1) {
+    maxFontSize = getMaxFontSizeForBoundedText(nextText, nextFont, container);
+  } else {
+    const { height: currHeight } = measureText(
+      nextText,
+      getFontString(nextFont),
+    );
+    maxFontSize = measureElementFontSizeFromHeight(element, {
+      height: currHeight,
+      fontSize: nextFont.fontSize,
+    });
   }
-  const {
-    width: nextWidth,
-    height: nextHeight,
-    baseline: nextBaseline,
-  } = measureText(nextText, getFontString(element), maxWidth);
+  if (maxFontSize < nextFont.fontSize) {
+    nextFont.fontSize = maxFontSize;
+  }
+  const { width: nextWidth, height: nextHeight } = measureText(
+    nextText,
+    getFontString(nextFont),
+  );
   const { textAlign, verticalAlign } = element;
   let x: number;
   let y: number;
@@ -189,11 +203,7 @@ const getAdjustedDimensions = (
     verticalAlign === VERTICAL_ALIGN.MIDDLE &&
     !element.containerId
   ) {
-    const prevMetrics = measureText(
-      element.text,
-      getFontString(element),
-      maxWidth,
-    );
+    const prevMetrics = measureText(element.text, getFontString(element));
     const offsets = getTextElementPositionOffsets(element, {
       width: nextWidth - prevMetrics.width,
       height: nextHeight - prevMetrics.height,
@@ -230,34 +240,12 @@ const getAdjustedDimensions = (
       deltaY2,
     );
   }
-
-  // make sure container dimensions are set properly when
-  // text editor overflows beyond viewport dimensions
-  if (container) {
-    const boundTextElementPadding = getBoundTextElementOffset(element);
-
-    const containerDims = getContainerDims(container);
-    let height = containerDims.height;
-    let width = containerDims.width;
-    if (nextHeight > height - boundTextElementPadding * 2) {
-      height = nextHeight + boundTextElementPadding * 2;
-    }
-    if (nextWidth > width - boundTextElementPadding * 2) {
-      width = nextWidth + boundTextElementPadding * 2;
-    }
-    if (
-      !isArrowElement(container) &&
-      (height !== containerDims.height || width !== containerDims.width)
-    ) {
-      mutateElement(container, { height, width });
-    }
-  }
   return {
     width: nextWidth,
     height: nextHeight,
     x: Number.isFinite(x) ? x : element.x,
     y: Number.isFinite(y) ? y : element.y,
-    baseline: nextBaseline,
+    fontSize: nextFont.fontSize,
   };
 };
 
@@ -267,46 +255,14 @@ export const refreshTextDimensions = (
 ) => {
   const container = getContainerElement(textElement);
   if (container) {
-    text = wrapText(
-      text,
-      getFontString(textElement),
-      getMaxContainerWidth(container),
-    );
+    const font = {
+      fontSize: textElement.fontSize,
+      fontFamily: textElement.fontFamily,
+    };
+    text = wrapText(text, getFontString(font), getMaxContainerWidth(container));
   }
   const dimensions = getAdjustedDimensions(textElement, text);
   return { text, ...dimensions };
-};
-
-export const getMaxContainerWidth = (container: ExcalidrawElement) => {
-  const width = getContainerDims(container).width;
-  if (isArrowElement(container)) {
-    const containerWidth = width - BOUND_TEXT_PADDING * 8 * 2;
-    if (containerWidth <= 0) {
-      const boundText = getBoundTextElement(container);
-      if (boundText) {
-        return boundText.width;
-      }
-      return BOUND_TEXT_PADDING * 8 * 2;
-    }
-    return containerWidth;
-  }
-  return width - BOUND_TEXT_PADDING * 2;
-};
-
-export const getMaxContainerHeight = (container: ExcalidrawElement) => {
-  const height = getContainerDims(container).height;
-  if (isArrowElement(container)) {
-    const containerHeight = height - BOUND_TEXT_PADDING * 8 * 2;
-    if (containerHeight <= 0) {
-      const boundText = getBoundTextElement(container);
-      if (boundText) {
-        return boundText.height;
-      }
-      return BOUND_TEXT_PADDING * 8 * 2;
-    }
-    return height;
-  }
-  return height - BOUND_TEXT_PADDING * 2;
 };
 
 export const updateTextElement = (

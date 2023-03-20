@@ -28,12 +28,11 @@ export const getDefaultAppState = (): Omit<
     currentItemFillStyle: "solid",
     currentItemFontFamily: DEFAULT_FONT_FAMILY,
     currentItemFontSize: DEFAULT_FONT_SIZE,
-    currentItemLinearStrokeSharpness: "sharp",
     currentItemOpacity: 100,
     currentItemRoughness: 0,
     currentItemStartArrowhead: null,
     currentItemStrokeColor: "#1F2123",
-    currentItemStrokeSharpness: "round",
+    currentItemRoundness: "round",
     currentItemStrokeStyle: "solid",
     currentItemStrokeWidth: 1,
     currentItemTextAlign: DEFAULT_TEXT_ALIGN,
@@ -46,7 +45,7 @@ export const getDefaultAppState = (): Omit<
       type: "selection",
       customType: null,
       locked: false,
-      lastActiveToolBeforeEraser: null,
+      lastActiveTool: null,
     },
     penMode: false,
     penDetected: false,
@@ -66,6 +65,7 @@ export const getDefaultAppState = (): Omit<
     lastPointerDownWith: "mouse",
     multiElement: null,
     name: `${t("labels.untitled")}-${getDateTime()}`,
+    contextMenu: null,
     openMenu: null,
     openPopup: null,
     openSidebar: null,
@@ -128,7 +128,7 @@ const APP_STATE_STORAGE_CONF = (<
   currentItemFillStyle: { browser: true, export: false, server: false },
   currentItemFontFamily: { browser: true, export: false, server: false },
   currentItemFontSize: { browser: true, export: false, server: false },
-  currentItemLinearStrokeSharpness: {
+  currentItemRoundness: {
     browser: true,
     export: false,
     server: false,
@@ -137,7 +137,6 @@ const APP_STATE_STORAGE_CONF = (<
   currentItemRoughness: { browser: true, export: false, server: false },
   currentItemStartArrowhead: { browser: true, export: false, server: false },
   currentItemStrokeColor: { browser: true, export: false, server: false },
-  currentItemStrokeSharpness: { browser: true, export: false, server: false },
   currentItemStrokeStyle: { browser: true, export: false, server: false },
   currentItemStrokeWidth: { browser: true, export: false, server: false },
   currentItemTextAlign: { browser: true, export: false, server: false },
@@ -167,6 +166,7 @@ const APP_STATE_STORAGE_CONF = (<
   name: { browser: true, export: false, server: false },
   offsetLeft: { browser: false, export: false, server: false },
   offsetTop: { browser: false, export: false, server: false },
+  contextMenu: { browser: false, export: false, server: false },
   openMenu: { browser: true, export: false, server: false },
   openPopup: { browser: false, export: false, server: false },
   openSidebar: { browser: true, export: false, server: false },
@@ -239,3 +239,11 @@ export const isEraserActive = ({
 }: {
   activeTool: AppState["activeTool"];
 }) => activeTool.type === "eraser";
+
+export const isHandToolActive = ({
+  activeTool,
+}: {
+  activeTool: AppState["activeTool"];
+}) => {
+  return activeTool.type === "hand";
+};

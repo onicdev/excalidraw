@@ -27,7 +27,7 @@ import { RoughGenerator } from "roughjs/bin/generator";
 
 import { RenderConfig } from "../scene/types";
 import { distance, getFontString, getFontFamilyString, isRTL } from "../utils";
-import { isPathALoop } from "../math";
+import { getCornerRadius, isPathALoop, isRightAngle } from "../math";
 import rough from "roughjs/bin/rough";
 import { AppState, BinaryFiles, Zoom } from "../types";
 import { getDefaultAppState } from "../appState";
@@ -36,13 +36,11 @@ import {
   MAX_DECIMALS_FOR_SVG_EXPORT,
   MIME_TYPES,
   SVG_NS,
-  VERTICAL_ALIGN,
 } from "../constants";
 import { getStroke, StrokeOptions } from "perfect-freehand";
 import {
   getApproxLineHeight,
   getBoundTextElement,
-  getBoundTextElementOffset,
   getContainerElement,
 } from "../element/textElement";
 import { LinearElementEditor } from "../element/linearElementEditor";
@@ -281,22 +279,19 @@ const drawElementOnCanvas = (
         const lineHeight = element.containerId
           ? getApproxLineHeight(getFontString(element))
           : element.height / lines.length;
-        let verticalOffset = element.height - element.baseline;
-        if (element.verticalAlign === VERTICAL_ALIGN.BOTTOM) {
-          verticalOffset = getBoundTextElementOffset(element);
-        }
-
         const horizontalOffset =
           element.textAlign === "center"
             ? element.width / 2
             : element.textAlign === "right"
             ? element.width
             : 0;
+        context.textBaseline = "bottom";
+
         for (let index = 0; index < lines.length; index++) {
           context.fillText(
             lines[index],
             horizontalOffset,
-            (index + 1) * lineHeight - verticalOffset,
+            (index + 1) * lineHeight,
           );
         }
         context.restore();
@@ -437,10 +432,10 @@ const generateElementShape = (
 
         break;
       case "rectangle":
-        if (element.strokeSharpness === "round") {
+        if (element.roundness) {
           const w = element.width;
           const h = element.height;
-          const r = Math.min(w, h) * 0.25;
+          const r = getCornerRadius(Math.min(w, h), element);
           shape = generator.path(
             `M ${r} 0 L ${w - r} 0 Q ${w} 0, ${w} ${r} L ${w} ${
               h - r
@@ -464,32 +459,36 @@ const generateElementShape = (
       case "diamond": {
         const [topX, topY, rightX, rightY, bottomX, bottomY, leftX, leftY] =
           getDiamondPoints(element);
-        if (element.strokeSharpness === "round") {
+        if (element.roundness) {
+          const verticalRadius = getCornerRadius(
+            Math.abs(topX - leftX),
+            element,
+          );
+
+          const horizontalRadius = getCornerRadius(
+            Math.abs(rightY - topY),
+            element,
+          );
+
           shape = generator.path(
-            `M ${topX + (rightX - topX) * 0.25} ${
-              topY + (rightY - topY) * 0.25
-            } L ${rightX - (rightX - topX) * 0.25} ${
-              rightY - (rightY - topY) * 0.25
-            }
+            `M ${topX + verticalRadius} ${topY + horizontalRadius} L ${
+              rightX - verticalRadius
+            } ${rightY - horizontalRadius}
             C ${rightX} ${rightY}, ${rightX} ${rightY}, ${
-              rightX - (rightX - bottomX) * 0.25
-            } ${rightY + (bottomY - rightY) * 0.25}
-            L ${bottomX + (rightX - bottomX) * 0.25} ${
-              bottomY - (bottomY - rightY) * 0.25
-            }
+              rightX - verticalRadius
+            } ${rightY + horizontalRadius}
+            L ${bottomX + verticalRadius} ${bottomY - horizontalRadius}
             C ${bottomX} ${bottomY}, ${bottomX} ${bottomY}, ${
-              bottomX - (bottomX - leftX) * 0.25
-            } ${bottomY - (bottomY - leftY) * 0.25}
-            L ${leftX + (bottomX - leftX) * 0.25} ${
-              leftY + (bottomY - leftY) * 0.25
+              bottomX - verticalRadius
+            } ${bottomY - horizontalRadius}
+            L ${leftX + verticalRadius} ${leftY + horizontalRadius}
+            C ${leftX} ${leftY}, ${leftX} ${leftY}, ${leftX + verticalRadius} ${
+              leftY - horizontalRadius
             }
-            C ${leftX} ${leftY}, ${leftX} ${leftY}, ${
-              leftX + (topX - leftX) * 0.25
-            } ${leftY - (leftY - topY) * 0.25}
-            L ${topX - (topX - leftX) * 0.25} ${topY + (leftY - topY) * 0.25}
-            C ${topX} ${topY}, ${topX} ${topY}, ${
-              topX + (rightX - topX) * 0.25
-            } ${topY + (rightY - topY) * 0.25}`,
+            L ${topX - verticalRadius} ${topY + horizontalRadius}
+            C ${topX} ${topY}, ${topX} ${topY}, ${topX + verticalRadius} ${
+              topY + horizontalRadius
+            }`,
             generateRoughOptions(element, true),
           );
         } else {
@@ -528,7 +527,7 @@ const generateElementShape = (
 
         // curve is always the first element
         // this simplifies finding the curve for an element
-        if (element.strokeSharpness === "sharp") {
+        if (!element.roundness) {
           if (options.fill) {
             shape = [generator.polygon(points as [number, number][], options)];
           } else {
@@ -722,22 +721,8 @@ const drawElementFromCanvas = (
   const cx = ((x1 + x2) / 2 + renderConfig.scrollX) * window.devicePixelRatio;
   const cy = ((y1 + y2) / 2 + renderConfig.scrollY) * window.devicePixelRatio;
 
-  const _isPendingImageElement = isPendingImageElement(element, renderConfig);
-
-  const scaleXFactor =
-    "scale" in elementWithCanvas.element && !_isPendingImageElement
-      ? elementWithCanvas.element.scale[0]
-      : 1;
-  const scaleYFactor =
-    "scale" in elementWithCanvas.element && !_isPendingImageElement
-      ? elementWithCanvas.element.scale[1]
-      : 1;
-
   context.save();
-  context.scale(
-    (1 / window.devicePixelRatio) * scaleXFactor,
-    (1 / window.devicePixelRatio) * scaleYFactor,
-  );
+  context.scale(1 / window.devicePixelRatio, 1 / window.devicePixelRatio);
   const boundTextElement = getBoundTextElement(element);
 
   if (isArrowElement(element) && boundTextElement) {
@@ -802,7 +787,7 @@ const drawElementFromCanvas = (
         zoom,
     );
 
-    context.translate(cx * scaleXFactor, cy * scaleYFactor);
+    context.translate(cx, cy);
     context.drawImage(
       tempCanvas,
       (-(x2 - x1) / 2) * window.devicePixelRatio - offsetX / zoom - padding,
@@ -811,15 +796,30 @@ const drawElementFromCanvas = (
       tempCanvas.height / zoom,
     );
   } else {
-    context.translate(cx * scaleXFactor, cy * scaleYFactor);
+    // we translate context to element center so that rotation and scale
+    // originates from the element center
+    context.translate(cx, cy);
 
-    context.rotate(element.angle * scaleXFactor * scaleYFactor);
+    context.rotate(element.angle);
+
+    if (
+      "scale" in elementWithCanvas.element &&
+      !isPendingImageElement(element, renderConfig)
+    ) {
+      context.scale(
+        elementWithCanvas.element.scale[0],
+        elementWithCanvas.element.scale[1],
+      );
+    }
+
+    // revert afterwards we don't have account for it during drawing
+    context.translate(-cx, -cy);
 
     context.drawImage(
       elementWithCanvas.canvas!,
-      (-(x2 - x1) / 2) * window.devicePixelRatio -
+      (x1 + renderConfig.scrollX) * window.devicePixelRatio -
         (padding * elementWithCanvas.canvasZoom) / elementWithCanvas.canvasZoom,
-      (-(y2 - y1) / 2) * window.devicePixelRatio -
+      (y1 + renderConfig.scrollY) * window.devicePixelRatio -
         (padding * elementWithCanvas.canvasZoom) / elementWithCanvas.canvasZoom,
       elementWithCanvas.canvas!.width / elementWithCanvas.canvasZoom,
       elementWithCanvas.canvas!.height / elementWithCanvas.canvasZoom,
@@ -915,9 +915,6 @@ export const renderElement = (
         }
         context.save();
         context.translate(cx, cy);
-        if (element.type === "image") {
-          context.scale(element.scale[0], element.scale[1]);
-        }
 
         if (shouldResetImageFilter(element, renderConfig)) {
           context.filter = "none";
@@ -983,6 +980,12 @@ export const renderElement = (
           );
         } else {
           context.rotate(element.angle);
+
+          if (element.type === "image") {
+            // note: scale must be applied *after* rotating
+            context.scale(element.scale[0], element.scale[1]);
+          }
+
           context.translate(-shiftX, -shiftY);
           drawElementOnCanvas(element, rc, context, renderConfig);
         }
@@ -995,7 +998,33 @@ export const renderElement = (
           element,
           renderConfig,
         );
+
+        const currentImageSmoothingStatus = context.imageSmoothingEnabled;
+
+        if (
+          // do not disable smoothing during zoom as blurry shapes look better
+          // on low resolution (while still zooming in) than sharp ones
+          !renderConfig?.shouldCacheIgnoreZoom &&
+          // angle is 0 -> always disable smoothing
+          (!element.angle ||
+            // or check if angle is a right angle in which case we can still
+            // disable smoothing without adversely affecting the result
+            isRightAngle(element.angle))
+        ) {
+          // Disabling smoothing makes output much sharper, especially for
+          // text. Unless for non-right angles, where the aliasing is really
+          // terrible on Chromium.
+          //
+          // Note that `context.imageSmoothingQuality="high"` has almost
+          // zero effect.
+          //
+          context.imageSmoothingEnabled = false;
+        }
+
         drawElementFromCanvas(elementWithCanvas, rc, context, renderConfig);
+
+        // reset
+        context.imageSmoothingEnabled = currentImageSmoothingStatus;
       }
       break;
     }
@@ -1281,7 +1310,7 @@ export const renderElementToSvg = (
         );
         const lines = element.text.replace(/\r\n?/g, "\n").split("\n");
         const lineHeight = element.height / lines.length;
-        const verticalOffset = element.height - element.baseline;
+        const verticalOffset = element.height;
         const horizontalOffset =
           element.textAlign === "center"
             ? element.width / 2
